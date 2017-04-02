@@ -27,6 +27,14 @@ void FeedManagerClass::setup() {
 void FeedManagerClass::advance(uint8_t feederNo) {
 	
 	sFeederState state = this->feeders_state[feederNo-1];
+	static uint8_t pos=0;
+	if(pos==0) {
+		FeedManager.feeders[0].write(0);
+		pos=1;
+		} else {
+		FeedManager.feeders[0].write(90);
+		pos=0;
+	}
 	
 	switch (state) {
 		case sAT_UNKNOWN_ANGLE: {
