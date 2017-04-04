@@ -16,17 +16,17 @@
 
 class FeedManagerClass {
 	protected:
-		
+	
 	public:
-		
+	
 		unsigned long lastUpdate;
-    
-    FeederClass feeders[NUMBER_OF_FEEDERS];
-    
-    void factoryReset();
-    
+	
+		FeederClass feeders[NUMBER_OF_FEEDERS];
+	
+		void factoryReset();
+	
 		void setup();
-		
+	
 		void update();
 };
 

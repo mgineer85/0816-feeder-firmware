@@ -1,6 +1,6 @@
-// 
-// 
-// 
+//
+//
+//
 
 #include "FeedManager.h"
 #include "config.h"
@@ -9,11 +9,11 @@
 #include <EEPROMex.h>
 
 void FeedManagerClass::setup() {
-  
-  
-  
+	
+	
+	
 	for (uint8_t i=0;i<NUMBER_OF_FEEDERS;i++) {
-	  this->feeders[i].setup(i);
+		this->feeders[i].setup(i);
 	}
 	Serial.println(F("FeedManagerClass setup finished."));
 	
@@ -22,11 +22,11 @@ void FeedManagerClass::setup() {
 }
 
 void FeedManagerClass::factoryReset() {
-  for (uint8_t i=0;i<NUMBER_OF_FEEDERS;i++) {
-    this->feeders[i].factoryReset();
-  }
+	for (uint8_t i=0;i<NUMBER_OF_FEEDERS;i++) {
+		this->feeders[i].factoryReset();
+	}
 
-  
+	
 }
 
 void FeedManagerClass::update() {

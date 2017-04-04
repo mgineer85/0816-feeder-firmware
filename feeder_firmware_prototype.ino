@@ -1,11 +1,11 @@
 /*
- *
- *
- *
- *
- *
- *
- *
+*
+*
+*
+*
+*
+*
+*
 */
 
 
@@ -24,17 +24,17 @@
 // ------------------  V A R  S E T U P -----------------------
 
 // ------ DEBOUNCE test button
-Bounce debouncedButton = Bounce(); 
+Bounce debouncedButton = Bounce();
 
 // ------ Settings-Struct (saved in EEPROM)
 struct sCommonSettings {
 	//add further settings here, above CONFIG_VERSION
 	
-    char version[4];   // This is for detection if settings suit to struct
+	char version[4];   // This is for detection if settings suit to struct
 } commonSettings = {
 	
 	//add further settings here, above CONFIG_VERSION
-    CONFIG_VERSION,
+	CONFIG_VERSION,
 };
 
 // ------ cmdMessenger
@@ -51,7 +51,7 @@ enum {
 	kAcknowledge=0,             // Command to acknowledge that cmd was received
 	kError=1,                   // Command to report errors
 	kAdvance,                 //
-  kUpdateFeederConfig,
+	kUpdateFeederConfig,
 };
 
 // ------------------  S E T U P -----------------------
@@ -60,17 +60,17 @@ void setup() {
 	while (!Serial);
 	Serial.println(F("Feeduino starting...")); Serial.flush();//setup servo objects
 
-  //factory reset on first start or version changing
-  EEPROM.readBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);
-  if(commonSettings.version != CONFIG_VERSION) {
-    Serial.println(F("First start/Config version changed"));
-    
-    //reset needed
-    FeedManager.factoryReset();
+	//factory reset on first start or version changing
+	EEPROM.readBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);
+	if(commonSettings.version != CONFIG_VERSION) {
+		Serial.println(F("First start/Config version changed"));
+		
+		//reset needed
+		FeedManager.factoryReset();
 
-    //update commonSettings in EEPROM to have no factory reset on next start
-    EEPROM.writeBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);
-  }
+		//update commonSettings in EEPROM to have no factory reset on next start
+		EEPROM.writeBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);
+	}
 	
 	//handles the servo controlling stuff
 	FeedManager.setup();
@@ -81,7 +81,7 @@ void setup() {
 	// attach callbacks to cmdMessenger
 	cmdMessenger.attach(OnUnknownCommand);
 	cmdMessenger.attach(kAdvance, OnAdvance);
-  cmdMessenger.attach(kUpdateFeederConfig, OnUpdateFeederConfig);
+	cmdMessenger.attach(kUpdateFeederConfig, OnUpdateFeederConfig);
 	
 	// Adds newline to every command
 	cmdMessenger.printLfCr();
@@ -90,7 +90,7 @@ void setup() {
 	cmdMessenger.sendCmd(kAcknowledge,"Arduino has started!");
 	
 	
-  
+	
 	// Setup the button for debugging purposes
 	pinMode(PIN_BUTTON,INPUT_PULLUP);
 	debouncedButton.attach(PIN_BUTTON);
@@ -129,12 +129,12 @@ void OnUnknownCommand() {
 
 void OnAdvance() {
 	//get commands parameters
-  uint8_t feederNo = (uint8_t)cmdMessenger.readInt16Arg();
+	uint8_t feederNo = (uint8_t)cmdMessenger.readInt16Arg();
 
-  //do the neccessary thingscmdMessenger.sendCmdStart(kAcknowledge);
-  FeedManager.feeders[feederNo].advance();
+	//do the neccessary thingscmdMessenger.sendCmdStart(kAcknowledge);
+	FeedManager.feeders[feederNo].advance();
 
-  //answer to host
+	//answer to host
 	cmdMessenger.sendCmdArg("Advancing FeederNo ");
 	cmdMessenger.sendCmdArg(feederNo);
 	cmdMessenger.sendCmdEnd();
@@ -142,18 +142,18 @@ void OnAdvance() {
 }
 
 void OnUpdateFeederConfig() {
-  //get commands parameters
-  uint8_t feederNo = (uint8_t)cmdMessenger.readInt16Arg();
+	//get commands parameters
+	uint8_t feederNo = (uint8_t)cmdMessenger.readInt16Arg();
 
-  //do the neccessary things
-  //FeedManager.feeders[feederNo].updateConfig();
+	//do the neccessary things
+	//FeedManager.feeders[feederNo].updateConfig();
 
-  //answer to host
-  cmdMessenger.sendCmdStart(kAcknowledge);
-  cmdMessenger.sendCmdArg("Updated FeederNo ");
-  cmdMessenger.sendCmdArg(feederNo);
-  cmdMessenger.sendCmdEnd();
+	//answer to host
+	cmdMessenger.sendCmdStart(kAcknowledge);
+	cmdMessenger.sendCmdArg("Updated FeederNo ");
+	cmdMessenger.sendCmdArg(feederNo);
+	cmdMessenger.sendCmdEnd();
 
-  
+	
 }
 
