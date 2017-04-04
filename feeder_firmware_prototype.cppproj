@@ -67,8 +67,9 @@
     <ListValues>
       <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries/SoftwareSerial/src</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/Bounce2</Value>
-      <Value>C:/Users/buero/Documents/Arduino/libraries/Servo/src</Value>
+      <Value>C:/Users/buero/Documents/Arduino/libraries/EEPROMEx</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/CmdMessenger</Value>
+      <Value>C:/Users/buero/Documents/Arduino/libraries/Servo/src</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/CmdMessenger/utility</Value>
       <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/fqwf2rud.bni/Micro Platforms/visualmicro/ide-atmel/libraries</Value>
       <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries</Value>
@@ -105,8 +106,9 @@
     <ListValues>
       <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries/SoftwareSerial/src</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/Bounce2</Value>
-      <Value>C:/Users/buero/Documents/Arduino/libraries/Servo/src</Value>
+      <Value>C:/Users/buero/Documents/Arduino/libraries/EEPROMEx</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/CmdMessenger</Value>
+      <Value>C:/Users/buero/Documents/Arduino/libraries/Servo/src</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/CmdMessenger/utility</Value>
       <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/fqwf2rud.bni/Micro Platforms/visualmicro/ide-atmel/libraries</Value>
       <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries</Value>
@@ -127,7 +129,7 @@
   <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
 </AvrGccCpp>
     </ToolchainSettings>
-    <VMSETTING_IncludePaths>C:/Users/buero/Documents/Arduino/libraries/Bounce2;C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/fqwf2rud.bni/Micro Platforms/visualmicro/ide-atmel/libraries;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries;C:/Users/buero/Documents/Arduino/libraries;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/cores/arduino;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/variants/standard;../../../feeder_firmware_prototype;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/avr/include/;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/avr/include/avr/;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/lib/gcc/avr/4.8.1/include;C:/Users/buero/Documents/Arduino/libraries/Servo/src;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries/SoftwareSerial/src;C:/Users/buero/Documents/Arduino/libraries/CmdMessenger;C:/Users/buero/Documents/Arduino/libraries/CmdMessenger/utility;</VMSETTING_IncludePaths>
+    <VMSETTING_IncludePaths>C:/Users/buero/Documents/Arduino/libraries/Bounce2;C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/fqwf2rud.bni/Micro Platforms/visualmicro/ide-atmel/libraries;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries;C:/Users/buero/Documents/Arduino/libraries;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/cores/arduino;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/variants/standard;../../../feeder_firmware_prototype;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/avr/include/;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/avr/include/avr/;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/lib/gcc/avr/4.8.1/include;C:/Users/buero/Documents/Arduino/libraries/Servo/src;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries/SoftwareSerial/src;C:/Users/buero/Documents/Arduino/libraries/CmdMessenger;C:/Users/buero/Documents/Arduino/libraries/CmdMessenger/utility;C:/Users/buero/Documents/Arduino/libraries/EEPROMEx;</VMSETTING_IncludePaths>
     <VisualMicroSettings>
       <VisualMicroSettings xmlns="">
         <arduino.upload.port>COM7</arduino.upload.port>
@@ -161,8 +163,9 @@
     <ListValues>
       <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries/SoftwareSerial/src</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/Bounce2</Value>
-      <Value>C:/Users/buero/Documents/Arduino/libraries/Servo/src</Value>
+      <Value>C:/Users/buero/Documents/Arduino/libraries/EEPROMEx</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/CmdMessenger</Value>
+      <Value>C:/Users/buero/Documents/Arduino/libraries/Servo/src</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/CmdMessenger/utility</Value>
       <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/fqwf2rud.bni/Micro Platforms/visualmicro/ide-atmel/libraries</Value>
       <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries</Value>
@@ -199,8 +202,9 @@
     <ListValues>
       <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries/SoftwareSerial/src</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/Bounce2</Value>
-      <Value>C:/Users/buero/Documents/Arduino/libraries/Servo/src</Value>
+      <Value>C:/Users/buero/Documents/Arduino/libraries/EEPROMEx</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/CmdMessenger</Value>
+      <Value>C:/Users/buero/Documents/Arduino/libraries/Servo/src</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/CmdMessenger/utility</Value>
       <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/fqwf2rud.bni/Micro Platforms/visualmicro/ide-atmel/libraries</Value>
       <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries</Value>
@@ -221,7 +225,7 @@
   <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
 </AvrGccCpp>
     </ToolchainSettings>
-    <VMSETTING_IncludePaths>C:/Users/buero/Documents/Arduino/libraries/Bounce2;C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/fqwf2rud.bni/Micro Platforms/visualmicro/ide-atmel/libraries;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries;C:/Users/buero/Documents/Arduino/libraries;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/cores/arduino;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/variants/standard;../../../feeder_firmware_prototype;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/avr/include/;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/avr/include/avr/;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/lib/gcc/avr/4.8.1/include;C:/Users/buero/Documents/Arduino/libraries/Servo/src;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries/SoftwareSerial/src;C:/Users/buero/Documents/Arduino/libraries/CmdMessenger;C:/Users/buero/Documents/Arduino/libraries/CmdMessenger/utility;</VMSETTING_IncludePaths>
+    <VMSETTING_IncludePaths>C:/Users/buero/Documents/Arduino/libraries/Bounce2;C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/fqwf2rud.bni/Micro Platforms/visualmicro/ide-atmel/libraries;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries;C:/Users/buero/Documents/Arduino/libraries;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/cores/arduino;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/variants/standard;../../../feeder_firmware_prototype;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/avr/include/;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/avr/include/avr/;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/lib/gcc/avr/4.8.1/include;C:/Users/buero/Documents/Arduino/libraries/Servo/src;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries/SoftwareSerial/src;C:/Users/buero/Documents/Arduino/libraries/CmdMessenger;C:/Users/buero/Documents/Arduino/libraries/CmdMessenger/utility;C:/Users/buero/Documents/Arduino/libraries/EEPROMEx;</VMSETTING_IncludePaths>
     <VisualMicroSettings>
       <VisualMicroSettings xmlns="">
         <arduino.upload.port>COM7</arduino.upload.port>
@@ -238,6 +242,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Feeder.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Feeder.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="FeedManager.cpp">

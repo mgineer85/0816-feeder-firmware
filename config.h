@@ -7,10 +7,13 @@
 
 #define PIN_BUTTON 5
 
+/*
+ *  EEPROM-Settings
+ */
+#define CONFIG_VERSION "aaa"
 
-#define CONFIG_VERSION "aaaa"
 #define EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET 4
-#define EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET 32
+#define EEPROM_FEEDER_SETTINGS_ADDRESS_OFFSET 32
 
 #define NUMBER_OF_FEEDERS 2
 #define SERIAL_BAUD 115200
@@ -49,7 +52,6 @@
 
 /* -----------------------------------------------------------------
  * --------------- FEEDER CONFIG ----------------------------------- */
-#define FEEDER_SETTINGS_EEPROM_BASE_ADDRESS 32
  /*
   * Defaults
   */

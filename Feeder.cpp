@@ -22,11 +22,11 @@ void FeederClass::setup(uint8_t feederNo) {
 }
 
 void FeederClass::loadFeederSettings() {
-  uint16_t adressOfFeederSettingsInEEPROM = FEEDER_SETTINGS_EEPROM_BASE_ADDRESS + feederNo * sizeof(this->feederSettings);
+  uint16_t adressOfFeederSettingsInEEPROM = EEPROM_FEEDER_SETTINGS_ADDRESS_OFFSET + feederNo * sizeof(this->feederSettings);
   EEPROM.readBlock(adressOfFeederSettingsInEEPROM, this->feederSettings);
 }
 void FeederClass::saveFeederSettings() {
-  uint16_t adressOfFeederSettingsInEEPROM = FEEDER_SETTINGS_EEPROM_BASE_ADDRESS + feederNo * sizeof(this->feederSettings);
+  uint16_t adressOfFeederSettingsInEEPROM = EEPROM_FEEDER_SETTINGS_ADDRESS_OFFSET + feederNo * sizeof(this->feederSettings);
   EEPROM.writeBlock(adressOfFeederSettingsInEEPROM, this->feederSettings);
 }
 

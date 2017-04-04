@@ -28,8 +28,12 @@ Bounce debouncedButton = Bounce();
 
 // ------ Settings-Struct (saved in EEPROM)
 struct sCommonSettings {
-    char version[4];   // This is for mere detection if they are your settings
+	//add further settings here, above CONFIG_VERSION
+	
+    char version[4];   // This is for detection if settings suit to struct
 } commonSettings = {
+	
+	//add further settings here, above CONFIG_VERSION
     CONFIG_VERSION,
 };
 
@@ -46,8 +50,8 @@ enum {
 	// Commands
 	kAcknowledge=0,             // Command to acknowledge that cmd was received
 	kError=1,                   // Command to report errors
-	kAdvance=GCODE_ADVANCE,                 //
-  kUpdateFeederConfig=GCODE_UPDATE_FEEDER_CONFIG,
+	kAdvance,                 //
+  kUpdateFeederConfig,
 };
 
 // ------------------  S E T U P -----------------------
