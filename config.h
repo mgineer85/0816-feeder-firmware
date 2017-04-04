@@ -1,5 +1,16 @@
+#ifndef _CONFIG_h
+#define _CONFIG_h
+
+
+#include <arduino.h>
+
+
 #define PIN_BUTTON 5
 
+
+#define CONFIG_VERSION "aaaa"
+#define EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET 4
+#define EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET 32
 
 #define NUMBER_OF_FEEDERS 2
 #define SERIAL_BAUD 115200
@@ -14,7 +25,7 @@
  * e.g. Feed 8mm send G
  * 
  */
-#define GCODE_ADVANCE 600						//	
+#define GCODE_ADVANCE 600						        //	
 //1st Parameter: feederNo
 //2nd Parameter: feedlength
 //3rd Parameter: speed	//maybe
@@ -25,28 +36,36 @@
 //4th Parameter: settletime
 
 /*
- * These are default values you can refer to in the config below for every single feeder
+ * Servo-Motor to spool tape
  */
+#define USE_SERVO_TO_SPOOL_COVER_TAPE     1
+#if USE_SERVO_TO_SPOOL_COVER_TAPE == 1
+  #define SPOOLSERVO_PIN                     12
+  #define SPOOLSERVO_MIN_PULSEWIDTH          544
+  #define SPOOLSERVO_MAX_PULSEWIDTH          2400
+  #define SPOOLSERVO_SPEED_RATE              120    [°]
+#endif
+
+
+/* -----------------------------------------------------------------
+ * --------------- FEEDER CONFIG ----------------------------------- */
+#define FEEDER_SETTINGS_EEPROM_BASE_ADDRESS 32
+ /*
+  * Defaults
+  */
 #define FEEDER_DEFAULT_ANGLE_IDLE  5				// [°]  usually 0, might be adjusted to servo or feeder
 #define FEEDER_DEFAULT_ANGLE_PULL  80				// [°]  usually about 80-110. Is effected by motor constants as well!
 #define FEEDER_DEFAULT_TIME_TO_SETTLE  200			// [ms] time the servo needs to travel from ANGLE_IDLE to ANGLE_PULL
 #define FEEDER_DEFAULT_MOTOR_MIN_PULSEWIDTH 544		// [µs] see motor specs or experiment at bit. Value set here should bring the servo to 0°
 #define FEEDER_DEFAULT_MOTOR_MAX_PULSEWITH 2400		// [µs] see motor specs or experiment at bit. Value set here should bring the servo to 180° (even if 180° cannot be reached) (?)
 
-/*
- * Feeder 1
- */
-#define FEEDER_1_PIN                        2
-#define FEEDER_1_ANGLE_IDLE                 FEEDER_DEFAULT_ANGLE_IDLE
-#define FEEDER_1_ANGLE_PULL                 FEEDER_DEFAULT_ANGLE_PULL
-#define FEEDER_1_TIME_TO_SETTLE             FEEDER_DEFAULT_TIME_TO_SETTLE
-#define FEEDER_1_MOTOR_MIN_PULSEWIDTH       FEEDER_DEFAULT_MOTOR_MIN_PULSEWIDTH
-#define FEEDER_1_MOTOR_MAX_PULSEWITH        FEEDER_DEFAULT_MOTOR_MAX_PULSEWITH
 
-#define FEEDER_2_PIN                        3
-#define FEEDER_2_ANGLE_IDLE                 FEEDER_DEFAULT_ANGLE_IDLE
-#define FEEDER_2_ANGLE_PULL                 FEEDER_DEFAULT_ANGLE_PULL
-#define FEEDER_2_TIME_TO_SETTLE             FEEDER_DEFAULT_TIME_TO_SETTLE
-#define FEEDER_2_MOTOR_MIN_PULSEWIDTH       FEEDER_DEFAULT_MOTOR_MIN_PULSEWIDTH
-#define FEEDER_2_MOTOR_MAX_PULSEWITH        FEEDER_DEFAULT_MOTOR_MAX_PULSEWITH
+
+const static uint8_t feederPinMap[NUMBER_OF_FEEDERS]= {
+  1,    // Feeder 1
+  2,    // Feeder 2
+};
+
+#endif
+
 

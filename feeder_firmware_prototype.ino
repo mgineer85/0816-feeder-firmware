@@ -11,13 +11,11 @@
 
 #include "config.h"
 
-// ------------------  I N C  L I B R A R I E S -----------------------
+// ------------------  I N C  L I B R A R I E S ---------------
 #include <SoftwareSerial.h>
 #include <Bounce2.h>
-
-#include <Servo.h>
+#include <EEPROMex.h>
 #include <CmdMessenger.h>
-//#include <ControlledServo.h>   TODO: maybe later?
 
 #include "FeedManager.h"
 
@@ -28,6 +26,12 @@
 // ------ DEBOUNCE test button
 Bounce debouncedButton = Bounce(); 
 
+// ------ Settings-Struct (saved in EEPROM)
+struct sCommonSettings {
+    char version[4];   // This is for mere detection if they are your settings
+} commonSettings = {
+    CONFIG_VERSION,
+};
 
 // ------ cmdMessenger
 char field_separator   = ' ';
@@ -52,7 +56,15 @@ void setup() {
 	Serial.begin(SERIAL_BAUD);
 	while (!Serial);
 	Serial.println(F("Feeduino starting...")); Serial.flush();//setup servo objects
-	
+
+  //factory reset on first start or version changing
+  EEPROM.readBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);
+  if(commonSettings.version != CONFIG_VERSION) {
+    Serial.println(F("First start/Config version changed"));
+    
+    //reset needed
+    FeedManager.factoryReset();
+  }
 	
 	//handles the servo controlling stuff
 	FeedManager.setup();
@@ -95,7 +107,7 @@ void loop() {
 	
 	
 	if ( debouncedButton.fell() ) {
-		FeedManager.advance(1);
+		FeedManager.feeders[0].advance();
 	}
 
 }
@@ -136,5 +148,5 @@ void OnAdvance() {
 	cmdMessenger.sendCmdArg("FeederNo");
 	cmdMessenger.sendCmdArg(feeder_number);
 	cmdMessenger.sendCmdEnd();
-	FeedManager.advance((uint8_t)feeder_number);
+	FeedManager.feeders[0].advance();
 }

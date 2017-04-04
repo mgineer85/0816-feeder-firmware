@@ -5,7 +5,10 @@
 
 #include "arduino.h"
 #include "config.h"
+#include "Feeder.h"
 #include <Servo.h>
+#include <EEPROMex.h>
+
 
 
 #define UPDATE_INTERVAL 10		//ms
@@ -17,23 +20,12 @@ class FeedManagerClass {
 	public:
 		
 		unsigned long lastUpdate;
-		
-		enum sFeederState {
-			sAT_UNKNOWN_ANGLE,
-			sAT_IDLE_ANGLE,
-			sMOVING,
-			sAT_PULL_ANGLE,
-
-			sAT_HALFPULL_ANGLE,
-			
-		};
-		
-		Servo feeders[NUMBER_OF_FEEDERS];
-		sFeederState feeders_state[NUMBER_OF_FEEDERS]={sAT_UNKNOWN_ANGLE};
-
+    
+    FeederClass feeders[NUMBER_OF_FEEDERS];
+    
+    void factoryReset();
+    
 		void setup();
-		
-		void advance(uint8_t feederNo);
 		
 		void update();
 };
