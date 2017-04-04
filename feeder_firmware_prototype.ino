@@ -44,11 +44,10 @@ CmdMessenger cmdMessenger = CmdMessenger(Serial, field_separator, command_separa
 // commandlist
 enum {
 	// Commands
-	kAcknowledge			, // Command to acknowledge that cmd was received
-	kError					, // Command to report errors
-	kFloatAddition			, // Command to request add two floats //TODO: remove
-	kFloatAdditionResult	, // Command to report addition result //TODO: remove.
-	kAdvance				,
+	kAcknowledge=0,             // Command to acknowledge that cmd was received
+	kError=1,                   // Command to report errors
+	kAdvance=GCODE_ADVANCE,                 //
+  kUpdateFeederConfig=GCODE_UPDATE_FEEDER_CONFIG,
 };
 
 // ------------------  S E T U P -----------------------
@@ -64,6 +63,9 @@ void setup() {
     
     //reset needed
     FeedManager.factoryReset();
+
+    //update commonSettings in EEPROM to have no factory reset on next start
+    EEPROM.writeBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);
   }
 	
 	//handles the servo controlling stuff
@@ -74,8 +76,8 @@ void setup() {
 	//interface to OpenPnP, command parsing, etc.
 	// attach callbacks to cmdMessenger
 	cmdMessenger.attach(OnUnknownCommand);
-	cmdMessenger.attach(kFloatAddition, OnFloatAddition);
 	cmdMessenger.attach(kAdvance, OnAdvance);
+  cmdMessenger.attach(kUpdateFeederConfig, OnUpdateFeederConfig);
 	
 	// Adds newline to every command
 	cmdMessenger.printLfCr();
@@ -121,32 +123,33 @@ void OnUnknownCommand() {
 	cmdMessenger.sendCmd(kError,"Unknown Command");
 }
 
-// Callback function that responds that Arduino is ready (has booted up)
-void OnArduinoReady() {
-	cmdMessenger.sendCmd(kAcknowledge,"Arduino ready");
+void OnAdvance() {
+	//get commands parameters
+  uint8_t feederNo = (uint8_t)cmdMessenger.readInt16Arg();
+
+  //do the neccessary thingscmdMessenger.sendCmdStart(kAcknowledge);
+  FeedManager.feeders[feederNo].advance();
+
+  //answer to host
+	cmdMessenger.sendCmdArg("Advancing FeederNo ");
+	cmdMessenger.sendCmdArg(feederNo);
+	cmdMessenger.sendCmdEnd();
+	
 }
 
-// Callback function calculates the sum of the two received float values
-void OnFloatAddition() {
-	// Retreive first parameter as float
-	float a = cmdMessenger.readFloatArg();
-	
-	// Retreive second parameter as float
-	float b = cmdMessenger.readFloatArg();
-	
-	// Send back the result of the addition
-	//cmdMessenger.sendCmd(kFloatAdditionResult,a + b);
-	cmdMessenger.sendCmdStart(kFloatAdditionResult);
-	cmdMessenger.sendCmdArg(a+b);
-	cmdMessenger.sendCmdArg(a-b);
-	cmdMessenger.sendCmdEnd();
+void OnUpdateFeederConfig() {
+  //get commands parameters
+  uint8_t feederNo = (uint8_t)cmdMessenger.readInt16Arg();
+
+  //do the neccessary things
+  //FeedManager.feeders[feederNo].updateConfig();
+
+  //answer to host
+  cmdMessenger.sendCmdStart(kAcknowledge);
+  cmdMessenger.sendCmdArg("Updated FeederNo ");
+  cmdMessenger.sendCmdArg(feederNo);
+  cmdMessenger.sendCmdEnd();
+
+  
 }
-// Callback function that responds that Arduino is ready (has booted up)
-void OnAdvance() {
-	uint16_t feeder_number = cmdMessenger.readInt16Arg();
-	cmdMessenger.sendCmdStart(kAcknowledge);
-	cmdMessenger.sendCmdArg("FeederNo");
-	cmdMessenger.sendCmdArg(feeder_number);
-	cmdMessenger.sendCmdEnd();
-	FeedManager.feeders[0].advance();
-}
+
