@@ -28,6 +28,9 @@
 * e.g. Feed 8mm send G
 *
 */
+#define MAX_BUF 64
+
+
 #define GCODE_ADVANCE 600						        //
 //1st Parameter: feederNo
 //2nd Parameter: feedlength
@@ -37,7 +40,7 @@
 //2nd Parameter: idle-angle
 //3rd Parameter: pull-angle
 //4th Parameter: settletime
-
+#define GCODE_RETRACT 602
 /*
 * Servo-Motor to spool tape
 */

@@ -1,9 +1,9 @@
 /*
+* Author: Michael Groene
+* (c)2017
 *
-*
-*
-*
-*
+* This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+* http://creativecommons.org/licenses/by-nc-sa/4.0/
 *
 *
 */
@@ -15,10 +15,7 @@
 #include <HardwareSerial.h>
 #include <Bounce2.h>
 #include <EEPROMex.h>
-#include <CmdMessenger.h>
-
 #include "FeedManager.h"
-
 
 
 // ------------------  V A R  S E T U P -----------------------
@@ -35,23 +32,6 @@ struct sCommonSettings {
 	
 	//add further settings here, above CONFIG_VERSION
 	CONFIG_VERSION,
-};
-
-// ------ cmdMessenger
-char field_separator   = ' ';
-char command_separator = '\n';
-char escape_separator = '/';
-
-// setup cmdMessenger, listen to serial port
-CmdMessenger cmdMessenger = CmdMessenger(Serial, field_separator, command_separator);
-
-// commandlist
-enum {
-	// Commands
-	kAcknowledge=0,             // Command to acknowledge that cmd was received
-	kError=1,                   // Command to report errors
-	kAdvance=2,                 //
-	kUpdateFeederConfig=3,
 };
 
 // ------------------  S E T U P -----------------------
@@ -75,21 +55,7 @@ void setup() {
 	//handles the servo controlling stuff
 	FeedManager.setup();
 	
-	
-	
-	//interface to OpenPnP, command parsing, etc.
-	// attach callbacks to cmdMessenger
-	cmdMessenger.attach(OnUnknownCommand);
-	cmdMessenger.attach(kAdvance, OnAdvance);
-	cmdMessenger.attach(kUpdateFeederConfig, OnUpdateFeederConfig);
-	
-	// Adds newline to every command
-	cmdMessenger.printLfCr();
 
-	// Send the status to the PC that says the Arduino has booted
-	cmdMessenger.sendCmd(kAcknowledge,"Arduino has started!");
-	
-	
 	
 	// Setup the button for debugging purposes
 	pinMode(PIN_BUTTON,INPUT_PULLUP);
@@ -106,7 +72,7 @@ void loop() {
 	debouncedButton.update();
 	
 	// Process incoming serial data and perform callbacks
-	cmdMessenger.feedinSerialData();
+  listenToSerialStream();
 	
 	// Process servo control
 	FeedManager.update();
@@ -118,50 +84,4 @@ void loop() {
 
 }
 
-
-
-// ------------------  C A L L B A C K S -----------------------
-
-// Called when a received command has no attached function
-void OnUnknownCommand() {
-	cmdMessenger.sendCmd(kError,"Unknown Command");
-}
-
-void OnAdvance() {
-	//get commands parameters
- 
-  if(!cmdMessenger.available()) {
-    //error, return
-  }
-  
-	uint8_t feederNo = (uint8_t)cmdMessenger.readInt16Arg();
-  uint8_t feedLength = FEEDER_PITCH;
-  if(cmdMessenger.available()) {
-    feedLength = (uint8_t)cmdMessenger.readInt16Arg();
-  }
-	//do the neccessary things
-	FeedManager.feeders[feederNo].advance(feedLength);
-
-	//answer to host
-	cmdMessenger.sendCmdArg("Advancing FeederNo ");
-	cmdMessenger.sendCmdArg(feederNo);
-	cmdMessenger.sendCmdEnd();
-	
-}
-
-void OnUpdateFeederConfig() {
-	//get commands parameters
-	uint8_t feederNo = (uint8_t)cmdMessenger.readInt16Arg();
-
-	//do the neccessary things
-	//FeedManager.feeders[feederNo].updateConfig();
-
-	//answer to host
-	cmdMessenger.sendCmdStart(kAcknowledge);
-	cmdMessenger.sendCmdArg("Updated FeederNo ");
-	cmdMessenger.sendCmdArg(feederNo);
-	cmdMessenger.sendCmdEnd();
-
-	
-}
 

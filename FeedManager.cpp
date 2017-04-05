@@ -22,6 +22,12 @@ void FeedManagerClass::setup() {
 	
 }
 
+void FeedManagerClass::retractAll() {
+  for (uint8_t i=0;i<NUMBER_OF_FEEDERS;i++) {
+    this->feeders[i].gotoRetractPosition();
+  }
+}
+
 void FeedManagerClass::factoryReset() {
 	for (uint8_t i=0;i<NUMBER_OF_FEEDERS;i++) {
 		this->feeders[i].factoryReset();

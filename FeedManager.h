@@ -4,6 +4,7 @@
 #define _FEEDMANAGER_h
 
 #include "arduino.h"
+#include "globals.h"
 #include "config.h"
 #include "Feeder.h"
 #include <Servo.h>
@@ -24,7 +25,8 @@ class FeedManagerClass {
 		FeederClass feeders[NUMBER_OF_FEEDERS];
 	
 		void factoryReset();
-	
+    void retractAll();
+    
 		void setup();
 	
 		void update();

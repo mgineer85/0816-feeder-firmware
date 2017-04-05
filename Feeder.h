@@ -2,6 +2,7 @@
 #define _FEEDER_h
 
 #include "arduino.h"
+#include "globals.h"
 #include "config.h"
 #include <Servo.h>
 
@@ -33,16 +34,7 @@ class FeederClass {
     bool sStateChanged=false;
     
     //
-		struct sFeederSettings {
-			//uint8_t pin;
-			int full_advanced_angle;
-			int half_advanced_angle;
-      int retract_angle;
-			int time_to_settle;
-			int motor_min_pulsewidth;
-			int motor_max_pulsewidth;
-      //sFeederState lastFeederState;       //save last position to stay there on poweron? needs something not to wear out the eeprom. until now just go to retract pos.
-		} feederSettings = {
+		sFeederSettings feederSettings = {
 			//0,
 			FEEDER_DEFAULT_FULL_ADVANCED_ANGLE,
 			FEEDER_DEFAULT_HALF_ADVANCED_ANGLE,
@@ -57,9 +49,15 @@ class FeederClass {
     
     
 		void setup(uint8_t feederNo);
+    sFeederSettings FeederClass::getSettings();
+    void FeederClass::setSettings(sFeederSettings UpdatedFeederSettings);
 		void loadFeederSettings();
 		void saveFeederSettings();
 		void factoryReset();
+
+    void gotoRetractPosition();
+    void gotoHalfAdvancedPosition();
+    void gotoFullAdvancedPosition();
 		void advance(uint8_t feedLength);
 	
 };

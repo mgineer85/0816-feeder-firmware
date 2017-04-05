@@ -22,6 +22,14 @@ void FeederClass::setup(uint8_t feederNo) {
   delay(this->feederSettings.time_to_settle);
 }
 
+sFeederSettings FeederClass::getSettings() {
+  return this->feederSettings;
+}
+void FeederClass::setSettings(sFeederSettings UpdatedFeederSettings) {
+  this->feederSettings=UpdatedFeederSettings;
+}
+
+
 void FeederClass::loadFeederSettings() {
 	uint16_t adressOfFeederSettingsInEEPROM = EEPROM_FEEDER_SETTINGS_ADDRESS_OFFSET + feederNo * sizeof(this->feederSettings);
 	EEPROM.readBlock(adressOfFeederSettingsInEEPROM, this->feederSettings);
@@ -34,6 +42,19 @@ void FeederClass::saveFeederSettings() {
 void FeederClass::factoryReset() {
 	//just save the defaults to eeprom...
 	this->saveFeederSettings();
+}
+
+
+void FeederClass::gotoRetractPosition() {
+  this->servo.write(this->feederSettings.retract_angle);
+}
+
+void FeederClass::gotoHalfAdvancedPosition() {
+  this->servo.write(this->feederSettings.half_advanced_angle);
+}
+
+void FeederClass::gotoFullAdvancedPosition() {
+  this->servo.write(this->feederSettings.full_advanced_angle);
 }
 
 void FeederClass::advance(uint8_t feedLength) {
@@ -70,12 +91,12 @@ void FeederClass::advance(uint8_t feedLength) {
 
         if(this->remainingFeedLength>=FEEDER_PITCH) {
           //goto full advance-pos
-          this->servo.write(this->feederSettings.full_advanced_angle);
+          this->gotoFullAdvancedPosition();
           this->feederState=sAT_FULL_ADVANCED_POSITION;
           this->remainingFeedLength-=FEEDER_PITCH;
         } else {
           //goto half advance-pos
-          this->servo.write(this->feederSettings.half_advanced_angle);
+          this->gotoHalfAdvancedPosition();
           this->feederState=sAT_HALF_ADVANCED_POSITION;
           this->remainingFeedLength-=FEEDER_PITCH/2;
         }
@@ -87,7 +108,7 @@ void FeederClass::advance(uint8_t feedLength) {
   		case sAT_HALF_ADVANCED_POSITION: {
         if(this->remainingFeedLength>=FEEDER_PITCH/2) {
           //goto full advance-pos
-          this->servo.write(this->feederSettings.full_advanced_angle);
+          this->gotoFullAdvancedPosition();
           this->feederState=sAT_FULL_ADVANCED_POSITION;
           this->remainingFeedLength-=FEEDER_PITCH;
         }
@@ -97,7 +118,7 @@ void FeederClass::advance(uint8_t feedLength) {
       /* ------------------------------------- FULL-ADVANCED POS ---------------------- */
       case sAT_FULL_ADVANCED_POSITION: {
           //just retract after having settled in full-advanced-pos for next task or finishing the current one...
-          this->servo.write(this->feederSettings.retract_angle);
+          this->gotoRetractPosition();
           this->feederState=sAT_RETRACT_POSITION;
       }
       break;
@@ -111,4 +132,5 @@ void FeederClass::advance(uint8_t feedLength) {
   }
 	return;
 }
+
 
