@@ -12,7 +12,7 @@
 
 
 
-#define UPDATE_INTERVAL 10		//ms
+#define UPDATE_INTERVAL 50		//ms
 
 
 class FeedManagerClass {
@@ -20,16 +20,17 @@ class FeedManagerClass {
 	
 	public:
 	
-		unsigned long lastUpdate;
+	unsigned long lastUpdate;
 	
-		FeederClass feeders[NUMBER_OF_FEEDERS];
+	FeederClass feeders[NUMBER_OF_FEEDERS];
 	
-		void factoryReset();
-    void retractAll();
-    
-		void setup();
+	void activateFeeders();
+	void factoryReset();
+	void retractAll();
 	
-		void update();
+	void setup();
+	
+	void update();
 };
 
 extern FeedManagerClass FeedManager;

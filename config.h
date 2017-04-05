@@ -4,8 +4,9 @@
 
 #include "arduino.h"
 
+#define DEBUG
 
-#define PIN_BUTTON 5
+#define PIN_BUTTON 13
 
 /*
 *  EEPROM-Settings
@@ -49,7 +50,7 @@
 	#define SPOOLSERVO_PIN                     12
 	#define SPOOLSERVO_MIN_PULSEWIDTH          544
 	#define SPOOLSERVO_MAX_PULSEWIDTH          2400
-	#define SPOOLSERVO_SPEED_RATE              120    //[°]
+	#define SPOOLSERVO_SPEED_RATE              88    //[°]
 #endif
 
 
@@ -60,24 +61,24 @@
 /*
 * Configurable/EEPROMed default values
 */
-#define FEEDER_DEFAULT_RETRACT_ANGLE  5				      // [°]  usually 0, might be adjusted to servo or feeder
-#define FEEDER_DEFAULT_FULL_ADVANCED_ANGLE  80				      // [°]  usually about 80-110. Is effected by motor constants as well!
-#define FEEDER_DEFAULT_HALF_ADVANCED_ANGLE  50              // [°]  usually about 80-110. Is effected by motor constants as well!
-#define FEEDER_DEFAULT_TIME_TO_SETTLE  200			  // [ms] time the servo needs to travel from ANGLE_IDLE to ANGLE_PULL
+#define FEEDER_DEFAULT_RETRACT_ANGLE  0				      // [°]  usually 0, might be adjusted to servo or feeder
+#define FEEDER_DEFAULT_FULL_ADVANCED_ANGLE  90				      // [°]  usually about 80-110. Is effected by motor constants as well!
+#define FEEDER_DEFAULT_HALF_ADVANCED_ANGLE  40              // [°]  usually about 80-110. Is effected by motor constants as well!
+#define FEEDER_DEFAULT_TIME_TO_SETTLE  300			  // [ms] time the servo needs to travel from ANGLE_IDLE to ANGLE_PULL
 #define FEEDER_DEFAULT_MOTOR_MIN_PULSEWIDTH 544		// [µs] see motor specs or experiment at bit. Value set here should bring the servo to 0°
 #define FEEDER_DEFAULT_MOTOR_MAX_PULSEWITH 2400		// [µs] see motor specs or experiment at bit. Value set here should bring the servo to 180° (even if 180° cannot be reached) (?)
 
 const static uint8_t feederPinMap[NUMBER_OF_FEEDERS] = {
 	2,    // Feeder 1
 	3,    // Feeder 2
-  4,
-  5,
-  6,
-  7,
-  8,
-  9,
-  10,
-  11
+	4,
+	5,
+	6,
+	7,
+	8,
+	9,
+	10,
+	11
 };
 
 #endif

@@ -28,7 +28,7 @@ struct sCommonSettings {
 	//add further settings here, above CONFIG_VERSION
 	
 	char version[4];   // This is for detection if settings suit to struct
-} commonSettings = {
+	} commonSettings = {
 	
 	//add further settings here, above CONFIG_VERSION
 	CONFIG_VERSION,
@@ -39,7 +39,10 @@ void setup() {
 	Serial.begin(SERIAL_BAUD);
 	while (!Serial);
 	Serial.println(F("Feeduino starting...")); Serial.flush();
-
+	
+	//initialize active feeders, this is giving them an valid ID
+	FeedManager.activateFeeders();
+	
 	//factory reset on first start or version changing
 	EEPROM.readBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);
 	if(commonSettings.version != CONFIG_VERSION) {
@@ -54,8 +57,13 @@ void setup() {
 	
 	//handles the servo controlling stuff
 	FeedManager.setup();
-	
 
+	#if USE_SERVO_TO_SPOOL_COVER_TAPE == 1 
+		//attach servo to pin
+		Servo spoolServo;
+		spoolServo.attach(SPOOLSERVO_PIN,SPOOLSERVO_MIN_PULSEWIDTH,SPOOLSERVO_MAX_PULSEWIDTH);
+		spoolServo.write(SPOOLSERVO_SPEED_RATE);
+	#endif
 	
 	// Setup the button for debugging purposes
 	pinMode(PIN_BUTTON,INPUT_PULLUP);
@@ -72,14 +80,14 @@ void loop() {
 	debouncedButton.update();
 	
 	// Process incoming serial data and perform callbacks
-  listenToSerialStream();
+	listenToSerialStream();
 	
 	// Process servo control
 	FeedManager.update();
 	
 	
 	if ( debouncedButton.fell() ) {
-		FeedManager.feeders[0].advance(2);
+		FeedManager.feeders[0].advance(4);
 	}
 
 }

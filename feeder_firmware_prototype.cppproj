@@ -18,8 +18,7 @@
     <ToolchainFlavour>Native</ToolchainFlavour>
     <KeepTimersRunning>true</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
-    <OverrideVtorValue>
-    </OverrideVtorValue>
+    <OverrideVtorValue>exception_table</OverrideVtorValue>
     <eraseonlaunchrule>0</eraseonlaunchrule>
     <ProgFlashFromRam>true</ProgFlashFromRam>
     <RamSnippetAddress>0x20000000</RamSnippetAddress>
@@ -39,6 +38,22 @@
       </framework-data>
     </AsfFrameworkConfig>
     <preserveEEPROM>true</preserveEEPROM>
+    <avrtool>com.atmel.avrdbg.tool.atmelice</avrtool>
+    <avrtoolserialnumber>J41800050422</avrtoolserialnumber>
+    <avrdeviceexpectedsignature>0x1E950F</avrdeviceexpectedsignature>
+    <com_atmel_avrdbg_tool_atmelice>
+      <ToolOptions>
+        <InterfaceProperties>
+          <IspClock>125000</IspClock>
+        </InterfaceProperties>
+        <InterfaceName>ISP</InterfaceName>
+      </ToolOptions>
+      <ToolType>com.atmel.avrdbg.tool.atmelice</ToolType>
+      <ToolNumber>J41800050422</ToolNumber>
+      <ToolName>Atmel-ICE</ToolName>
+    </com_atmel_avrdbg_tool_atmelice>
+    <avrtoolinterface>ISP</avrtoolinterface>
+    <avrtoolinterfaceclock>125000</avrtoolinterfaceclock>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
@@ -65,13 +80,10 @@
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
     <ListValues>
-      <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries/SoftwareSerial/src</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/Bounce2</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/EEPROMEx</Value>
-      <Value>C:/Users/buero/Documents/Arduino/libraries/CmdMessenger</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/Servo/src</Value>
-      <Value>C:/Users/buero/Documents/Arduino/libraries/CmdMessenger/utility</Value>
-      <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/fqwf2rud.bni/Micro Platforms/visualmicro/ide-atmel/libraries</Value>
+      <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/xmu4sem3.w5h/Micro Platforms/visualmicro/ide-atmel/libraries</Value>
       <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries</Value>
       <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/cores/arduino</Value>
@@ -104,13 +116,10 @@
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>
     <ListValues>
-      <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries/SoftwareSerial/src</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/Bounce2</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/EEPROMEx</Value>
-      <Value>C:/Users/buero/Documents/Arduino/libraries/CmdMessenger</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/Servo/src</Value>
-      <Value>C:/Users/buero/Documents/Arduino/libraries/CmdMessenger/utility</Value>
-      <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/fqwf2rud.bni/Micro Platforms/visualmicro/ide-atmel/libraries</Value>
+      <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/xmu4sem3.w5h/Micro Platforms/visualmicro/ide-atmel/libraries</Value>
       <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries</Value>
       <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/cores/arduino</Value>
@@ -129,10 +138,12 @@
   <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
 </AvrGccCpp>
     </ToolchainSettings>
-    <VMSETTING_IncludePaths>C:/Users/buero/Documents/Arduino/libraries/Bounce2;C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/fqwf2rud.bni/Micro Platforms/visualmicro/ide-atmel/libraries;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries;C:/Users/buero/Documents/Arduino/libraries;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/cores/arduino;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/variants/standard;../../../feeder_firmware_prototype;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/avr/include/;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/avr/include/avr/;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/lib/gcc/avr/4.8.1/include;C:/Users/buero/Documents/Arduino/libraries/Servo/src;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries/SoftwareSerial/src;C:/Users/buero/Documents/Arduino/libraries/CmdMessenger;C:/Users/buero/Documents/Arduino/libraries/CmdMessenger/utility;C:/Users/buero/Documents/Arduino/libraries/EEPROMEx;</VMSETTING_IncludePaths>
+    <VMSETTING_IncludePaths>C:/Users/buero/Documents/Arduino/libraries/Bounce2;C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/fqwf2rud.bni/Micro Platforms/visualmicro/ide-atmel/libraries;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries;C:/Users/buero/Documents/Arduino/libraries;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/cores/arduino;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/variants/standard;../../../feeder_firmware_prototype;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/avr/include/;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/avr/include/avr/;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/lib/gcc/avr/4.8.1/include;C:/Users/buero/Documents/Arduino/libraries/Servo/src;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries/SoftwareSerial/src;C:/Users/buero/Documents/Arduino/libraries/CmdMessenger;C:/Users/buero/Documents/Arduino/libraries/CmdMessenger/utility;C:/Users/buero/Documents/Arduino/libraries/EEPROMEx;C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/xmu4sem3.w5h/Micro Platforms/visualmicro/ide-atmel/libraries;</VMSETTING_IncludePaths>
     <VisualMicroSettings>
-      <VisualMicroSettings xmlns="">
+      <VisualMicroSettings>
         <arduino.upload.port>COM7</arduino.upload.port>
+        <vm.upload.useprogrammer>0</vm.upload.useprogrammer>
+        <vm.programmer_name>atmel_studio_device_programming</vm.programmer_name>
       </VisualMicroSettings>
     </VisualMicroSettings>
   </PropertyGroup>
@@ -161,13 +172,10 @@
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
     <ListValues>
-      <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries/SoftwareSerial/src</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/Bounce2</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/EEPROMEx</Value>
-      <Value>C:/Users/buero/Documents/Arduino/libraries/CmdMessenger</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/Servo/src</Value>
-      <Value>C:/Users/buero/Documents/Arduino/libraries/CmdMessenger/utility</Value>
-      <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/fqwf2rud.bni/Micro Platforms/visualmicro/ide-atmel/libraries</Value>
+      <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/xmu4sem3.w5h/Micro Platforms/visualmicro/ide-atmel/libraries</Value>
       <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries</Value>
       <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/cores/arduino</Value>
@@ -200,13 +208,10 @@
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>
     <ListValues>
-      <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries/SoftwareSerial/src</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/Bounce2</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/EEPROMEx</Value>
-      <Value>C:/Users/buero/Documents/Arduino/libraries/CmdMessenger</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/Servo/src</Value>
-      <Value>C:/Users/buero/Documents/Arduino/libraries/CmdMessenger/utility</Value>
-      <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/fqwf2rud.bni/Micro Platforms/visualmicro/ide-atmel/libraries</Value>
+      <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/xmu4sem3.w5h/Micro Platforms/visualmicro/ide-atmel/libraries</Value>
       <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries</Value>
       <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/cores/arduino</Value>
@@ -225,22 +230,334 @@
   <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
 </AvrGccCpp>
     </ToolchainSettings>
-    <VMSETTING_IncludePaths>C:/Users/buero/Documents/Arduino/libraries/Bounce2;C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/fqwf2rud.bni/Micro Platforms/visualmicro/ide-atmel/libraries;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries;C:/Users/buero/Documents/Arduino/libraries;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/cores/arduino;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/variants/standard;../../../feeder_firmware_prototype;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/avr/include/;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/avr/include/avr/;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/lib/gcc/avr/4.8.1/include;C:/Users/buero/Documents/Arduino/libraries/Servo/src;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries/SoftwareSerial/src;C:/Users/buero/Documents/Arduino/libraries/CmdMessenger;C:/Users/buero/Documents/Arduino/libraries/CmdMessenger/utility;C:/Users/buero/Documents/Arduino/libraries/EEPROMEx;</VMSETTING_IncludePaths>
+    <VMSETTING_IncludePaths>C:/Users/buero/Documents/Arduino/libraries/Bounce2;C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/fqwf2rud.bni/Micro Platforms/visualmicro/ide-atmel/libraries;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries;C:/Users/buero/Documents/Arduino/libraries;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/cores/arduino;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/variants/standard;../../../feeder_firmware_prototype;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/avr/include/;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/avr/include/avr/;C:/Users/buero/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.3-arduino2/lib/gcc/avr/4.8.1/include;C:/Users/buero/Documents/Arduino/libraries/Servo/src;C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries/SoftwareSerial/src;C:/Users/buero/Documents/Arduino/libraries/CmdMessenger;C:/Users/buero/Documents/Arduino/libraries/CmdMessenger/utility;C:/Users/buero/Documents/Arduino/libraries/EEPROMEx;C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/xmu4sem3.w5h/Micro Platforms/visualmicro/ide-atmel/libraries;</VMSETTING_IncludePaths>
     <VisualMicroSettings>
-      <VisualMicroSettings xmlns="">
+      <VisualMicroSettings>
         <arduino.upload.port>COM7</arduino.upload.port>
+        <vm.upload.useprogrammer>0</vm.upload.useprogrammer>
+        <vm.programmer_name>atmel_studio_device_programming</vm.programmer_name>
       </VisualMicroSettings>
     </VisualMicroSettings>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="C:\Users\buero\Documents\Arduino\libraries\Bounce2\INSTALL.txt">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\Bounce2\INSTALL.txt</Link>
+    </None>
+    <None Include="C:\Users\buero\Documents\Arduino\libraries\Bounce2\keywords.txt">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\Bounce2\keywords.txt</Link>
+    </None>
+    <None Include="C:\Users\buero\Documents\Arduino\libraries\Bounce2\library.json">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\Bounce2\library.json</Link>
+    </None>
+    <None Include="C:\Users\buero\Documents\Arduino\libraries\Bounce2\library.properties">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\Bounce2\library.properties</Link>
+    </None>
+    <None Include="C:\Users\buero\Documents\Arduino\libraries\EEPROMEx\keywords.txt">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\EEPROMEx\keywords.txt</Link>
+    </None>
+    <None Include="C:\Users\buero\Documents\Arduino\libraries\EEPROMEx\library.json">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\EEPROMEx\library.json</Link>
+    </None>
+    <None Include="C:\Users\buero\Documents\Arduino\libraries\EEPROMEx\library.properties">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\EEPROMEx\library.properties</Link>
+    </None>
+    <None Include="C:\Users\buero\Documents\Arduino\libraries\Servo\keywords.txt">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\Servo\keywords.txt</Link>
+    </None>
+    <None Include="C:\Users\buero\Documents\Arduino\libraries\Servo\library.properties">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\Servo\library.properties</Link>
+    </None>
     <None Include="feeder_firmware_prototype.ino">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="gcode.ino">
       <SubType>compile</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="feeder_firmware_prototype\" />
+    <Folder Include="feeder_firmware_prototype\src\" />
+    <Folder Include="feeder_firmware_prototype\src\_micro-api-readonly\" />
+    <Folder Include="feeder_firmware_prototype\src\_micro-api-readonly\core\" />
+    <Folder Include="feeder_firmware_prototype\src\_micro-api-readonly\libraries\" />
+    <Folder Include="feeder_firmware_prototype\src\_micro-api-readonly\libraries\Bounce2\" />
+    <Folder Include="feeder_firmware_prototype\src\_micro-api-readonly\libraries\EEPROMEx\" />
+    <Folder Include="feeder_firmware_prototype\src\_micro-api-readonly\libraries\Servo\" />
+    <Folder Include="feeder_firmware_prototype\src\_micro-api-readonly\libraries\Servo\src\" />
+    <Folder Include="feeder_firmware_prototype\src\_micro-api-readonly\libraries\Servo\src\avr\" />
+    <Folder Include="feeder_firmware_prototype\src\_micro-api-readonly\libraries\Servo\src\nrf52\" />
+    <Folder Include="feeder_firmware_prototype\src\_micro-api-readonly\libraries\Servo\src\samd\" />
+    <Folder Include="feeder_firmware_prototype\src\_micro-api-readonly\libraries\Servo\src\sam\" />
+    <Folder Include="feeder_firmware_prototype\src\_micro-api-readonly\libraries\Servo\src\stm32f4\" />
+    <Folder Include="feeder_firmware_prototype\src\_micro-api-readonly\variants\" />
+    <Folder Include="feeder_firmware_prototype\src\_micro-api-readonly\variants\standard\" />
+    <Folder Include="src\" />
+    <Folder Include="src\_micro-api-readonly\" />
+    <Folder Include="src\_micro-api-readonly\core\" />
+    <Folder Include="src\_micro-api-readonly\libraries\" />
+    <Folder Include="src\_micro-api-readonly\libraries\Bounce2\" />
+    <Folder Include="src\_micro-api-readonly\libraries\EEPROMEx\" />
+    <Folder Include="src\_micro-api-readonly\libraries\Servo\" />
+    <Folder Include="src\_micro-api-readonly\libraries\Servo\src\" />
+    <Folder Include="src\_micro-api-readonly\libraries\Servo\src\avr\" />
+    <Folder Include="src\_micro-api-readonly\libraries\Servo\src\nrf52\" />
+    <Folder Include="src\_micro-api-readonly\libraries\Servo\src\samd\" />
+    <Folder Include="src\_micro-api-readonly\libraries\Servo\src\sam\" />
+    <Folder Include="src\_micro-api-readonly\libraries\Servo\src\stm32f4\" />
+    <Folder Include="src\_micro-api-readonly\variants\" />
+    <Folder Include="src\_micro-api-readonly\variants\standard\" />
     <Folder Include="__vm\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\abi.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\abi.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\Arduino.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\Arduino.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\binary.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\binary.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\CDC.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\CDC.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\Client.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\Client.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\HardwareSerial.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\HardwareSerial.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\HardwareSerial.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\HardwareSerial.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\HardwareSerial0.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\HardwareSerial0.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\HardwareSerial1.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\HardwareSerial1.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\HardwareSerial2.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\HardwareSerial2.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\HardwareSerial3.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\HardwareSerial3.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\HardwareSerial_private.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\HardwareSerial_private.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\hooks.c">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\hooks.c</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\IPAddress.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\IPAddress.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\IPAddress.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\IPAddress.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\main.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\main.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\new.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\new.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\new.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\new.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\PluggableUSB.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\PluggableUSB.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\PluggableUSB.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\PluggableUSB.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\Print.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\Print.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\Print.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\Print.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\Printable.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\Printable.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\Server.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\Server.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\Stream.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\Stream.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\Stream.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\Stream.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\Tone.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\Tone.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\Udp.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\Udp.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\USBAPI.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\USBAPI.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\USBCore.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\USBCore.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\USBCore.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\USBCore.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\USBDesc.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\USBDesc.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\WCharacter.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\WCharacter.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\WInterrupts.c">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\WInterrupts.c</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\wiring.c">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\wiring.c</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\wiring_analog.c">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\wiring_analog.c</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\wiring_digital.c">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\wiring_digital.c</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\wiring_private.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\wiring_private.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\wiring_pulse.c">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\wiring_pulse.c</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\wiring_shift.c">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\wiring_shift.c</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\WMath.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\WMath.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\WString.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\WString.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\cores\arduino\WString.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\core\WString.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\AppData\Local\arduino15\packages\arduino\hardware\avr\1.6.17\variants\standard\pins_arduino.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\variants\standard\pins_arduino.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\Documents\Arduino\libraries\Bounce2\Bounce2.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\Bounce2\Bounce2.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\Documents\Arduino\libraries\Bounce2\Bounce2.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\Bounce2\Bounce2.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\Documents\Arduino\libraries\EEPROMEx\EEPROMex.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\EEPROMEx\EEPROMex.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\Documents\Arduino\libraries\EEPROMEx\EEPROMex.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\EEPROMEx\EEPROMex.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\Documents\Arduino\libraries\EEPROMEx\EEPROMVar.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\EEPROMEx\EEPROMVar.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\Documents\Arduino\libraries\Servo\src\avr\Servo.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\Servo\src\avr\Servo.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\Documents\Arduino\libraries\Servo\src\avr\ServoTimers.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\Servo\src\avr\ServoTimers.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\Documents\Arduino\libraries\Servo\src\nrf52\Servo.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\Servo\src\nrf52\Servo.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\Documents\Arduino\libraries\Servo\src\nrf52\ServoTimers.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\Servo\src\nrf52\ServoTimers.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\Documents\Arduino\libraries\Servo\src\samd\Servo.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\Servo\src\samd\Servo.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\Documents\Arduino\libraries\Servo\src\samd\ServoTimers.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\Servo\src\samd\ServoTimers.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\Documents\Arduino\libraries\Servo\src\sam\Servo.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\Servo\src\sam\Servo.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\Documents\Arduino\libraries\Servo\src\sam\ServoTimers.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\Servo\src\sam\ServoTimers.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\Documents\Arduino\libraries\Servo\src\Servo.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\Servo\src\Servo.h</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\Documents\Arduino\libraries\Servo\src\stm32f4\Servo.cpp">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\Servo\src\stm32f4\Servo.cpp</Link>
+    </Compile>
+    <Compile Include="C:\Users\buero\Documents\Arduino\libraries\Servo\src\stm32f4\ServoTimers.h">
+      <SubType>compile</SubType>
+      <Link>feeder_firmware_prototype\src\_micro-api-readonly\libraries\Servo\src\stm32f4\ServoTimers.h</Link>
+    </Compile>
     <Compile Include="config.h">
       <SubType>compile</SubType>
     </Compile>
@@ -254,6 +571,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="FeedManager.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="globals.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="__vm\.feeder_firmware_prototype.vsarduino.h">
