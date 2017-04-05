@@ -50,15 +50,15 @@ enum {
 	// Commands
 	kAcknowledge=0,             // Command to acknowledge that cmd was received
 	kError=1,                   // Command to report errors
-	kAdvance,                 //
-	kUpdateFeederConfig,
+	kAdvance=2,                 //
+	kUpdateFeederConfig=3,
 };
 
 // ------------------  S E T U P -----------------------
 void setup() {
 	Serial.begin(SERIAL_BAUD);
 	while (!Serial);
-	Serial.println(F("Feeduino starting...")); Serial.flush();//setup servo objects
+	Serial.println(F("Feeduino starting...")); Serial.flush();
 
 	//factory reset on first start or version changing
 	EEPROM.readBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);
@@ -113,7 +113,7 @@ void loop() {
 	
 	
 	if ( debouncedButton.fell() ) {
-		FeedManager.feeders[0].advance(4);
+		FeedManager.feeders[0].advance(2);
 	}
 
 }
@@ -129,10 +129,18 @@ void OnUnknownCommand() {
 
 void OnAdvance() {
 	//get commands parameters
+ 
+  if(!cmdMessenger.available()) {
+    //error, return
+  }
+  
 	uint8_t feederNo = (uint8_t)cmdMessenger.readInt16Arg();
-
-	//do the neccessary thingscmdMessenger.sendCmdStart(kAcknowledge);
-	FeedManager.feeders[feederNo].advance(4);
+  uint8_t feedLength = FEEDER_PITCH;
+  if(cmdMessenger.available()) {
+    feedLength = (uint8_t)cmdMessenger.readInt16Arg();
+  }
+	//do the neccessary things
+	FeedManager.feeders[feederNo].advance(feedLength);
 
 	//answer to host
 	cmdMessenger.sendCmdArg("Advancing FeederNo ");

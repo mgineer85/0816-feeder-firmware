@@ -38,15 +38,6 @@ void FeederClass::factoryReset() {
 
 void FeederClass::advance(uint8_t feedLength) {
 	
-	static uint8_t pos=0;
-	if(pos==0) {
-		this->servo.write(this->feederSettings.retract_angle);
-		pos=1;
-	} else {
-		this->servo.write(this->feederSettings.full_advanced_angle);
-		pos=0;
-	}
-
   //check, what to do? if not, return quickly
   if(feedLength==0 && this->remainingFeedLength==0) {
     //nothing to do, just return
