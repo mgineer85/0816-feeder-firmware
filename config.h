@@ -15,7 +15,7 @@
 #define EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET 4
 #define EEPROM_FEEDER_SETTINGS_ADDRESS_OFFSET 32
 
-#define NUMBER_OF_FEEDERS 2
+#define NUMBER_OF_FEEDERS 10
 #define SERIAL_BAUD 115200
 
 /*
@@ -52,20 +52,29 @@
 
 /* -----------------------------------------------------------------
 * --------------- FEEDER CONFIG ----------------------------------- */
+#define FEEDER_PITCH  4                   // [mm]  default: 4 mm. given by mechanical design.
+
 /*
-* Defaults
+* Configurable/EEPROMed default values
 */
-#define FEEDER_DEFAULT_ANGLE_IDLE  5				// [°]  usually 0, might be adjusted to servo or feeder
-#define FEEDER_DEFAULT_ANGLE_PULL  80				// [°]  usually about 80-110. Is effected by motor constants as well!
-#define FEEDER_DEFAULT_TIME_TO_SETTLE  200			// [ms] time the servo needs to travel from ANGLE_IDLE to ANGLE_PULL
+#define FEEDER_DEFAULT_RETRACT_ANGLE  5				      // [°]  usually 0, might be adjusted to servo or feeder
+#define FEEDER_DEFAULT_FULL_ADVANCED_ANGLE  80				      // [°]  usually about 80-110. Is effected by motor constants as well!
+#define FEEDER_DEFAULT_HALF_ADVANCED_ANGLE  50              // [°]  usually about 80-110. Is effected by motor constants as well!
+#define FEEDER_DEFAULT_TIME_TO_SETTLE  200			  // [ms] time the servo needs to travel from ANGLE_IDLE to ANGLE_PULL
 #define FEEDER_DEFAULT_MOTOR_MIN_PULSEWIDTH 544		// [µs] see motor specs or experiment at bit. Value set here should bring the servo to 0°
 #define FEEDER_DEFAULT_MOTOR_MAX_PULSEWITH 2400		// [µs] see motor specs or experiment at bit. Value set here should bring the servo to 180° (even if 180° cannot be reached) (?)
 
-
-
 const static uint8_t feederPinMap[NUMBER_OF_FEEDERS] = {
-	1,    // Feeder 1
-	2,    // Feeder 2
+	2,    // Feeder 1
+	3,    // Feeder 2
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11
 };
 
 #endif

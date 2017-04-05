@@ -14,6 +14,7 @@ void FeedManagerClass::setup() {
 	
 	for (uint8_t i=0;i<NUMBER_OF_FEEDERS;i++) {
 		this->feeders[i].setup(i);
+    
 	}
 	Serial.println(F("FeedManagerClass setup finished."));
 	
@@ -33,7 +34,13 @@ void FeedManagerClass::update() {
 	
 	if (millis() - lastUpdate >= UPDATE_INTERVAL) {
 		lastUpdate=millis();
-		
+
+    //check whether there have to be feeders to feed something?
+    for (uint8_t i=0;i<NUMBER_OF_FEEDERS;i++) {
+      this->feeders[i].advance(0);
+    }
+    
+    
 		//do the necessary things...
 		
 		

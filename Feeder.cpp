@@ -14,11 +14,12 @@ void FeederClass::setup(uint8_t feederNo) {
 	//attach servo to pin
 	this->servo.attach(feederPinMap[feederNo],this->feederSettings.motor_min_pulsewidth,this->feederSettings.motor_max_pulsewidth);
 
-	//put in idle-angle
-	this->servo.write(this->feederSettings.angle_idle);
+	//put on defined position
+	this->servo.write(this->feederSettings.retract_angle);      //TODO: one could go to last position if stored in eeprom...
+	this->feederState=sAT_RETRACT_POSITION;
 
-	this->feederState=sAT_IDLE_ANGLE;
-	
+  //wait settle time to not having all servos run at the same time if power-supply is not dimensioned adequate
+  delay(this->feederSettings.time_to_settle);
 }
 
 void FeederClass::loadFeederSettings() {
@@ -35,50 +36,88 @@ void FeederClass::factoryReset() {
 	this->saveFeederSettings();
 }
 
-void FeederClass::advance() {
+void FeederClass::advance(uint8_t feedLength) {
 	
 	static uint8_t pos=0;
 	if(pos==0) {
-		this->servo.write(0);
+		this->servo.write(this->feederSettings.retract_angle);
 		pos=1;
-		} else {
-		this->servo.write(90);
+	} else {
+		this->servo.write(this->feederSettings.full_advanced_angle);
 		pos=0;
 	}
-	
-	switch (this->feederState) {
-		case sAT_UNKNOWN_ANGLE: {
-			
-		}
-		break;
-		
-		case sAT_IDLE_ANGLE: {
-			
-		}
-		break;
-		
-		case sMOVING: {
-			
-		}
-		break;
-		
-		case sAT_PULL_ANGLE: {
-			
-		}
-		break;
-		
-		case sAT_HALFPULL_ANGLE: {
-			
-		}
-		break;
-		
-		default: {
-			//state not relevant for advancing...
-			
-		}
-		break;
-	}
-	
+
+  //check, what to do? if not, return quickly
+  if(feedLength==0 && this->remainingFeedLength==0) {
+    //nothing to do, just return
+    return;
+  } else if (feedLength>0 && this->remainingFeedLength>0) {
+    //last advancing not completed! ignoring newly received command->return error
+    //TODO.
+  } else {
+    //OK, start new advance-proc
+    //feed multiples of 2 possible: 2/4/6/8/10/12,...
+    this->remainingFeedLength=feedLength;
+  }
+
+  
+
+  //state machine-update-stuff (for settle time)
+  if(this->lastFeederState!=this->feederState) {
+    sStateChanged=true;
+    lastTimeStateChange=millis();
+    this->lastFeederState=this->feederState;
+  }
+
+  //time to change the position?
+  if (millis() - lastTimeStateChange >= this->feederSettings.time_to_settle) {
+    //now servo is expected to have settled at its designated position
+    
+  	switch (this->feederState) {
+      /* ------------------------------------- RETRACT POS ---------------------- */
+      case sAT_RETRACT_POSITION: {
+
+        if(this->remainingFeedLength>=FEEDER_PITCH) {
+          //goto full advance-pos
+          this->servo.write(this->feederSettings.full_advanced_angle);
+          this->feederState=sAT_FULL_ADVANCED_POSITION;
+          this->remainingFeedLength-=FEEDER_PITCH;
+        } else {
+          //goto half advance-pos
+          this->servo.write(this->feederSettings.half_advanced_angle);
+          this->feederState=sAT_HALF_ADVANCED_POSITION;
+          this->remainingFeedLength-=FEEDER_PITCH/2;
+        }
+        
+      }
+      break;
+  
+      /* ------------------------------------- HALF-ADVANCED POS ---------------------- */
+  		case sAT_HALF_ADVANCED_POSITION: {
+        if(this->remainingFeedLength>=FEEDER_PITCH/2) {
+          //goto full advance-pos
+          this->servo.write(this->feederSettings.full_advanced_angle);
+          this->feederState=sAT_FULL_ADVANCED_POSITION;
+          this->remainingFeedLength-=FEEDER_PITCH;
+        }
+  		}
+  		break;
+  
+      /* ------------------------------------- FULL-ADVANCED POS ---------------------- */
+      case sAT_FULL_ADVANCED_POSITION: {
+          //just retract after having settled in full-advanced-pos for next task or finishing the current one...
+          this->servo.write(this->feederSettings.retract_angle);
+          this->feederState=sAT_RETRACT_POSITION;
+      }
+      break;
+  
+  		default: {
+  			//state not relevant for advancing...
+  			//return error, should not occur?
+  		}
+  		break;
+  	}
+  }
 	return;
 }
 

@@ -12,7 +12,7 @@
 #include "config.h"
 
 // ------------------  I N C  L I B R A R I E S ---------------
-#include <SoftwareSerial.h>
+#include <HardwareSerial.h>
 #include <Bounce2.h>
 #include <EEPROMex.h>
 #include <CmdMessenger.h>
@@ -113,7 +113,7 @@ void loop() {
 	
 	
 	if ( debouncedButton.fell() ) {
-		FeedManager.feeders[0].advance();
+		FeedManager.feeders[0].advance(4);
 	}
 
 }
@@ -132,7 +132,7 @@ void OnAdvance() {
 	uint8_t feederNo = (uint8_t)cmdMessenger.readInt16Arg();
 
 	//do the neccessary thingscmdMessenger.sendCmdStart(kAcknowledge);
-	FeedManager.feeders[feederNo].advance();
+	FeedManager.feeders[feederNo].advance(4);
 
 	//answer to host
 	cmdMessenger.sendCmdArg("Advancing FeederNo ");
