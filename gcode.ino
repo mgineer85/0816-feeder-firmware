@@ -24,27 +24,35 @@
 */
 
 
+String inputBuffer = "";         // Buffer for incoming G-Code lines
 
-char  buffer[MAX_BUF];  // where we store the message until we get a newline
-int   sofar;            // how much is in the buffer
 
 /**
-* Look for character /code/ in the buffer and read the float that immediately follows it.
-* @return the value found.  If nothing is found, /val/ is returned.
+* Look for character /code/ in the inputBuffer and read the float that immediately follows it.
+* @return the value found.  If nothing is found, /defaultVal/ is returned.
 * @input code the character to look for.
-* @input val the return value if /code/ is not found.
+* @input defaultVal the return value if /code/ is not found.
 **/
-float parsenumber(char code,float val) {
-	char *ptr=buffer;
-	while(ptr>1 && *ptr && ptr<buffer+sofar) {
-		if(*ptr==code) {
-			return atof(ptr+1);
-		}
-		ptr=strchr(ptr,' ');
+float parseParameter(char code,float defaultVal) {
+	int codePosition = inputBuffer.indexOf(code);
+	if(codePosition!=-1) {
+		//code found in buffer
+		
+		//find end of number (separated by " " (space))
+		int delimiterPosition = inputBuffer.indexOf(" ",codePosition+1);
+		
+		float parsedNumber = inputBuffer.substring(codePosition+1,delimiterPosition-1).toFloat();
+		
+		return parsedNumber;
+	} else {
+		return defaultVal;
 	}
-	return val;
+	
 }
 
+void setupGCodeProc() {
+	inputBuffer.reserve(MAX_BUF);
+}
 
 /**
 * write a string followed by a float to the serial line.  Convenient for debugging.
@@ -89,10 +97,10 @@ boolean validFeederNo(int8_t signedFeederNo) {
 void processCommand() {
 
 	//get the command, default -1 if no command found
-	int cmd = parsenumber('M',-1);
+	int cmd = parseParameter('M',-1);
 
 	//check for feederNo - if present, it has to be right.
-	int8_t signedFeederNo = (int8_t)parsenumber('N',-1);
+	int8_t signedFeederNo = (int8_t)parseParameter('N',-1);
 	if(signedFeederNo!=-1) {  //feederNo given -> check for a valid number
 		if(!validFeederNo(signedFeederNo)) {
 			sendAnswer(1,F("Invalid feederNo"));
@@ -111,7 +119,7 @@ void processCommand() {
 
 			
 			//get feedLength, default is FEEDER_PITCH
-			uint8_t feedLength = (uint8_t)parsenumber('F',FEEDER_PITCH);
+			uint8_t feedLength = (uint8_t)parseParameter('F',FEEDER_PITCH);
 			if ( ((feedLength%2) != 0) || feedLength>12 ) {
 				//advancing is only possible for multiples of 2mm and 12mm max
 				sendAnswer(1,F("Invalid feedLength"));
@@ -155,12 +163,12 @@ void processCommand() {
 			//merge given parameters to old settings
 			sFeederSettings oldFeederSettings=FeedManager.feeders[(uint8_t)signedFeederNo].getSettings();
 			
-			oldFeederSettings.full_advanced_angle=parsenumber('A',-1);  //full_advanced_angle
-			oldFeederSettings.half_advanced_angle=parsenumber('B',-1);  //half_advanced_angle
-			oldFeederSettings.retract_angle=parsenumber('C',-1);  //retract_angle
-			oldFeederSettings.time_to_settle=parsenumber('U',-1);  //time_to_settle
-			oldFeederSettings.motor_min_pulsewidth=parsenumber('V',-1);  //motor_min_pulsewidth
-			oldFeederSettings.motor_max_pulsewidth=parsenumber('W',-1);  //motor_max_pulsewidth
+			oldFeederSettings.full_advanced_angle=parseParameter('A',-1);  //full_advanced_angle
+			oldFeederSettings.half_advanced_angle=parseParameter('B',-1);  //half_advanced_angle
+			oldFeederSettings.retract_angle=parseParameter('C',-1);  //retract_angle
+			oldFeederSettings.time_to_settle=parseParameter('U',-1);  //time_to_settle
+			oldFeederSettings.motor_min_pulsewidth=parseParameter('V',-1);  //motor_min_pulsewidth
+			oldFeederSettings.motor_max_pulsewidth=parseParameter('W',-1);  //motor_max_pulsewidth
 			
 			
 			break;
@@ -178,36 +186,40 @@ void processCommand() {
 * prepares the input buffer to receive a new message and tells the serial connected device it is ready for more.
 */
 void ready() {
-	sofar=0;  // clear input buffer
 	Serial.print(F(">"));  // signal ready to receive input
 }
 
 
 void listenToSerialStream() {
-	// listen for serial commands
-	while(Serial.available() > 0) {  // if something is available
+	
+	while (Serial.available()) {
+	
+		// get the received byte, convert to char for adding to buffer
+		char receivedChar = (char)Serial.read();
 		
-		char c=Serial.read();  // get it
+		// print back for debugging
+		#ifdef DEBUG
+			Serial.print(receivedChar);
+		#endif
 		
-		Serial.print(c);  // repeat it back so I know you got the message
+		// add to buffer
+		inputBuffer += receivedChar;
 		
-		if(sofar<MAX_BUF-1) buffer[sofar++]=c;  // store it
-		
-		if((c=='\n') || (c == '\r')) {
+		// if the received character is a newline, processCommand
+		if (receivedChar == '\n' || receivedChar == '\r') {
+			#ifdef DEBUG
+				Serial.print(F("\r\n"));
+			#endif
 			
-			// entire message received
+			processCommand();
 			
-			buffer[sofar]=0;  // end the buffer so string functions work right
-			
-			Serial.print(F("\r\n"));  // echo a return character for humans
-			
-			processCommand();  // do something with the command
+			//clear buffer
+			inputBuffer="";
 			
 			ready();
 		}
 	}
 }
-
 
 
 // ------------------  C A L L B A C K S -----------------------

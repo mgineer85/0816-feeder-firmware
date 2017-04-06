@@ -40,6 +40,9 @@ void setup() {
 	while (!Serial);
 	Serial.println(F("Feeduino starting...")); Serial.flush();
 	
+	//
+	setupGCodeProc();
+	
 	//initialize active feeders, this is giving them an valid ID
 	FeedManager.activateFeeders();
 	
