@@ -136,6 +136,7 @@ void processCommand() {
 			if ( ((feedLength%2) != 0) || feedLength>12 ) {
 				//advancing is only possible for multiples of 2mm and 12mm max
 				sendAnswer(1,F("Invalid feedLength"));
+				break;
 			}
 			#ifdef DEBUG
 				Serial.print("Determined feedLength ");
@@ -178,21 +179,14 @@ void processCommand() {
 			}
 			
 			//merge given parameters to old settings
-			sFeederSettings updatedFeederSettings=feeders[(uint8_t)signedFeederNo].getSettings();
-			sFeederSettings receivedFeederSettings;
-			receivedFeederSettings.full_advanced_angle=parseParameter('A',-999);
-			receivedFeederSettings.half_advanced_angle=parseParameter('B',-999);
-			receivedFeederSettings.retract_angle=parseParameter('C',-999);
-			receivedFeederSettings.time_to_settle=parseParameter('U',-999);
-			receivedFeederSettings.motor_min_pulsewidth=parseParameter('V',-999);
-			receivedFeederSettings.motor_max_pulsewidth=parseParameter('W',-999);
-			
-			updatedFeederSettings.full_advanced_angle=(receivedFeederSettings.full_advanced_angle==-999)?updatedFeederSettings.full_advanced_angle:receivedFeederSettings.full_advanced_angle;
-			updatedFeederSettings.half_advanced_angle=(receivedFeederSettings.half_advanced_angle==-999)?updatedFeederSettings.half_advanced_angle:receivedFeederSettings.half_advanced_angle;
-			updatedFeederSettings.retract_angle=(receivedFeederSettings.retract_angle==-999)?updatedFeederSettings.retract_angle:receivedFeederSettings.retract_angle;
-			updatedFeederSettings.time_to_settle=(receivedFeederSettings.time_to_settle==-999)?updatedFeederSettings.time_to_settle:receivedFeederSettings.time_to_settle;
-			updatedFeederSettings.motor_min_pulsewidth=(receivedFeederSettings.motor_min_pulsewidth==-999)?updatedFeederSettings.motor_min_pulsewidth:receivedFeederSettings.motor_min_pulsewidth;
-			updatedFeederSettings.motor_max_pulsewidth=(receivedFeederSettings.motor_max_pulsewidth==-999)?updatedFeederSettings.motor_max_pulsewidth:receivedFeederSettings.motor_max_pulsewidth;
+			sFeederSettings oldFeederSettings=feeders[(uint8_t)signedFeederNo].getSettings();
+			sFeederSettings updatedFeederSettings;
+			updatedFeederSettings.full_advanced_angle=parseParameter('A',oldFeederSettings.full_advanced_angle);
+			updatedFeederSettings.half_advanced_angle=parseParameter('B',oldFeederSettings.half_advanced_angle);
+			updatedFeederSettings.retract_angle=parseParameter('C',oldFeederSettings.retract_angle);
+			updatedFeederSettings.time_to_settle=parseParameter('U',oldFeederSettings.time_to_settle);
+			updatedFeederSettings.motor_min_pulsewidth=parseParameter('V',oldFeederSettings.motor_min_pulsewidth);
+			updatedFeederSettings.motor_max_pulsewidth=parseParameter('W',oldFeederSettings.motor_max_pulsewidth);
 			
 			feeders[(uint8_t)signedFeederNo].setSettings(updatedFeederSettings);
 			break;
