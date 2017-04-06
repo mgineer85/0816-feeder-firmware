@@ -28,10 +28,11 @@ Bounce debouncedButton = Bounce();
 // ------ Settings-Struct (saved in EEPROM)
 struct sCommonSettings {
 	//add further settings here, above CONFIG_VERSION
-	
+	int test;
 	char version[4];   // This is for detection if settings suit to struct
-	} commonSettings = {
-	
+	};
+sCommonSettings commonSettings_default = {
+	0,
 	//add further settings here, above CONFIG_VERSION
 	CONFIG_VERSION,
 };
@@ -90,8 +91,11 @@ void setup() {
 	//needs to be done before factory reset to have a valid ID (eeprom-settings location is derived off the ID)
 	executeCommand(cmdActivateFeeder);
 	
-	//factory reset on first start or version changing
+	//load commonSettings from eeprom
+	sCommonSettings commonSettings;
 	EEPROM.readBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);
+	
+	//factory reset on first start or version changing
 	if(strcmp(commonSettings.version,CONFIG_VERSION) != 0) {
 		Serial.println(F("First start/Config version changed"));
 		
@@ -99,7 +103,7 @@ void setup() {
 		executeCommand(cmdFactoryReset);
 
 		//update commonSettings in EEPROM to have no factory reset on next start
-		EEPROM.writeBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);
+		EEPROM.writeBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings_default);
 	}
 	
 	//handles the servo controlling stuff

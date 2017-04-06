@@ -16,7 +16,7 @@
 *  EEPROM-Settings
 */
 //change to something other unique if structure of data to be saved in eeprom changed (max 3 chars)
-#define CONFIG_VERSION "aaa"
+#define CONFIG_VERSION "aab"
 
 //2 blocks to store data, do not change
 #define EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET 4
