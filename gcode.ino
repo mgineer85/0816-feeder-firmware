@@ -51,7 +51,7 @@ float parseParameter(char code,float defaultVal) {
 }
 
 void setupGCodeProc() {
-	inputBuffer.reserve(MAX_BUF);
+	inputBuffer.reserve(MAX_BUFFFER_GCODE_LINE);
 }
 
 /**

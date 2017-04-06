@@ -39,8 +39,20 @@ struct sCommonSettings {
 // ------------------  U T I L I T I E S ---------------
 
 // ------ Operate command on all feeders 
-void executeCommand(eFeederCommands command) {
-	for (uint8_t i=0;i<NUMBER_OF_FEEDERS;i++) {
+void executeCommand(eFeederCommands command, int8_t signedFeederNo=-1) {
+	uint8_t i;
+	uint8_t runTo;
+	if(signedFeederNo==-1) {
+		//operate on all feeders
+		i=0;
+		runTo=NUMBER_OF_FEEDERS;
+	} else {
+		//operate on specific feeder
+		i=(uint8_t)signedFeederNo;
+		runTo=i+1;
+	}
+	
+	for (uint8_t i=0;i<runTo;i++) {
 		switch(command) {
 			case cmdSetup:
 				feeders[i].setup();
