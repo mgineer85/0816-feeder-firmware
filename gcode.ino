@@ -126,7 +126,7 @@ void processCommand() {
 			}
 
 			//start feeding
-			FeedManager.feeders[(uint8_t)signedFeederNo].advance(feedLength);
+			feeders[(uint8_t)signedFeederNo].advance(feedLength);
 
 			//answer OK to host
 			sendAnswer(0,F("advanced."));
@@ -139,11 +139,11 @@ void processCommand() {
 			
 			if(signedFeederNo==-1) {
 				//retract all
-				FeedManager.retractAll();
+				executeCommand(cmdRetract);
 				
 				} else {
 				//retract specified feeder
-				FeedManager.feeders[(uint8_t)signedFeederNo].gotoRetractPosition();
+				feeders[(uint8_t)signedFeederNo].gotoRetractPosition();
 			}
 			
 			//answer to host
@@ -157,20 +157,27 @@ void processCommand() {
 			
 			//check for valid FeederNo
 			if(signedFeederNo==-1) {
-				sendAnswer(1,F("feederNo missing for command"));
+				sendAnswer(1,F("feederNo not optional for this command"));
 			}
 			
 			//merge given parameters to old settings
-			sFeederSettings oldFeederSettings=FeedManager.feeders[(uint8_t)signedFeederNo].getSettings();
+			sFeederSettings updatedFeederSettings=feeders[(uint8_t)signedFeederNo].getSettings();
+			sFeederSettings receivedFeederSettings;
+			receivedFeederSettings.full_advanced_angle=parseParameter('A',-999);
+			receivedFeederSettings.half_advanced_angle=parseParameter('B',-999);
+			receivedFeederSettings.retract_angle=parseParameter('C',-999);
+			receivedFeederSettings.time_to_settle=parseParameter('U',-999);
+			receivedFeederSettings.motor_min_pulsewidth=parseParameter('V',-999);
+			receivedFeederSettings.motor_max_pulsewidth=parseParameter('W',-999);
 			
-			oldFeederSettings.full_advanced_angle=parseParameter('A',-1);  //full_advanced_angle
-			oldFeederSettings.half_advanced_angle=parseParameter('B',-1);  //half_advanced_angle
-			oldFeederSettings.retract_angle=parseParameter('C',-1);  //retract_angle
-			oldFeederSettings.time_to_settle=parseParameter('U',-1);  //time_to_settle
-			oldFeederSettings.motor_min_pulsewidth=parseParameter('V',-1);  //motor_min_pulsewidth
-			oldFeederSettings.motor_max_pulsewidth=parseParameter('W',-1);  //motor_max_pulsewidth
+			updatedFeederSettings.full_advanced_angle=(receivedFeederSettings.full_advanced_angle==-999)?updatedFeederSettings.full_advanced_angle:receivedFeederSettings.full_advanced_angle;
+			updatedFeederSettings.half_advanced_angle=(receivedFeederSettings.half_advanced_angle==-999)?updatedFeederSettings.half_advanced_angle:receivedFeederSettings.half_advanced_angle;
+			updatedFeederSettings.retract_angle=(receivedFeederSettings.retract_angle==-999)?updatedFeederSettings.retract_angle:receivedFeederSettings.retract_angle;
+			updatedFeederSettings.time_to_settle=(receivedFeederSettings.time_to_settle==-999)?updatedFeederSettings.time_to_settle:receivedFeederSettings.time_to_settle;
+			updatedFeederSettings.motor_min_pulsewidth=(receivedFeederSettings.motor_min_pulsewidth==-999)?updatedFeederSettings.motor_min_pulsewidth:receivedFeederSettings.motor_min_pulsewidth;
+			updatedFeederSettings.motor_max_pulsewidth=(receivedFeederSettings.motor_max_pulsewidth==-999)?updatedFeederSettings.motor_max_pulsewidth:receivedFeederSettings.motor_max_pulsewidth;
 			
-			
+			feeders[(uint8_t)signedFeederNo].setSettings(updatedFeederSettings);
 			break;
 		}
 
@@ -219,46 +226,6 @@ void listenToSerialStream() {
 			ready();
 		}
 	}
-}
-
-
-// ------------------  C A L L B A C K S -----------------------
-
-void DoUpdateFeederConfig() {
-	//get commands parameters
-	uint8_t feederNo = (uint8_t)0;
-
-	//do the neccessary things
-	//FeedManager.feeders[feederNo].updateConfig();
-
-	//answer to host
-	//--TODO
-
-	
-}
-
-void DoRetract() {
-	//get commands parameters
-
-	if(true) {
-		//specific feeder
-		uint8_t feederNo = (uint8_t)0;
-		
-		//do the neccessary things
-		FeedManager.feeders[feederNo].gotoRetractPosition();
-		
-		//answer to host
-		//--TODO
-		
-		} else {
-		//do the neccessary things
-		FeedManager.retractAll();
-		
-		//answer to host
-		//--TODO
-	}
-	
-	
 }
 
 

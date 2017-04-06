@@ -15,10 +15,12 @@
 #include <HardwareSerial.h>
 #include <Bounce2.h>
 #include <EEPROMex.h>
-#include "FeedManager.h"
-
+#include "Feeder.h"
 
 // ------------------  V A R  S E T U P -----------------------
+
+// ------ Feeders
+FeederClass feeders[NUMBER_OF_FEEDERS];
 
 // ------ DEBOUNCE test button
 Bounce debouncedButton = Bounce();
@@ -34,32 +36,62 @@ struct sCommonSettings {
 	CONFIG_VERSION,
 };
 
+// ------------------  U T I L I T I E S ---------------
+
+// ------ Operate command on all feeders 
+void executeCommand(eFeederCommands command) {
+	for (uint8_t i=0;i<NUMBER_OF_FEEDERS;i++) {
+		switch(command) {
+			case cmdSetup:
+				feeders[i].setup();
+			break;
+			case cmdUpdate:
+				feeders[i].update();
+			break;
+			case cmdRetract:
+				feeders[i].gotoRetractPosition();
+			break;
+			case cmdActivateFeeder:
+				feeders[i].feederNo=i;
+			break;
+			case cmdFactoryReset:
+				feeders[i].factoryReset();
+			break;
+			default:
+				{}
+			break;
+		}
+	}
+}
+
+
 // ------------------  S E T U P -----------------------
 void setup() {
 	Serial.begin(SERIAL_BAUD);
 	while (!Serial);
 	Serial.println(F("Feeduino starting...")); Serial.flush();
 	
-	//
+	// setup listener to serial stream
 	setupGCodeProc();
 	
 	//initialize active feeders, this is giving them an valid ID
-	FeedManager.activateFeeders();
+	//needs to be done before factory reset to have a valid ID (eeprom-settings location is derived off the ID)
+	executeCommand(cmdActivateFeeder);
 	
 	//factory reset on first start or version changing
 	EEPROM.readBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);
-	if(commonSettings.version != CONFIG_VERSION) {
+	if(strcmp(commonSettings.version,CONFIG_VERSION) != 0) {
 		Serial.println(F("First start/Config version changed"));
 		
 		//reset needed
-		FeedManager.factoryReset();
+		executeCommand(cmdFactoryReset);
 
 		//update commonSettings in EEPROM to have no factory reset on next start
 		EEPROM.writeBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);
 	}
 	
 	//handles the servo controlling stuff
-	FeedManager.setup();
+	executeCommand(cmdSetup);
 
 	#if USE_SERVO_TO_SPOOL_COVER_TAPE == 1 
 		//attach servo to pin
@@ -76,6 +108,8 @@ void setup() {
 	
 }
 
+
+
 // ------------------  L O O P -----------------------
 
 void loop() {
@@ -86,11 +120,11 @@ void loop() {
 	listenToSerialStream();
 	
 	// Process servo control
-	FeedManager.update();
+	executeCommand(cmdUpdate);
 	
 	
 	if ( debouncedButton.fell() ) {
-		FeedManager.feeders[0].advance(4);
+		feeders[0].advance(4);
 	}
 
 }
