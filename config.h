@@ -52,6 +52,7 @@ const static uint8_t feederPinMap[NUMBER_OF_FEEDERS] = {
 
 
 /* Default settings for feeders */
+// calculate angles: https://de.wikipedia.org/wiki/Schubkurbel
 #define FEEDER_DEFAULT_RETRACT_ANGLE  0				      // [°]  usually 0, might be adjusted to servo or feeder
 #define FEEDER_DEFAULT_FULL_ADVANCED_ANGLE  90				      // [°]  usually about 80-110. Is effected by motor constants as well!
 #define FEEDER_DEFAULT_HALF_ADVANCED_ANGLE  40              // [°]  usually about 40-60. Is effected by motor constants as well!

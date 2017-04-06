@@ -123,7 +123,7 @@ void FeederClass::update() {
 		//now servo is expected to have settled at its designated position
 		
 		#ifdef DEBUG
-			Serial.print("this->remainingFeedLength before working");
+			Serial.print("remainingFeedLength before working: ");
 			Serial.println(this->remainingFeedLength);
 		#endif
 		switch (this->feederState) {
@@ -172,7 +172,7 @@ void FeederClass::update() {
 		}
 		
 		#ifdef DEBUG
-			Serial.print("this->remainingFeedLength after working");
+			Serial.print("remainingFeedLength after working: ");
 			Serial.println(this->remainingFeedLength);
 		#endif
 	}

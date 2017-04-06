@@ -41,7 +41,7 @@ float parseParameter(char code,float defaultVal) {
 		//find end of number (separated by " " (space))
 		int delimiterPosition = inputBuffer.indexOf(" ",codePosition+1);
 		
-		float parsedNumber = inputBuffer.substring(codePosition+1,delimiterPosition-1).toFloat();
+		float parsedNumber = inputBuffer.substring(codePosition+1,delimiterPosition).toFloat();
 		
 		return parsedNumber;
 	} else {
@@ -98,21 +98,34 @@ void processCommand() {
 
 	//get the command, default -1 if no command found
 	int cmd = parseParameter('M',-1);
-
+	
+	#ifdef DEBUG
+		Serial.print("Determined CMD ");
+		Serial.print(cmd);
+		Serial.println("");
+	#endif
+	
 	//check for feederNo - if present, it has to be right.
-	int8_t signedFeederNo = (int8_t)parseParameter('N',-1);
+	int8_t signedFeederNo = (int)parseParameter('N',-1);
 	if(signedFeederNo!=-1) {  //feederNo given -> check for a valid number
 		if(!validFeederNo(signedFeederNo)) {
 			sendAnswer(1,F("Invalid feederNo"));
 			return;
 		}
 	}
+	#ifdef DEBUG
+		Serial.print("Determined signedFeederNo ");
+		Serial.print(signedFeederNo);
+		Serial.println("");
+	#endif
+	
 
 	switch(cmd) {
 		case  GCODE_ADVANCE: {
-			//check for valid FeederNo
+			//check for presence of FeederNo
 			if(signedFeederNo==-1) {
 				sendAnswer(1,F("feederNo missing for command"));
+				break;
 			}
 
 			//can go on without further checks -> if number was given, it was checked for validity above already
@@ -124,7 +137,11 @@ void processCommand() {
 				//advancing is only possible for multiples of 2mm and 12mm max
 				sendAnswer(1,F("Invalid feedLength"));
 			}
-
+			#ifdef DEBUG
+				Serial.print("Determined feedLength ");
+				Serial.print(feedLength);
+				Serial.println("");
+			#endif
 			//start feeding
 			feeders[(uint8_t)signedFeederNo].advance(feedLength);
 
@@ -213,11 +230,8 @@ void listenToSerialStream() {
 		inputBuffer += receivedChar;
 		
 		// if the received character is a newline, processCommand
-		if (receivedChar == '\n' || receivedChar == '\r') {
-			#ifdef DEBUG
-				Serial.print(F("\r\n"));
-			#endif
-			
+		if (receivedChar == '\n') {
+
 			processCommand();
 			
 			//clear buffer

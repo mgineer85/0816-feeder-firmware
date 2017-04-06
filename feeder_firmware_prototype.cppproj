@@ -567,12 +567,6 @@
     <Compile Include="Feeder.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="FeedManager.cpp">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="FeedManager.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="globals.h">
       <SubType>compile</SubType>
     </Compile>
