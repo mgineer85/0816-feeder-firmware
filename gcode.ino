@@ -1,29 +1,5 @@
 #include "globals.h"
 
-/**
-* Parts in this file base on GcodeCNCDemo. Original copyright following:
-*
-* GcodeCNCDemo is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* GcodeCNCDemo is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this software. If not, see <http://www.gnu.org/licenses/>.
-*
-* please see http://www.github.com/MarginallyClever/GcodeCNCDemo for more information.
-* ------------------------------------------------------------------------------
-*  2 Axis CNC Demo
-*  dan@marginallycelver.com 2013-08-30
-* ------------------------------------------------------------------------------
-*/
-
-
 String inputBuffer = "";         // Buffer for incoming G-Code lines
 
 
