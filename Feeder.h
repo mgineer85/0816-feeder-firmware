@@ -31,14 +31,13 @@ class FeederClass {
 		
 	} lastFeederState= sAT_UNKNOWN, feederState = sAT_UNKNOWN;
 	unsigned long lastTimePositionChange;
-	bool sStateChanged=false;
 	
 	//
 	sFeederSettings feederSettings = {
-		//0,
 		FEEDER_DEFAULT_FULL_ADVANCED_ANGLE,
 		FEEDER_DEFAULT_HALF_ADVANCED_ANGLE,
 		FEEDER_DEFAULT_RETRACT_ANGLE,
+		FEEDER_DEFAULT_FEED_LENGTH,
 		FEEDER_DEFAULT_TIME_TO_SETTLE,
 		FEEDER_DEFAULT_MOTOR_MIN_PULSEWIDTH,
 		FEEDER_DEFAULT_MOTOR_MAX_PULSEWITH,

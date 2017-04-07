@@ -121,7 +121,13 @@ void processCommand() {
 	
 
 	switch(cmd) {
-		case  GCODE_ADVANCE: {
+		case GCODE_ADVANCE:
+		case GCODE_ADVANCE+2:
+		case GCODE_ADVANCE+4:
+		case GCODE_ADVANCE+6:
+		case GCODE_ADVANCE+8:
+		case GCODE_ADVANCE+10:
+		case GCODE_ADVANCE+12: {
 			//check for presence of FeederNo
 			if(signedFeederNo==-1) {
 				sendAnswer(1,F("feederNo missing for command"));
@@ -129,10 +135,20 @@ void processCommand() {
 			}
 
 			//can go on without further checks -> if number was given, it was checked for validity above already
-
 			
-			//get feedLength, default is FEEDER_PITCH
-			uint8_t feedLength = (uint8_t)parseParameter('F',FEEDER_PITCH);
+			//determine feedLength
+			uint8_t feedLength;
+			if(cmd == GCODE_ADVANCE) {
+				//base-command. two options for feedLength here:
+				//F parameter omitted: use configured feed_length
+				//F parameter given: go for given feedlength F
+				//get feedLength if given, otherwise go for default configured feed_length in case of base-command GCODE_ADVANCE
+				feedLength = (uint8_t)parseParameter('F',feeders[(uint8_t)signedFeederNo].feederSettings.feed_length);
+			} else {
+				//do the mapping of several m-codes to feedLengths'
+				feedLength = cmd-GCODE_ADVANCE;
+			}
+			
 			if ( ((feedLength%2) != 0) || feedLength>12 ) {
 				//advancing is only possible for multiples of 2mm and 12mm max
 				sendAnswer(1,F("Invalid feedLength"));
@@ -184,6 +200,7 @@ void processCommand() {
 			updatedFeederSettings.full_advanced_angle=parseParameter('A',oldFeederSettings.full_advanced_angle);
 			updatedFeederSettings.half_advanced_angle=parseParameter('B',oldFeederSettings.half_advanced_angle);
 			updatedFeederSettings.retract_angle=parseParameter('C',oldFeederSettings.retract_angle);
+			updatedFeederSettings.feed_length=parseParameter('F',oldFeederSettings.feed_length);
 			updatedFeederSettings.time_to_settle=parseParameter('U',oldFeederSettings.time_to_settle);
 			updatedFeederSettings.motor_min_pulsewidth=parseParameter('V',oldFeederSettings.motor_min_pulsewidth);
 			updatedFeederSettings.motor_max_pulsewidth=parseParameter('W',oldFeederSettings.motor_max_pulsewidth);

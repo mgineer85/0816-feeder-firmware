@@ -16,7 +16,7 @@
 *  EEPROM-Settings
 */
 //change to something other unique if structure of data to be saved in eeprom changed (max 3 chars)
-#define CONFIG_VERSION "aab"
+#define CONFIG_VERSION "aac"
 
 //2 blocks to store data, do not change
 #define EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET 4
@@ -56,6 +56,7 @@ const static uint8_t feederPinMap[NUMBER_OF_FEEDERS] = {
 #define FEEDER_DEFAULT_RETRACT_ANGLE  0				      // [°]  usually 0, might be adjusted to servo or feeder
 #define FEEDER_DEFAULT_FULL_ADVANCED_ANGLE  90				      // [°]  usually about 80-110. Is effected by motor constants as well!
 #define FEEDER_DEFAULT_HALF_ADVANCED_ANGLE  40              // [°]  usually about 40-60. Is effected by motor constants as well!
+#define FEEDER_DEFAULT_FEED_LENGTH FEEDER_PITCH			// [mm] distance to be fed if no feedlength was given
 #define FEEDER_DEFAULT_TIME_TO_SETTLE  300			  // [ms] time the servo needs to travel from ANGLE_IDLE to ANGLE_PULL
 #define FEEDER_DEFAULT_MOTOR_MIN_PULSEWIDTH 544		// [µs] see motor specs or experiment at bit. Value set here should bring the servo to 0°
 #define FEEDER_DEFAULT_MOTOR_MAX_PULSEWITH 2400		// [µs] see motor specs or experiment at bit. Value set here should bring the servo to 180° (even if 180° cannot be reached) (?)
@@ -90,6 +91,7 @@ const static uint8_t feederPinMap[NUMBER_OF_FEEDERS] = {
 * A
 * B
 * C
+* F
 * U
 * V
 * W
@@ -97,7 +99,7 @@ const static uint8_t feederPinMap[NUMBER_OF_FEEDERS] = {
 * Example:
 *
 */
-#define GCODE_UPDATE_FEEDER_CONFIG	601
+#define GCODE_UPDATE_FEEDER_CONFIG	700
 
 
 
@@ -109,7 +111,7 @@ const static uint8_t feederPinMap[NUMBER_OF_FEEDERS] = {
 * N Number of Feeder, optional: 0...11
 *
 */
-#define GCODE_RETRACT 602
+#define GCODE_RETRACT 701
 
 
 /* ------------ M-CODE: FACTORY RESET -----------
@@ -117,7 +119,7 @@ const static uint8_t feederPinMap[NUMBER_OF_FEEDERS] = {
 * Clear EEPROM and use DEFAULT values for feeder config
 *
 */
-#define GCODE_FACTORY_RESET 699
+#define GCODE_FACTORY_RESET 799
 
 
 /* -----------------------------------------------------------------

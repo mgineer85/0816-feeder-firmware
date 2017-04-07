@@ -4,10 +4,10 @@
 
 //used to transfer settings between different objects
 struct sFeederSettings {
-	//uint8_t pin;
 	int full_advanced_angle;
 	int half_advanced_angle;
 	int retract_angle;
+	uint8_t feed_length;
 	int time_to_settle;
 	int motor_min_pulsewidth;
 	int motor_max_pulsewidth;

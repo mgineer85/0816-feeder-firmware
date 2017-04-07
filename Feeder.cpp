@@ -10,6 +10,8 @@ void FeederClass::outputCurrentSettings() {
 	Serial.print(this->feederSettings.half_advanced_angle);
 	Serial.print(" C:");
 	Serial.print(this->feederSettings.retract_angle);
+	Serial.print(" F:");
+	Serial.print(this->feederSettings.feed_length);
 	Serial.print(" U:");
 	Serial.print(this->feederSettings.time_to_settle);
 	Serial.print(" V:");
@@ -102,7 +104,6 @@ void FeederClass::advance(uint8_t feedLength) {
 		this->remainingFeedLength=feedLength;
 	}
 
-	//this->update();
 }
 
 void FeederClass::update() {
@@ -113,7 +114,6 @@ void FeederClass::update() {
 	
 	//state machine-update-stuff (for settle time)
 	if(this->lastFeederState!=this->feederState) {
-		this->sStateChanged=true;
 		this->lastTimePositionChange=millis();
 		this->lastFeederState=this->feederState;
 	}
