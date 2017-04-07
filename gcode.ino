@@ -181,7 +181,11 @@ void processCommand() {
 			updatedFeederSettings.motor_min_pulsewidth=parseParameter('V',oldFeederSettings.motor_min_pulsewidth);
 			updatedFeederSettings.motor_max_pulsewidth=parseParameter('W',oldFeederSettings.motor_max_pulsewidth);
 			
+			//set to feeder
 			feeders[(uint8_t)signedFeederNo].setSettings(updatedFeederSettings);
+			
+			//save to eeprom
+			feeders[(uint8_t)signedFeederNo].saveFeederSettings();
 			break;
 		}
 
