@@ -52,9 +52,9 @@ void help() {
 
 void sendAnswer(uint8_t error, String message) {
 	if(error==0)
-	Serial.print(F("OK "));
+		Serial.print(F("OK "));
 	else
-	Serial.print(F("ERROR "));
+		Serial.print(F("ERROR "));
 	
 	Serial.println(message);
 }
@@ -97,6 +97,10 @@ void processCommand() {
 	
 
 	switch(cmd) {
+		
+		/*
+			FEEDER-CODES
+		*/
 		case GCODE_ADVANCE:
 		case GCODE_ADVANCE+2:
 		case GCODE_ADVANCE+4:
@@ -168,6 +172,7 @@ void processCommand() {
 			//check for valid FeederNo
 			if(signedFeederNo==-1) {
 				sendAnswer(1,F("feederNo not optional for this command"));
+				break;
 			}
 			
 			//merge given parameters to old settings
@@ -188,7 +193,55 @@ void processCommand() {
 			feeders[(uint8_t)signedFeederNo].saveFeederSettings();
 			break;
 		}
-
+		
+		/*
+		CODES to Control ADC
+		*/
+		case GCODE_GET_ADC_RAW: {
+			//answer to host
+			uint8_t channel=parseParameter('A',0);
+			sendAnswer(0,String(adcRawValues[channel],4));
+			
+			
+			break;
+		}
+		case GCODE_GET_ADC_SCALED: {
+			//answer to host
+			uint8_t channel=parseParameter('A',0);
+			sendAnswer(0,String(adcScaledValues[channel],4));
+			
+			
+			break;
+		}
+		case GCODE_SET_SCALING: {
+			
+			int8_t channel=parseParameter('A',-1);
+			
+			//check for valid parameters
+			if(channel==-1) {
+				sendAnswer(1,F("channelNo not optional"));
+				break;
+			}
+			
+			commonSettings.adc_scaling_values[(uint8_t)channel][0]=parseParameter('S',commonSettings.adc_scaling_values[(uint8_t)channel][0]);
+			commonSettings.adc_scaling_values[(uint8_t)channel][1]=parseParameter('O',commonSettings.adc_scaling_values[(uint8_t)channel][1]);
+			
+			sendAnswer(0,(F("Set Scaling for X ")));
+			break;
+		}
+		
+		
+		case GCODE_SET_POWER_OUTPUT: {
+			//answer to host
+			int8_t powerPin=parseParameter('D',-1);
+			int8_t powerState=parseParameter('S',-1);
+			if(powerPin!=-1 && powerState!=-1) {
+				digitalWrite(pwrOutputPinMap[(uint8_t)powerPin], (uint8_t)powerState);
+			}
+			break;
+		}
+		
+			
 		
 		case 100:  help();  break;
 		default:  break;

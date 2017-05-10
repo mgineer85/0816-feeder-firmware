@@ -140,6 +140,31 @@ const static uint8_t feederPinMap[NUMBER_OF_FEEDERS] = {
 #endif
 
 
+
+/* ----------------
+  Analog Reading Config
+*/
+
+#define GCODE_GET_ADC_RAW 143
+#define GCODE_GET_ADC_SCALED 144
+#define GCODE_SET_SCALING 145
+
+#define ADC_READ_EVERY_MS 20	
+
+
+/* ----------------
+  Switches Config
+*/
+
+#define GCODE_SET_POWER_OUTPUT 155
+#define NUMBER_OF_POWER_OUTPUT 4
+const static uint8_t pwrOutputPinMap[NUMBER_OF_POWER_OUTPUT] = {
+	50,    // Output 0
+	52,    // Output 1
+	52,	   //...
+	52,
+};
+
+
+//DEFINE config_h-ENDIF!!!
 #endif
-
-

@@ -41,12 +41,36 @@ struct sCommonSettings {
 	//add further settings here, above CONFIG_VERSION
 	int test;
 	char version[4];   // This is for detection if settings suit to struct
+	float adc_scaling_values[8][2];
+	uint16_t autoswitch_thresholds[NUMBER_OF_POWER_OUTPUT][2];
 	};
 sCommonSettings commonSettings_default = {
 	0,
 	//add further settings here, above CONFIG_VERSION
 	CONFIG_VERSION,
+	{
+		{0.1277,-120.23},			//pressure [kPa]=(ADCval/1023-0.92)/0.007652
+		{0.1277,-120.23},
+		{0.1277,-120.23},
+		{1,0},
+		{1,0},
+		{1,0},
+		{1,0},
+		{1,0},
+	},
+	{
+		{0,0},
+		{0,0},
+		{0,0},
+		{0,0},
+	}
 };
+sCommonSettings commonSettings;
+
+// ------ ADC readout
+unsigned long lastTimeADCread;
+uint16_t adcRawValues[8];
+float adcScaledValues[8];
 
 // ------------------  U T I L I T I E S ---------------
 
@@ -88,6 +112,27 @@ void executeCommand(eFeederCommands command, int8_t signedFeederNo=-1) {
 	}
 }
 
+void updateADCvalues() {
+	
+	for(uint8_t i=0; i<=7; i++) {
+		adcRawValues[i]=analogRead(i);
+		adcScaledValues[i]=(adcRawValues[i]*commonSettings.adc_scaling_values[i][0])+commonSettings.adc_scaling_values[i][1];
+	}
+}
+
+void updateAutoSwitches() {
+	/*
+	for(uint8_t i=0; i<NUMBER_OF_POWER_OUTPUT; i++) {
+		if((autoswitch_thresholds[i][0]|autoswitch_thresholds[i][1])!=0) {
+			if(below threslow -> on && !isOn) {
+				
+			} else if(over threshigh -> off && !isOff) {
+				
+			}
+		}
+	}
+	*/
+}
 
 // ------------------  S E T U P -----------------------
 void setup() {
@@ -103,7 +148,6 @@ void setup() {
 	executeCommand(cmdActivateFeeder);
 	
 	//load commonSettings from eeprom
-	sCommonSettings commonSettings;
 	EEPROM.readBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);
 	
 	//factory reset on first start or version changing
@@ -127,6 +171,18 @@ void setup() {
 		spoolServo.write(SPOOLSERVO_SPEED_RATE);
 	#endif
 	
+	//init adc-values
+	updateADCvalues();
+	lastTimeADCread=millis();
+	
+	//init autoswitches
+	updateAutoSwitches();
+	
+	//power output init
+	for(uint8_t i=0;i<NUMBER_OF_POWER_OUTPUT;i++) {
+		pinMode(pwrOutputPinMap[i],OUTPUT);
+	}
+	
 	// Setup the button for debugging purposes
 	pinMode(PIN_BUTTON,INPUT_PULLUP);
 	debouncedButton.attach(PIN_BUTTON);
@@ -148,6 +204,15 @@ void loop() {
 	
 	// Process servo control
 	executeCommand(cmdUpdate);
+	
+	// Process ADC inputs
+	if (millis() - lastTimeADCread >= ADC_READ_EVERY_MS) {
+		lastTimeADCread=millis();
+		
+		updateADCvalues();
+		
+		updateAutoSwitches();
+	}
 	
 	
 	if ( debouncedButton.fell() ) {
