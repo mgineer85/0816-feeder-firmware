@@ -42,7 +42,7 @@ struct sCommonSettings {
 	int test;
 	char version[4];   // This is for detection if settings suit to struct
 	float adc_scaling_values[8][2];
-	uint16_t autoswitch_thresholds[NUMBER_OF_POWER_OUTPUT][2];
+	uint16_t autoswitch_thresholds[NUMBER_OF_POWER_OUTPUT][3];
 	};
 sCommonSettings commonSettings_default = {
 	0,
@@ -59,10 +59,10 @@ sCommonSettings commonSettings_default = {
 		{1,0},
 	},
 	{
-		{0,0},
-		{0,0},
-		{0,0},
-		{0,0},
+		{750,800,0},
+		{0,0,0},
+		{0,0,0},
+		{0,0,0},
 	}
 };
 sCommonSettings commonSettings;
@@ -121,15 +121,26 @@ void updateADCvalues() {
 }
 
 void updateAutoSwitches() {
-	/*
-	for(uint8_t i=0; i<NUMBER_OF_POWER_OUTPUT; i++) {
-		if((autoswitch_thresholds[i][0]|autoswitch_thresholds[i][1])!=0) {
-			if(below threslow -> on && !isOn) {
+	
+	//TODO. Maybe one day. Useful to turn on vacuum pump if vac-reservoir is low and turn off if high
+	
+/*	for(uint8_t i=0; i<NUMBER_OF_POWER_OUTPUT; i++) {
+		if(output_freigabe[NUMBER_OF_POWER_OUTPUT][i]) {
+			if( (commonSettings.autoswitch_thresholds[i][0] && commonSettings.autoswitch_thresholds[i][1]) == 0 ) {
+				//manual mode
 				
-			} else if(over threshigh -> off && !isOff) {
-				
+			} else {
+				//automatic mode overrides manual mode thresholds set
+				if(below threslow -> on && !isOn) {
+					
+					} else if(over threshigh -> off && !isOff) {
+					
+				}
 			}
+		} else {
+			digitalWrite(,0);
 		}
+		
 	}
 	*/
 }
@@ -188,7 +199,7 @@ void setup() {
 	debouncedButton.attach(PIN_BUTTON);
 	debouncedButton.interval(5); // interval in ms
 	
-	
+	Serial.println(F("Feeduino up and ready! Have fun."));
 }
 
 

@@ -7,7 +7,7 @@
 *     DEBUG
 */
 // prints some extra information via serial
-#define DEBUG
+//#define DEBUG
 
 // might use a button for debugging -> TODO remove this or make at least configureable
 #define PIN_BUTTON 13
@@ -16,11 +16,11 @@
 *  EEPROM-Settings
 */
 //change to something other unique if structure of data to be saved in eeprom changed (max 3 chars)
-#define CONFIG_VERSION "aac"
+#define CONFIG_VERSION "aad"
 
 //2 blocks to store data, do not change
 #define EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET 4
-#define EEPROM_FEEDER_SETTINGS_ADDRESS_OFFSET 32
+#define EEPROM_FEEDER_SETTINGS_ADDRESS_OFFSET 128
 
 
 /*
@@ -34,18 +34,35 @@
 /* -----------------------------------------------------------------
 *  FEEDER CONFIG
 *  ----------------------------------------------------------------- */
-#define NUMBER_OF_FEEDERS 10				// max 12, if 360° servo is used, max 11 feeder.
+#define NUMBER_OF_FEEDERS 24				// max 12, if 360° servo is used, max 11 feeder.
 const static uint8_t feederPinMap[NUMBER_OF_FEEDERS] = {
-	2,    // Feeder 0
-	3,    // Feeder 1
+	2,    // Feeder 1
+	3,    // Feeder 2
 	4,		//...
 	5,
 	6,
 	7,
-	8,
+	
+	8,	// Feeder 7
 	9,
 	10,
-	11
+	11,
+	12,
+	13,
+	
+	22,	// Feeder 13
+	24,
+	26,
+	28,
+	30,
+	32,
+	
+	34,	//Feeder 19
+	36,
+	38,
+	40,
+	42,
+	44,
 };
 
 #define FEEDER_PITCH  4                   // [mm]  default: 4 mm. given by mechanical design.
@@ -157,12 +174,23 @@ const static uint8_t feederPinMap[NUMBER_OF_FEEDERS] = {
 */
 
 #define GCODE_SET_POWER_OUTPUT 155
+
+/*
+turn on Output 1 (D0)
+> M155 D0 S1;
+
+turn off Output 3 (D2)
+> M155 D2 S0;
+
+*/
+
+
 #define NUMBER_OF_POWER_OUTPUT 4
 const static uint8_t pwrOutputPinMap[NUMBER_OF_POWER_OUTPUT] = {
-	50,    // Output 0
-	52,    // Output 1
-	52,	   //...
-	52,
+	52,    // Output 1 (D0)
+	50,    // Output 2 (D1)
+	48,	   //...
+	46,
 };
 
 

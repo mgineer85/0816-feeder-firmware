@@ -30,15 +30,17 @@ void setupGCodeProc() {
 	inputBuffer.reserve(MAX_BUFFFER_GCODE_LINE);
 }
 
+
 /**
 * write a string followed by a float to the serial line.  Convenient for debugging.
 * @input code the string.
 * @input val the float.
 */
+/*
 void output(const char *code,float val) {
 	Serial.print(code);
 	Serial.println(val);
-}
+}*/
 
 /**
 * display helpful information
@@ -52,9 +54,9 @@ void help() {
 
 void sendAnswer(uint8_t error, String message) {
 	if(error==0)
-		Serial.print(F("OK "));
+		Serial.print(F("ok "));
 	else
-		Serial.print(F("ERROR "));
+		Serial.print(F("error "));
 	
 	Serial.println(message);
 }
@@ -62,7 +64,7 @@ void sendAnswer(uint8_t error, String message) {
 boolean validFeederNo(int8_t signedFeederNo) {
 	if(signedFeederNo<0 || signedFeederNo>(NUMBER_OF_FEEDERS-1)) {
 		return false;
-		} else {
+	} else {
 		return true;
 	}
 }
@@ -81,20 +83,6 @@ void processCommand() {
 		Serial.println("");
 	#endif
 	
-	//check for feederNo - if present, it has to be right.
-	int8_t signedFeederNo = (int)parseParameter('N',-1);
-	if(signedFeederNo!=-1) {  //feederNo given -> check for a valid number
-		if(!validFeederNo(signedFeederNo)) {
-			sendAnswer(1,F("Invalid feederNo"));
-			return;
-		}
-	}
-	#ifdef DEBUG
-		Serial.print("Determined signedFeederNo ");
-		Serial.print(signedFeederNo);
-		Serial.println("");
-	#endif
-	
 
 	switch(cmd) {
 		
@@ -108,9 +96,14 @@ void processCommand() {
 		case GCODE_ADVANCE+8:
 		case GCODE_ADVANCE+10:
 		case GCODE_ADVANCE+12: {
+			int8_t signedFeederNo = (int)parseParameter('N',-1);
+			
 			//check for presence of FeederNo
 			if(signedFeederNo==-1) {
 				sendAnswer(1,F("feederNo missing for command"));
+				break;
+			} else if(!validFeederNo(signedFeederNo)) {
+				sendAnswer(1,F("invalid feeder selected"));
 				break;
 			}
 
@@ -150,16 +143,17 @@ void processCommand() {
 
 		
 		case GCODE_RETRACT: {
+			int8_t signedFeederNo = (int)parseParameter('N',-1);
 			
+			//check for presence of FeederNo
 			if(signedFeederNo==-1) {
 				//retract all
 				executeCommand(cmdRetract);
-				
-				} else {
+			} else if(validFeederNo(signedFeederNo)) {
 				//retract specified feeder
 				feeders[(uint8_t)signedFeederNo].gotoRetractPosition();
 			}
-			
+
 			//answer to host
 			sendAnswer(0,F("retracted."));
 			
@@ -168,10 +162,14 @@ void processCommand() {
 
 		
 		case GCODE_UPDATE_FEEDER_CONFIG: {
+			int8_t signedFeederNo = (int)parseParameter('N',-1);
 			
-			//check for valid FeederNo
+			//check for presence of FeederNo
 			if(signedFeederNo==-1) {
-				sendAnswer(1,F("feederNo not optional for this command"));
+				sendAnswer(1,F("feederNo missing for command"));
+				break;
+				} else if(!validFeederNo(signedFeederNo)) {
+				sendAnswer(1,F("invalid feeder selected"));
 				break;
 			}
 			
@@ -191,6 +189,10 @@ void processCommand() {
 			
 			//save to eeprom
 			feeders[(uint8_t)signedFeederNo].saveFeederSettings();
+			
+			//confirm
+			sendAnswer(0,F("Config of feeder updated."));
+			
 			break;
 		}
 		
@@ -199,17 +201,33 @@ void processCommand() {
 		*/
 		case GCODE_GET_ADC_RAW: {
 			//answer to host
-			uint8_t channel=parseParameter('A',0);
-			sendAnswer(0,String(adcRawValues[channel],4));
-			
+			int8_t channel=parseParameter('A',-1);
+			if( channel>=0 && channel<8 ) {
+				
+				//send value in first line of answer, so it can be parsed by OpenPnP correctly
+				Serial.println(String("value:")+String(adcRawValues[(uint8_t)channel]));
+				
+				//common answer
+				sendAnswer(0,"value sent");
+			} else {
+				sendAnswer(1,F("invalid adc channel (0...7)"));
+			}
 			
 			break;
 		}
 		case GCODE_GET_ADC_SCALED: {
 			//answer to host
-			uint8_t channel=parseParameter('A',0);
-			sendAnswer(0,String(adcScaledValues[channel],4));
-			
+			int8_t channel=parseParameter('A',-1);
+			if( channel>=0 && channel<8 ) {
+				
+				//send value in first line of answer, so it can be parsed by OpenPnP correctly
+				Serial.println(String("value:")+String(adcScaledValues[(uint8_t)channel],4));
+				
+				//common answer
+				sendAnswer(0,"value sent");
+			} else {
+				sendAnswer(1,F("invalid adc channel (0...7)"));
+			}
 			
 			break;
 		}
@@ -218,15 +236,16 @@ void processCommand() {
 			int8_t channel=parseParameter('A',-1);
 			
 			//check for valid parameters
-			if(channel==-1) {
-				sendAnswer(1,F("channelNo not optional"));
-				break;
+			if( channel>=0 && channel<8 ) {
+				commonSettings.adc_scaling_values[(uint8_t)channel][0]=parseParameter('S',commonSettings.adc_scaling_values[(uint8_t)channel][0]);
+				commonSettings.adc_scaling_values[(uint8_t)channel][1]=parseParameter('O',commonSettings.adc_scaling_values[(uint8_t)channel][1]);
+				
+				sendAnswer(0,(F("scaling set")));
+			} else {
+				sendAnswer(1,F("invalid adc channel (0...7)"));
 			}
 			
-			commonSettings.adc_scaling_values[(uint8_t)channel][0]=parseParameter('S',commonSettings.adc_scaling_values[(uint8_t)channel][0]);
-			commonSettings.adc_scaling_values[(uint8_t)channel][1]=parseParameter('O',commonSettings.adc_scaling_values[(uint8_t)channel][1]);
 			
-			sendAnswer(0,(F("Set Scaling for X ")));
 			break;
 		}
 		
@@ -235,8 +254,11 @@ void processCommand() {
 			//answer to host
 			int8_t powerPin=parseParameter('D',-1);
 			int8_t powerState=parseParameter('S',-1);
-			if(powerPin!=-1 && powerState!=-1) {
+			if( (powerPin>=0 && powerPin<NUMBER_OF_POWER_OUTPUT) && (powerState==0 || powerState==1) ) {
 				digitalWrite(pwrOutputPinMap[(uint8_t)powerPin], (uint8_t)powerState);
+				sendAnswer(0,F("Output set"));
+			} else {
+				sendAnswer(1,F("Invalid Parameters"));
 			}
 			break;
 		}
@@ -244,7 +266,10 @@ void processCommand() {
 			
 		
 		case 100:  help();  break;
-		default:  break;
+		default:
+			sendAnswer(0,F("unknown or empty command ignored"));
+			
+			break;
 	}
 	
 }
@@ -275,13 +300,18 @@ void listenToSerialStream() {
 		
 		// if the received character is a newline, processCommand
 		if (receivedChar == '\n') {
-
+			
+			//remove comments
+			inputBuffer.remove(inputBuffer.indexOf(";"));
+			inputBuffer.trim();
+			
+			
 			processCommand();
 			
 			//clear buffer
 			inputBuffer="";
 			
-			ready();
+			//ready();
 		}
 	}
 }
