@@ -4,21 +4,21 @@
 #include <EEPROMex.h>
 
 void FeederClass::outputCurrentSettings() {
-	Serial.print("A:");
+	Serial.print("A");
 	Serial.print(this->feederSettings.full_advanced_angle);
-	Serial.print(" B:");
+	Serial.print(" B");
 	Serial.print(this->feederSettings.half_advanced_angle);
-	Serial.print(" C:");
+	Serial.print(" C");
 	Serial.print(this->feederSettings.retract_angle);
-	Serial.print(" F:");
+	Serial.print(" F");
 	Serial.print(this->feederSettings.feed_length);
-	Serial.print(" U:");
+	Serial.print(" U");
 	Serial.print(this->feederSettings.time_to_settle);
-	Serial.print(" V:");
+	Serial.print(" V");
 	Serial.print(this->feederSettings.motor_min_pulsewidth);
-	Serial.print(" W:");
+	Serial.print(" W");
 	Serial.print(this->feederSettings.motor_max_pulsewidth);
-	Serial.println("");
+	Serial.println();
 }
 
 void FeederClass::setup() {
@@ -37,8 +37,8 @@ void FeederClass::setup() {
 	this->servo.attach(feederPinMap[feederNo],this->feederSettings.motor_min_pulsewidth,this->feederSettings.motor_max_pulsewidth);
 
 	//put on defined position
-	this->gotoRetractPosition();
-	this->feederState=sAT_RETRACT_POSITION;
+	this->gotoFullAdvancedPosition();
+	this->feederState=sAT_FULL_ADVANCED_POSITION;
 
 	//wait settle time to not having all servos run at the same time if power-supply is not dimensioned adequate
 	delay(this->feederSettings.time_to_settle);
@@ -98,6 +98,7 @@ void FeederClass::advance(uint8_t feedLength) {
 	} else if (feedLength>0 && this->remainingFeedLength>0) {
 		//last advancing not completed! ignoring newly received command->return error
 		//TODO.
+		return;
 	} else {
 		//OK, start new advance-proc
 		//feed multiples of 2 possible: 2/4/6/8/10/12,...
@@ -108,9 +109,6 @@ void FeederClass::advance(uint8_t feedLength) {
 
 void FeederClass::update() {
 	
-	//if no need for feeding exit fast. take care: if in FULL_ADVANCED_POS and remainingLength is 0 go calcs through to retract automatically
-	if(this->remainingFeedLength==0 && this->feederState!=sAT_FULL_ADVANCED_POSITION)
-		return;
 	
 	//state machine-update-stuff (for settle time)
 	if(this->lastFeederState!=this->feederState) {
@@ -120,7 +118,20 @@ void FeederClass::update() {
 
 	//time to change the position?
 	if (millis() - this->lastTimePositionChange >= (unsigned long)this->feederSettings.time_to_settle) {
-		//now servo is expected to have settled at its designated position
+		//now servo is expected to have settled at its designated position, so do some stuff
+		
+		
+		if(this->flagAdvancingFinished==1) {
+			Serial.println("ok");
+			this->flagAdvancingFinished=0;
+		}
+		
+		
+		
+		//if no need for feeding exit fast.
+		if(this->remainingFeedLength==0)
+			return;
+		
 		
 		#ifdef DEBUG
 			Serial.print("remainingFeedLength before working: ");
@@ -175,7 +186,15 @@ void FeederClass::update() {
 			Serial.print("remainingFeedLength after working: ");
 			Serial.println(this->remainingFeedLength);
 		#endif
+		
+		//just finished advancing? set flag to send ok in next run after settle-time to let the pnp go on
+		if(this->remainingFeedLength==0) {
+			this->flagAdvancingFinished=1;
+		}
 	}
+	
+	
+	
 	return;
 }
 

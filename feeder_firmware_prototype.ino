@@ -195,9 +195,9 @@ void setup() {
 	}
 	
 	// Setup the button for debugging purposes
-	pinMode(PIN_BUTTON,INPUT_PULLUP);
+	/*pinMode(PIN_BUTTON,INPUT_PULLUP);
 	debouncedButton.attach(PIN_BUTTON);
-	debouncedButton.interval(5); // interval in ms
+	debouncedButton.interval(5); // interval in ms*/
 	
 	Serial.println(F("Feeduino up and ready! Have fun."));
 }
@@ -226,9 +226,9 @@ void loop() {
 	}
 	
 	
-	if ( debouncedButton.fell() ) {
+	/*if ( debouncedButton.fell() ) {
 		feeders[0].advance(4);
-	}
+	}*/
 
 }
 

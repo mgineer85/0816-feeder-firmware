@@ -19,6 +19,8 @@ class FeederClass {
 
 	uint8_t remainingFeedLength=0;
 	
+	uint8_t flagAdvancingFinished=0;
+	
 	
 	enum sFeederState {
 		sAT_UNKNOWN,

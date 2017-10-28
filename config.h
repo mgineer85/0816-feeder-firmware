@@ -7,7 +7,7 @@
 *     DEBUG
 */
 // prints some extra information via serial
-//#define DEBUG
+#define DEBUG
 
 // might use a button for debugging -> TODO remove this or make at least configureable
 #define PIN_BUTTON 13
@@ -16,7 +16,7 @@
 *  EEPROM-Settings
 */
 //change to something other unique if structure of data to be saved in eeprom changed (max 3 chars)
-#define CONFIG_VERSION "aad"
+#define CONFIG_VERSION "aaa"
 
 //2 blocks to store data, do not change
 #define EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET 4
@@ -70,13 +70,29 @@ const static uint8_t feederPinMap[NUMBER_OF_FEEDERS] = {
 
 /* Default settings for feeders */
 // calculate angles: https://de.wikipedia.org/wiki/Schubkurbel
-#define FEEDER_DEFAULT_RETRACT_ANGLE  0				      // [°]  usually 0, might be adjusted to servo or feeder
-#define FEEDER_DEFAULT_FULL_ADVANCED_ANGLE  90				      // [°]  usually about 80-110. Is effected by motor constants as well!
-#define FEEDER_DEFAULT_HALF_ADVANCED_ANGLE  40              // [°]  usually about 40-60. Is effected by motor constants as well!
+/*
+	when setting these values, make sure, the values for 
+	FEEDER_DEFAULT_MOTOR_MIN_PULSEWIDTH and
+	FEEDER_DEFAULT_MOTOR_MAX_PULSEWITH
+	reflect the according position for servo being used
+	
+	when everything is setup right, the lever is in advanced position at servo-angle ~85 degree
+	fully retracted is about ~10°
+	
+*/
+#define FEEDER_DEFAULT_RETRACT_ANGLE  10				      // [°]  usually 80, might be adjusted to servo or feeder
+#define FEEDER_DEFAULT_FULL_ADVANCED_ANGLE  85				      // [°]  usually about 90.
+#define FEEDER_DEFAULT_HALF_ADVANCED_ANGLE  40              // [°]  usually about 40-60.
 #define FEEDER_DEFAULT_FEED_LENGTH FEEDER_PITCH			// [mm] distance to be fed if no feedlength was given
-#define FEEDER_DEFAULT_TIME_TO_SETTLE  300			  // [ms] time the servo needs to travel from ANGLE_IDLE to ANGLE_PULL
+#define FEEDER_DEFAULT_TIME_TO_SETTLE  240			  // [ms] time the servo needs to travel from FEEDER_DEFAULT_FULL_ADVANCED_ANGLE to FEEDER_DEFAULT_RETRACT_ANGLE
+/*
+	 0° == ~ 544 µs	--> min, default 544 and seems it fits to the sg90 from tower pro
+	90° ==          --> "middle"
+   180° == ~2400 µs --> max, default 2400 and seems it fits to the sg90 from tower pro
+	 --> SERVO.attach(PIN, 544, 2400);
+*/
 #define FEEDER_DEFAULT_MOTOR_MIN_PULSEWIDTH 544		// [µs] see motor specs or experiment at bit. Value set here should bring the servo to 0°
-#define FEEDER_DEFAULT_MOTOR_MAX_PULSEWITH 2400		// [µs] see motor specs or experiment at bit. Value set here should bring the servo to 180° (even if 180° cannot be reached) (?)
+#define FEEDER_DEFAULT_MOTOR_MAX_PULSEWITH 2400		// [µs] see motor specs or experiment at bit. Value set here should bring the servo to 180°
 
 
 /* -----------------------------------------------------------------

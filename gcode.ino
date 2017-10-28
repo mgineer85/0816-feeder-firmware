@@ -136,7 +136,8 @@ void processCommand() {
 			feeders[(uint8_t)signedFeederNo].advance(feedLength);
 
 			//answer OK to host
-			sendAnswer(0,F("advanced."));
+			//no answer to host here: wait to send OK, until finished. otherwise the pickup is started to early.
+			//message is fired off in feeder.cpp
 			
 			break;
 		}
@@ -291,9 +292,9 @@ void listenToSerialStream() {
 		char receivedChar = (char)Serial.read();
 		
 		// print back for debugging
-		#ifdef DEBUG
+		//#ifdef DEBUG
 			Serial.print(receivedChar);
-		#endif
+		//#endif
 		
 		// add to buffer
 		inputBuffer += receivedChar;
