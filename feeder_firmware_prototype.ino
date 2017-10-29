@@ -34,36 +34,31 @@
 FeederClass feeders[NUMBER_OF_FEEDERS];
 
 // ------ DEBOUNCE test button
-Bounce debouncedButton = Bounce();
+//Bounce debouncedButton = Bounce();
 
 // ------ Settings-Struct (saved in EEPROM)
 struct sCommonSettings {
-	//add further settings here, above CONFIG_VERSION
-	int test;
-	char version[4];   // This is for detection if settings suit to struct
+
+	//add further settings here
+	
+	char version[4];   // This is for detection if settings suit to struct, if not, eeprom is reset to defaults
 	float adc_scaling_values[8][2];
-	uint16_t autoswitch_thresholds[NUMBER_OF_POWER_OUTPUT][3];
 	};
 sCommonSettings commonSettings_default = {
-	0,
-	//add further settings here, above CONFIG_VERSION
+
+	//add further settings here
+	
 	CONFIG_VERSION,
 	{
-		{0.1277,-120.23},			//pressure [kPa]=(ADCval/1023-0.92)/0.007652
-		{0.1277,-120.23},
-		{0.1277,-120.23},
-		{1,0},
-		{1,0},
-		{1,0},
-		{1,0},
-		{1,0},
+		{ANALOG_A0_SCALING_FACTOR,ANALOG_A0_OFFSET},			//pressure [kPa]=(ADCval/1023-0.92)/0.007652
+		{ANALOG_A1_SCALING_FACTOR,ANALOG_A1_OFFSET},
+		{ANALOG_A2_SCALING_FACTOR,ANALOG_A2_OFFSET},
+		{ANALOG_A3_SCALING_FACTOR,ANALOG_A3_OFFSET},
+		{ANALOG_A4_SCALING_FACTOR,ANALOG_A4_OFFSET},
+		{ANALOG_A5_SCALING_FACTOR,ANALOG_A5_OFFSET},
+		{ANALOG_A6_SCALING_FACTOR,ANALOG_A6_OFFSET},
+		{ANALOG_A7_SCALING_FACTOR,ANALOG_A7_OFFSET},
 	},
-	{
-		{750,800,0},
-		{0,0,0},
-		{0,0,0},
-		{0,0,0},
-	}
 };
 sCommonSettings commonSettings;
 
@@ -74,30 +69,15 @@ float adcScaledValues[8];
 
 // ------------------  U T I L I T I E S ---------------
 
-// ------ Operate command on all feeders 
-void executeCommand(eFeederCommands command, int8_t signedFeederNo=-1) {
-	uint8_t i;
-	uint8_t runTo;
-	if(signedFeederNo==-1) {
-		//operate on all feeders
-		i=0;
-		runTo=NUMBER_OF_FEEDERS;
-	} else {
-		//operate on specific feeder
-		i=(uint8_t)signedFeederNo;
-		runTo=i+1;
-	}
-	
-	for (uint8_t i=0;i<runTo;i++) {
+// ------ Operate command on all feeder
+void executeCommandOnAllFeeder(eFeederCommands command) {
+	for (uint8_t i=0;i<NUMBER_OF_FEEDERS;i++) {
 		switch(command) {
 			case cmdSetup:
 				feeders[i].setup();
 			break;
 			case cmdUpdate:
 				feeders[i].update();
-			break;
-			case cmdRetract:
-				feeders[i].gotoRetractPosition();
 			break;
 			case cmdActivateFeeder:
 				feeders[i].feederNo=i;
@@ -120,43 +100,35 @@ void updateADCvalues() {
 	}
 }
 
-void updateAutoSwitches() {
+void printCommonSettings() {
 	
-	//TODO. Maybe one day. Useful to turn on vacuum pump if vac-reservoir is low and turn off if high
-	
-/*	for(uint8_t i=0; i<NUMBER_OF_POWER_OUTPUT; i++) {
-		if(output_freigabe[NUMBER_OF_POWER_OUTPUT][i]) {
-			if( (commonSettings.autoswitch_thresholds[i][0] && commonSettings.autoswitch_thresholds[i][1]) == 0 ) {
-				//manual mode
-				
-			} else {
-				//automatic mode overrides manual mode thresholds set
-				if(below threslow -> on && !isOn) {
-					
-					} else if(over threshigh -> off && !isOff) {
-					
-				}
-			}
-		} else {
-			digitalWrite(,0);
-		}
-		
+	//ADC-scaling values
+	Serial.println("Analog Scaling Settings:");
+	for(uint8_t i=0; i<=7; i++) {
+		Serial.print("M");
+		Serial.print(GCODE_SET_SCALING);
+		Serial.print(" A");
+		Serial.print(i);
+		Serial.print(" S");
+		Serial.print(commonSettings.adc_scaling_values[i][0]);
+		Serial.print(" O");
+		Serial.print(commonSettings.adc_scaling_values[i][1]);
+		Serial.println();
 	}
-	*/
 }
 
 // ------------------  S E T U P -----------------------
 void setup() {
 	Serial.begin(SERIAL_BAUD);
 	while (!Serial);
-	Serial.println(F("Feeduino starting...")); Serial.flush();
+	Serial.println(F("Controller starting...")); Serial.flush();
 	
 	// setup listener to serial stream
 	setupGCodeProc();
 	
 	//initialize active feeders, this is giving them an valid ID
 	//needs to be done before factory reset to have a valid ID (eeprom-settings location is derived off the ID)
-	executeCommand(cmdActivateFeeder);
+	executeCommandOnAllFeeder(cmdActivateFeeder);
 	
 	//load commonSettings from eeprom
 	EEPROM.readBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);
@@ -166,28 +138,21 @@ void setup() {
 		Serial.println(F("First start/Config version changed"));
 		
 		//reset needed
-		executeCommand(cmdFactoryReset);
+		executeCommandOnAllFeeder(cmdFactoryReset);
 
 		//update commonSettings in EEPROM to have no factory reset on next start
 		EEPROM.writeBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings_default);
 	}
 	
-	//handles the servo controlling stuff
-	executeCommand(cmdSetup);
-
-	#if USE_SERVO_TO_SPOOL_COVER_TAPE == 1 
-		//attach servo to pin
-		Servo spoolServo;
-		spoolServo.attach(SPOOLSERVO_PIN,SPOOLSERVO_MIN_PULSEWIDTH,SPOOLSERVO_MAX_PULSEWIDTH);
-		spoolServo.write(SPOOLSERVO_SPEED_RATE);
-	#endif
+	//print all settings on UI
+	printCommonSettings();
 	
+	//handles the servo controlling stuff
+	executeCommandOnAllFeeder(cmdSetup);
+
 	//init adc-values
 	updateADCvalues();
 	lastTimeADCread=millis();
-	
-	//init autoswitches
-	updateAutoSwitches();
 	
 	//power output init
 	for(uint8_t i=0;i<NUMBER_OF_POWER_OUTPUT;i++) {
@@ -199,7 +164,7 @@ void setup() {
 	debouncedButton.attach(PIN_BUTTON);
 	debouncedButton.interval(5); // interval in ms*/
 	
-	Serial.println(F("Feeduino up and ready! Have fun."));
+	Serial.println(F("Controller up and ready! Have fun."));
 }
 
 
@@ -208,21 +173,19 @@ void setup() {
 
 void loop() {
 
-	debouncedButton.update();
+	//debouncedButton.update();
 	
 	// Process incoming serial data and perform callbacks
 	listenToSerialStream();
 	
 	// Process servo control
-	executeCommand(cmdUpdate);
+	executeCommandOnAllFeeder(cmdUpdate);
 	
 	// Process ADC inputs
 	if (millis() - lastTimeADCread >= ADC_READ_EVERY_MS) {
 		lastTimeADCread=millis();
 		
 		updateADCvalues();
-		
-		updateAutoSwitches();
 	}
 	
 	

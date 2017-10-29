@@ -4,7 +4,11 @@
 #include <EEPROMex.h>
 
 void FeederClass::outputCurrentSettings() {
-	Serial.print("A");
+	Serial.print("M");
+	Serial.print(GCODE_UPDATE_FEEDER_CONFIG);
+	Serial.print(" N");
+	Serial.print(this->feederNo);
+	Serial.print(" A");
 	Serial.print(this->feederSettings.full_advanced_angle);
 	Serial.print(" B");
 	Serial.print(this->feederSettings.half_advanced_angle);
@@ -26,13 +30,6 @@ void FeederClass::setup() {
 	//load settings from eeprom
 	this->loadFeederSettings();
 	
-	#ifdef DEBUG
-		Serial.print(F("Loaded settings for feederNo "));
-		Serial.print(this->feederNo);
-		Serial.print(F(" following"));
-		this->outputCurrentSettings();
-	#endif
-	
 	//attach servo to pin
 	this->servo.attach(feederPinMap[feederNo],this->feederSettings.motor_min_pulsewidth,this->feederSettings.motor_max_pulsewidth);
 
@@ -49,16 +46,34 @@ sFeederSettings FeederClass::getSettings() {
 }
 void FeederClass::setSettings(sFeederSettings UpdatedFeederSettings) {
 	this->feederSettings=UpdatedFeederSettings;
+	
+	
+	#ifdef DEBUG
+		Serial.println(F("updated feeder settings"));
+		this->outputCurrentSettings();
+	#endif
 }
 
 
 void FeederClass::loadFeederSettings() {
 	uint16_t adressOfFeederSettingsInEEPROM = EEPROM_FEEDER_SETTINGS_ADDRESS_OFFSET + this->feederNo * sizeof(this->feederSettings);
 	EEPROM.readBlock(adressOfFeederSettingsInEEPROM, this->feederSettings);
+	
+	#ifdef DEBUG
+		Serial.println(F("loaded settings from eeprom:"));
+		this->outputCurrentSettings();
+	#endif
+	
 }
 void FeederClass::saveFeederSettings() {
 	uint16_t adressOfFeederSettingsInEEPROM = EEPROM_FEEDER_SETTINGS_ADDRESS_OFFSET + this->feederNo * sizeof(this->feederSettings);
 	EEPROM.writeBlock(adressOfFeederSettingsInEEPROM, this->feederSettings);
+	
+	
+	#ifdef DEBUG
+		Serial.println(F("stored settings to eeprom:"));
+		this->outputCurrentSettings();
+	#endif
 }
 
 void FeederClass::factoryReset() {

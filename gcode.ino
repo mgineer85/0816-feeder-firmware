@@ -78,9 +78,8 @@ void processCommand() {
 	int cmd = parseParameter('M',-1);
 	
 	#ifdef DEBUG
-		Serial.print("Determined CMD ");
-		Serial.print(cmd);
-		Serial.println("");
+		Serial.print("command found: M");
+		Serial.println(cmd);
 	#endif
 	
 
@@ -142,26 +141,6 @@ void processCommand() {
 			break;
 		}
 
-		
-		case GCODE_RETRACT: {
-			int8_t signedFeederNo = (int)parseParameter('N',-1);
-			
-			//check for presence of FeederNo
-			if(signedFeederNo==-1) {
-				//retract all
-				executeCommand(cmdRetract);
-			} else if(validFeederNo(signedFeederNo)) {
-				//retract specified feeder
-				feeders[(uint8_t)signedFeederNo].gotoRetractPosition();
-			}
-
-			//answer to host
-			sendAnswer(0,F("retracted."));
-			
-			break;
-		}
-
-		
 		case GCODE_UPDATE_FEEDER_CONFIG: {
 			int8_t signedFeederNo = (int)parseParameter('N',-1);
 			

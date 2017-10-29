@@ -80,9 +80,9 @@ const static uint8_t feederPinMap[NUMBER_OF_FEEDERS] = {
 	fully retracted is about ~10°
 	
 */
-#define FEEDER_DEFAULT_RETRACT_ANGLE  10				      // [°]  usually 80, might be adjusted to servo or feeder
-#define FEEDER_DEFAULT_FULL_ADVANCED_ANGLE  85				      // [°]  usually about 90.
+#define FEEDER_DEFAULT_FULL_ADVANCED_ANGLE  90				      // [°]  usually about 90.
 #define FEEDER_DEFAULT_HALF_ADVANCED_ANGLE  40              // [°]  usually about 40-60.
+#define FEEDER_DEFAULT_RETRACT_ANGLE  20				      // [°]  usually 80, might be adjusted to servo or feeder
 #define FEEDER_DEFAULT_FEED_LENGTH FEEDER_PITCH			// [mm] distance to be fed if no feedlength was given
 #define FEEDER_DEFAULT_TIME_TO_SETTLE  240			  // [ms] time the servo needs to travel from FEEDER_DEFAULT_FULL_ADVANCED_ANGLE to FEEDER_DEFAULT_RETRACT_ANGLE
 /*
@@ -117,88 +117,90 @@ const static uint8_t feederPinMap[NUMBER_OF_FEEDERS] = {
 
 /* ------------ M-CODE: UPDATE FEEDER CONFIG -----------
 *
-* To tweak feeder parameters for improve accuracy, etc.
+* Tweak feeder parameters for specific servo, to improve accuracy, etc.
 *
 * Parameters:
-* N Number of Feeder: 0...11
-* A
-* B
-* C
-* F
-* U
-* V
-* W
+* N Number of Feeder: 0...(NUMBER_OF_FEEDERS-1)
+* A advanced angle, defaults to FEEDER_DEFAULT_FULL_ADVANCED_ANGLE
+* B half advanced angle, defaults to FEEDER_DEFAULT_HALF_ADVANCED_ANGLE
+* C retract angle, defaults to FEEDER_DEFAULT_RETRACT_ANGLE
+* F standard feed length, defaults to FEEDER_DEFAULT_FEED_LENGTH, which is FEED_PITCH, which is 4mm usually
+* U settle time to go from advanced angle to retract angle and reverse, defaults to FEEDER_DEFAULT_TIME_TO_SETTLE. make sure the servo is fast enough to reach the angles within given settle time
+* V pulsewidth at which servo is at about 0°, defaults to FEEDER_DEFAULT_MOTOR_MIN_PULSEWIDTH
+* W pulsewidth at which servo is at about 180°, defaults to FEEDER_DEFAULT_MOTOR_MAX_PULSEWIDTH
 *
-* Example:
+* Example for feeder 18:
+* > M700 N18 A90 B40 C20 F4 U240 V544 W2400
+* 
 *
 */
 #define GCODE_UPDATE_FEEDER_CONFIG	700
 
-
-
-/* ------------ M-CODE: RETRACT -----------
-*
-* Set feeder to retracted position
-*
-* Parameters:
-* N Number of Feeder, optional: 0...11
-*
-*/
-#define GCODE_RETRACT 701
-
-
 /* ------------ M-CODE: FACTORY RESET -----------
 *
 * Clear EEPROM and use DEFAULT values for feeder config
-*
+* TODO
 */
 #define GCODE_FACTORY_RESET 799
-
-
-/* -----------------------------------------------------------------
-*  COVER TAPE LEAD AWAY
-*
-* 360° servo-motor to lead away cover tape
-* 
-* If using a continuous servo motor to lead away the cover tape, it can be configured here.
-* That motor needs to be switched on/off via microswitch in every feeder, but a common signal can be generated
-* at the expense of one feeder less to be controlled via arduino.
-*  ----------------------------------------------------------------- */
-#define USE_SERVO_TO_SPOOL_COVER_TAPE     1
-#if USE_SERVO_TO_SPOOL_COVER_TAPE == 1
-	#define SPOOLSERVO_PIN                     12
-	#define SPOOLSERVO_MIN_PULSEWIDTH          544
-	#define SPOOLSERVO_MAX_PULSEWIDTH          2400
-	#define SPOOLSERVO_SPEED_RATE              88    //[°]
-#endif
-
-
 
 /* ----------------
   Analog Reading Config
 */
 
+#define ADC_READ_EVERY_MS 20
+
 #define GCODE_GET_ADC_RAW 143
 #define GCODE_GET_ADC_SCALED 144
+
+/* ------------ M-CODE: SET SCALING -----------
+*
+* Read out scaled values from ADC instead raw values
+*
+* Parameters:
+* A analog input (0...7)
+* S scaling factor, multiplied with raw value read from adc
+* O offset, added to raw value read from adc
+*
+* Example commands:
+* > M145 A3 S1.00 O0.00 -> Set scaling to 1 offset to 0 for A3 (that is no scaling active)
+* > M145 A0 S0.1277 O-120.23 -> Set scaling to 0.1277 offset to -120.23 for A0 (scale example for NXP vacuum sensors)
+*/
 #define GCODE_SET_SCALING 145
 
-#define ADC_READ_EVERY_MS 20	
 
+
+// Scaling Factors for output of GCODE_GET_ADC_SCALED
+#define ANALOG_A0_SCALING_FACTOR 0.1277			//preset for NXP vacuum sensor, formula pressure [kPa]=(ADCval/1023-0.92)/0.007652
+#define ANALOG_A0_OFFSET -120.23
+#define ANALOG_A1_SCALING_FACTOR 0.1277			//preset for NXP vacuum sensor, formula pressure [kPa]=(ADCval/1023-0.92)/0.007652
+#define ANALOG_A1_OFFSET -120.23
+#define ANALOG_A2_SCALING_FACTOR 0.1277			//preset for NXP vacuum sensor, formula pressure [kPa]=(ADCval/1023-0.92)/0.007652
+#define ANALOG_A2_OFFSET -120.23
+#define ANALOG_A3_SCALING_FACTOR 1
+#define ANALOG_A3_OFFSET 0
+#define ANALOG_A4_SCALING_FACTOR 1
+#define ANALOG_A4_OFFSET 0
+#define ANALOG_A5_SCALING_FACTOR 1
+#define ANALOG_A5_OFFSET 0
+#define ANALOG_A6_SCALING_FACTOR 1
+#define ANALOG_A6_OFFSET 0
+#define ANALOG_A7_SCALING_FACTOR 1
+#define ANALOG_A7_OFFSET 0
 
 /* ----------------
   Switches Config
+  
+  EXAMPLE:
+  
+  turn on output on pin D0
+  > M155 D0 S1;
+
+  turn off output on pin D2
+  > M155 D2 S0;
 */
 
 #define GCODE_SET_POWER_OUTPUT 155
 
-/*
-turn on Output 1 (D0)
-> M155 D0 S1;
-
-turn off Output 3 (D2)
-> M155 D2 S0;
-
-*/
 
 
 #define NUMBER_OF_POWER_OUTPUT 4
