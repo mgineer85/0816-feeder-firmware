@@ -22,6 +22,8 @@ void FeederClass::outputCurrentSettings() {
 	Serial.print(this->feederSettings.motor_min_pulsewidth);
 	Serial.print(" W");
 	Serial.print(this->feederSettings.motor_max_pulsewidth);
+	Serial.print(" X");
+	Serial.print(this->feederSettings.ignore_feedback);
 	Serial.println();
 }
 
@@ -30,8 +32,14 @@ void FeederClass::setup() {
 	//load settings from eeprom
 	this->loadFeederSettings();
 	
+	//feedback input
+	//microswitch is active low (NO connected to feedback-pin)
+	if(feederFeedbackPinMap[this->feederNo]!=-1) {
+		pinMode((uint8_t)feederFeedbackPinMap[this->feederNo],INPUT_PULLUP);
+	}
+	
 	//attach servo to pin
-	this->servo.attach(feederPinMap[feederNo],this->feederSettings.motor_min_pulsewidth,this->feederSettings.motor_max_pulsewidth);
+	this->servo.attach(feederPinMap[this->feederNo],this->feederSettings.motor_min_pulsewidth,this->feederSettings.motor_max_pulsewidth);
 
 	//put on defined position
 	this->gotoFullAdvancedPosition();
@@ -106,13 +114,21 @@ void FeederClass::gotoFullAdvancedPosition() {
 
 void FeederClass::advance(uint8_t feedLength) {
 	
+	//check whether feeder is OK first
+	if(!this->feederIsOk()) {
+		Serial.print(F("error "));
+		Serial.println(F("feeder not OK (not activated, no tape or tension of cover tape not OK)"));
+		return;
+	}
+	
+	
 	//check, what to do? if not, return quickly
 	if(feedLength==0 && this->remainingFeedLength==0) {
 		//nothing to do, just return
 		return;
 	} else if (feedLength>0 && this->remainingFeedLength>0) {
-		//last advancing not completed! ignoring newly received command->return error
-		//TODO.
+		//last advancing not completed! ignore newly received command
+		//TODO: one could use a queue
 		return;
 	} else {
 		//OK, start new advance-proc
@@ -120,6 +136,23 @@ void FeederClass::advance(uint8_t feedLength) {
 		this->remainingFeedLength=feedLength;
 	}
 
+}
+
+
+uint8_t FeederClass::feederIsOk() {
+	if(this->feederSettings.ignore_feedback==1 || feederFeedbackPinMap[this->feederNo]==-1) {
+		//no feedback pin defined or feedback shall be ignored
+		return 1;
+	} else {
+		if( digitalRead((uint8_t)feederFeedbackPinMap[this->feederNo]) == LOW ) {
+			//the microswitch pulls feedback-pin LOW if tension of cover tape is OK. motor to pull tape is off then
+			return 1;
+		} else {
+			//microswitch is open, this is considered as an error
+			return 0;
+		}
+	}
+	
 }
 
 void FeederClass::update() {

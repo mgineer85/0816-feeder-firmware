@@ -11,6 +11,7 @@ struct sFeederSettings {
 	int time_to_settle;
 	int motor_min_pulsewidth;
 	int motor_max_pulsewidth;
+	uint8_t ignore_feedback;
 	//sFeederState lastFeederState;       //save last position to stay there on poweron? needs something not to wear out the eeprom. until now just go to retract pos.
 };
 

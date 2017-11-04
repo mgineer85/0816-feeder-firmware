@@ -30,8 +30,8 @@
 
 // ------------------  V A R  S E T U P -----------------------
 
-// ------ Feeders
-FeederClass feeders[NUMBER_OF_FEEDERS];
+// ------ Feeder
+FeederClass feeders[NUMBER_OF_FEEDER];
 
 // ------ DEBOUNCE test button
 //Bounce debouncedButton = Bounce();
@@ -42,15 +42,17 @@ struct sCommonSettings {
 	//add further settings here
 	
 	char version[4];   // This is for detection if settings suit to struct, if not, eeprom is reset to defaults
+	
 	float adc_scaling_values[8][2];
-	};
+};
 sCommonSettings commonSettings_default = {
 
 	//add further settings here
 	
 	CONFIG_VERSION,
+	
 	{
-		{ANALOG_A0_SCALING_FACTOR,ANALOG_A0_OFFSET},			//pressure [kPa]=(ADCval/1023-0.92)/0.007652
+		{ANALOG_A0_SCALING_FACTOR,ANALOG_A0_OFFSET},
 		{ANALOG_A1_SCALING_FACTOR,ANALOG_A1_OFFSET},
 		{ANALOG_A2_SCALING_FACTOR,ANALOG_A2_OFFSET},
 		{ANALOG_A3_SCALING_FACTOR,ANALOG_A3_OFFSET},
@@ -71,7 +73,7 @@ float adcScaledValues[8];
 
 // ------ Operate command on all feeder
 void executeCommandOnAllFeeder(eFeederCommands command) {
-	for (uint8_t i=0;i<NUMBER_OF_FEEDERS;i++) {
+	for (uint8_t i=0;i<NUMBER_OF_FEEDER;i++) {
 		switch(command) {
 			case cmdSetup:
 				feeders[i].setup();

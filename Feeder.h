@@ -43,6 +43,7 @@ class FeederClass {
 		FEEDER_DEFAULT_TIME_TO_SETTLE,
 		FEEDER_DEFAULT_MOTOR_MIN_PULSEWIDTH,
 		FEEDER_DEFAULT_MOTOR_MAX_PULSEWITH,
+		FEEDER_DEFAULT_IGNORE_FEEDBACK,
 		//sAT_UNKNOWN,
 	};
 
@@ -61,6 +62,8 @@ class FeederClass {
 	void gotoHalfAdvancedPosition();
 	void gotoFullAdvancedPosition();
 	void advance(uint8_t feedLength);
+	
+	uint8_t feederIsOk();
 	
 	void update();
 };

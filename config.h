@@ -9,14 +9,11 @@
 // prints some extra information via serial
 #define DEBUG
 
-// might use a button for debugging -> TODO remove this or make at least configureable
-#define PIN_BUTTON 13
-
 /*
 *  EEPROM-Settings
 */
 //change to something other unique if structure of data to be saved in eeprom changed (max 3 chars)
-#define CONFIG_VERSION "aaa"
+#define CONFIG_VERSION "aab"
 
 //2 blocks to store data, do not change
 #define EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET 4
@@ -34,14 +31,14 @@
 /* -----------------------------------------------------------------
 *  FEEDER CONFIG
 *  ----------------------------------------------------------------- */
-#define NUMBER_OF_FEEDERS 24				// max 12, if 360° servo is used, max 11 feeder.
-const static uint8_t feederPinMap[NUMBER_OF_FEEDERS] = {
+#define NUMBER_OF_FEEDER 24
+const static uint8_t feederPinMap[NUMBER_OF_FEEDER] = {
 	2,    // Feeder 1
 	3,    // Feeder 2
 	4,		//...
 	5,
 	6,
-	7,
+	53,
 	
 	8,	// Feeder 7
 	9,
@@ -63,6 +60,38 @@ const static uint8_t feederPinMap[NUMBER_OF_FEEDERS] = {
 	40,
 	42,
 	44,
+};
+
+const static int8_t feederFeedbackPinMap[NUMBER_OF_FEEDER] = {
+	//use -1 to disable feedback pin for specific feeder. otherwise set input pin
+	-1,    // Feeder 1
+	-1,    // Feeder 2
+	-1,		//...
+	-1,
+	-1,
+	 7,
+	
+	-1,    // Feeder 7
+	-1,
+	-1,
+	-1,
+	-1,
+	-1,
+	
+	-1,    // Feeder 13
+	-1,
+	-1,
+	-1,
+	-1,
+	-1,
+	
+	-1,    // Feeder 19
+	-1,
+	-1,
+	-1,
+	-1,
+	-1,
+	
 };
 
 #define FEEDER_PITCH  4                   // [mm]  default: 4 mm. given by mechanical design.
@@ -93,7 +122,8 @@ const static uint8_t feederPinMap[NUMBER_OF_FEEDERS] = {
 */
 #define FEEDER_DEFAULT_MOTOR_MIN_PULSEWIDTH 544		// [µs] see motor specs or experiment at bit. Value set here should bring the servo to 0°
 #define FEEDER_DEFAULT_MOTOR_MAX_PULSEWITH 2400		// [µs] see motor specs or experiment at bit. Value set here should bring the servo to 180°
-
+#define FEEDER_DEFAULT_IGNORE_FEEDBACK 0			// 0: before feeding the feedback-signal is checked. if signal is as expected, the feeder advances tape and returns OK to host. otherwise an error is thrown.
+													// 1: the feedback-signal is not checked, feeder advances tape and returns OK always
 
 /* -----------------------------------------------------------------
 *  M-CODES
@@ -128,13 +158,25 @@ const static uint8_t feederPinMap[NUMBER_OF_FEEDERS] = {
 * U settle time to go from advanced angle to retract angle and reverse, defaults to FEEDER_DEFAULT_TIME_TO_SETTLE. make sure the servo is fast enough to reach the angles within given settle time
 * V pulsewidth at which servo is at about 0°, defaults to FEEDER_DEFAULT_MOTOR_MIN_PULSEWIDTH
 * W pulsewidth at which servo is at about 180°, defaults to FEEDER_DEFAULT_MOTOR_MAX_PULSEWIDTH
+* X ignore feedback pin, defaults to FEEDER_DEFAULT_IGNORE_FEEDBACK
 *
 * Example for feeder 18:
-* > M700 N18 A90 B40 C20 F4 U240 V544 W2400
+* > M700 N18 A90 B40 C20 F4 U240 V544 W2400 X0
 * 
 *
 */
 #define GCODE_UPDATE_FEEDER_CONFIG	700
+
+
+/* ------------ M-CODE: CHECK FEEDER -----------
+*
+* Command issued to check status of feeder
+*
+* Example commands:
+* M710 N3
+*/
+#define GCODE_FEEDER_IS_OK 710
+
 
 /* ------------ M-CODE: FACTORY RESET -----------
 *

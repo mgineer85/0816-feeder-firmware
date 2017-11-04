@@ -62,9 +62,11 @@ void sendAnswer(uint8_t error, String message) {
 }
 
 boolean validFeederNo(int8_t signedFeederNo) {
-	if(signedFeederNo<0 || signedFeederNo>(NUMBER_OF_FEEDERS-1)) {
+	if(signedFeederNo<0 || signedFeederNo>(NUMBER_OF_FEEDER-1)) {
+		//error, not valid
 		return false;
 	} else {
+		//perfectly fine
 		return true;
 	}
 }
@@ -140,6 +142,28 @@ void processCommand() {
 			
 			break;
 		}
+		
+		case GCODE_FEEDER_IS_OK: {
+			int8_t signedFeederNo = (int)parseParameter('N',-1);
+			
+			//check for presence of FeederNo
+			if(signedFeederNo==-1) {
+				sendAnswer(1,F("feederNo missing for command"));
+				break;
+			} else if(!validFeederNo(signedFeederNo)) {
+				sendAnswer(1,F("invalid feeder selected"));
+				break;
+			}
+			
+			if(feeders[(uint8_t)signedFeederNo].feederIsOk()) {
+				sendAnswer(0,F("feeder OK"));
+			} else {
+				//return answer as ("OK"), cause it's a status request
+				sendAnswer(0,F("feeder is on ERROR state"));
+			}
+			
+			break;
+		}
 
 		case GCODE_UPDATE_FEEDER_CONFIG: {
 			int8_t signedFeederNo = (int)parseParameter('N',-1);
@@ -148,7 +172,7 @@ void processCommand() {
 			if(signedFeederNo==-1) {
 				sendAnswer(1,F("feederNo missing for command"));
 				break;
-				} else if(!validFeederNo(signedFeederNo)) {
+			} else if(!validFeederNo(signedFeederNo)) {
 				sendAnswer(1,F("invalid feeder selected"));
 				break;
 			}
@@ -163,6 +187,7 @@ void processCommand() {
 			updatedFeederSettings.time_to_settle=parseParameter('U',oldFeederSettings.time_to_settle);
 			updatedFeederSettings.motor_min_pulsewidth=parseParameter('V',oldFeederSettings.motor_min_pulsewidth);
 			updatedFeederSettings.motor_max_pulsewidth=parseParameter('W',oldFeederSettings.motor_max_pulsewidth);
+			updatedFeederSettings.ignore_feedback=parseParameter('X',oldFeederSettings.ignore_feedback);
 			
 			//set to feeder
 			feeders[(uint8_t)signedFeederNo].setSettings(updatedFeederSettings);
