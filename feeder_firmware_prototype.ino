@@ -24,7 +24,6 @@
 
 // ------------------  I N C  L I B R A R I E S ---------------
 #include <HardwareSerial.h>
-#include <Bounce2.h>
 #include <EEPROMex.h>
 #include "Feeder.h"
 
@@ -113,7 +112,7 @@ void printCommonSettings() {
 	Serial.println("Analog Scaling Settings:");
 	for(uint8_t i=0; i<=7; i++) {
 		Serial.print("M");
-		Serial.print(GCODE_SET_SCALING);
+		Serial.print(MCODE_SET_SCALING);
 		Serial.print(" A");
 		Serial.print(i);
 		Serial.print(" S");

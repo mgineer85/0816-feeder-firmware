@@ -79,7 +79,6 @@
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
     <ListValues>
-      <Value>C:/Users/buero/Documents/Arduino/libraries/Bounce2</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/EEPROMEx</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/Servo/src</Value>
       <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/xmu4sem3.w5h/Micro Platforms/visualmicro/ide-atmel/libraries</Value>
@@ -114,7 +113,6 @@
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>
     <ListValues>
-      <Value>C:/Users/buero/Documents/Arduino/libraries/Bounce2</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/EEPROMEx</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/Servo/src</Value>
       <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/xmu4sem3.w5h/Micro Platforms/visualmicro/ide-atmel/libraries</Value>
@@ -436,7 +434,6 @@ build.arch=AVR
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
     <ListValues>
-      <Value>C:/Users/buero/Documents/Arduino/libraries/Bounce2</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/EEPROMEx</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/Servo/src</Value>
       <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/xmu4sem3.w5h/Micro Platforms/visualmicro/ide-atmel/libraries</Value>
@@ -471,7 +468,6 @@ build.arch=AVR
   </avrgcccpp.compiler.symbols.DefSymbols>
   <avrgcccpp.compiler.directories.IncludePaths>
     <ListValues>
-      <Value>C:/Users/buero/Documents/Arduino/libraries/Bounce2</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/EEPROMEx</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries/Servo/src</Value>
       <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/xmu4sem3.w5h/Micro Platforms/visualmicro/ide-atmel/libraries</Value>

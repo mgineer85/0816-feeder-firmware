@@ -1,5 +1,11 @@
 #include "globals.h"
 
+
+
+
+
+
+
 String inputBuffer = "";         // Buffer for incoming G-Code lines
 
 
@@ -27,7 +33,7 @@ float parseParameter(char code,float defaultVal) {
 }
 
 void setupGCodeProc() {
-	inputBuffer.reserve(MAX_BUFFFER_GCODE_LINE);
+	inputBuffer.reserve(MAX_BUFFFER_MCODE_LINE);
 }
 
 
@@ -90,7 +96,7 @@ void processCommand() {
 		/*
 			FEEDER-CODES
 		*/
-		case GCODE_ADVANCE: {
+		case MCODE_ADVANCE: {
 			//1st to check: are feeder enabled?
 			if(feederEnabled!=1) {
 				sendAnswer(1,F("Enable feeder first!"));
@@ -113,15 +119,15 @@ void processCommand() {
 			
 			//determine feedLength
 			uint8_t feedLength;
-			if(cmd == GCODE_ADVANCE) {
+			if(cmd == MCODE_ADVANCE) {
 				//base-command. two options for feedLength here:
 				//F parameter omitted: use configured feed_length
 				//F parameter given: go for given feedlength F
-				//get feedLength if given, otherwise go for default configured feed_length in case of base-command GCODE_ADVANCE
+				//get feedLength if given, otherwise go for default configured feed_length in case of base-command MCODE_ADVANCE
 				feedLength = (uint8_t)parseParameter('F',feeders[(uint8_t)signedFeederNo].feederSettings.feed_length);
 			} else {
 				//do the mapping of several m-codes to feedLengths'
-				feedLength = cmd-GCODE_ADVANCE;
+				feedLength = cmd-MCODE_ADVANCE;
 			}
 			
 			if ( ((feedLength%2) != 0) || feedLength>12 ) {
@@ -144,7 +150,7 @@ void processCommand() {
 			break;
 		}
 		
-		case GCODE_FEEDER_IS_OK: {
+		case MCODE_FEEDER_IS_OK: {
 			int8_t signedFeederNo = (int)parseParameter('N',-1);
 			
 			//check for presence of FeederNo
@@ -166,7 +172,7 @@ void processCommand() {
 			break;
 		}
 
-		case GCODE_UPDATE_FEEDER_CONFIG: {
+		case MCODE_UPDATE_FEEDER_CONFIG: {
 			int8_t signedFeederNo = (int)parseParameter('N',-1);
 			
 			//check for presence of FeederNo
@@ -205,7 +211,7 @@ void processCommand() {
 		/*
 		CODES to Control ADC
 		*/
-		case GCODE_GET_ADC_RAW: {
+		case MCODE_GET_ADC_RAW: {
 			//answer to host
 			int8_t channel=parseParameter('A',-1);
 			if( channel>=0 && channel<8 ) {
@@ -221,7 +227,7 @@ void processCommand() {
 			
 			break;
 		}
-		case GCODE_GET_ADC_SCALED: {
+		case MCODE_GET_ADC_SCALED: {
 			//answer to host
 			int8_t channel=parseParameter('A',-1);
 			if( channel>=0 && channel<8 ) {
@@ -237,7 +243,7 @@ void processCommand() {
 			
 			break;
 		}
-		case GCODE_SET_SCALING: {
+		case MCODE_SET_SCALING: {
 			
 			int8_t channel=parseParameter('A',-1);
 			
@@ -257,7 +263,7 @@ void processCommand() {
 			break;
 		}
 		
-		case GCODE_SET_FEEDER_ENABLE: {
+		case MCODE_SET_FEEDER_ENABLE: {
 			
 			int8_t _feederEnabled=parseParameter('S',-1);
 			if( (_feederEnabled==0 || _feederEnabled==1) ) {
@@ -276,7 +282,7 @@ void processCommand() {
 			
 			break;
 		}
-		case GCODE_SET_POWER_OUTPUT: {
+		case MCODE_SET_POWER_OUTPUT: {
 			//answer to host
 			int8_t powerPin=parseParameter('D',-1);
 			int8_t powerState=parseParameter('S',-1);
@@ -291,7 +297,7 @@ void processCommand() {
 			break;
 		}
 		
-		case GCODE_FACTORY_RESET: {
+		case MCODE_FACTORY_RESET: {
 			commonSettings.version[0]=commonSettings.version[0]+1;
 			
 			EEPROM.writeBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);

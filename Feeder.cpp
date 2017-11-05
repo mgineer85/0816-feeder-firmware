@@ -5,7 +5,7 @@
 
 void FeederClass::outputCurrentSettings() {
 	Serial.print("M");
-	Serial.print(GCODE_UPDATE_FEEDER_CONFIG);
+	Serial.print(MCODE_UPDATE_FEEDER_CONFIG);
 	Serial.print(" N");
 	Serial.print(this->feederNo);
 	Serial.print(" A");
@@ -198,16 +198,16 @@ void FeederClass::update() {
 			/* ------------------------------------- RETRACT POS ---------------------- */
 			case sAT_RETRACT_POSITION: {
 
-				if(this->remainingFeedLength>=FEEDER_PITCH) {
+				if(this->remainingFeedLength>=FEEDER_MECHANICAL_ADVANCE_LENGTH) {
 					//goto full advance-pos
 					this->gotoFullAdvancedPosition();
 					this->feederState=sAT_FULL_ADVANCED_POSITION;
-					this->remainingFeedLength-=FEEDER_PITCH;
-				} else if(this->remainingFeedLength>=FEEDER_PITCH/2) {
+					this->remainingFeedLength-=FEEDER_MECHANICAL_ADVANCE_LENGTH;
+				} else if(this->remainingFeedLength>=FEEDER_MECHANICAL_ADVANCE_LENGTH/2) {
 					//goto half advance-pos
 					this->gotoHalfAdvancedPosition();
 					this->feederState=sAT_HALF_ADVANCED_POSITION;
-					this->remainingFeedLength-=FEEDER_PITCH/2;
+					this->remainingFeedLength-=FEEDER_MECHANICAL_ADVANCE_LENGTH/2;
 				}
 				
 			}
@@ -215,11 +215,11 @@ void FeederClass::update() {
 			
 			/* ------------------------------------- HALF-ADVANCED POS ---------------------- */
 			case sAT_HALF_ADVANCED_POSITION: {
-				if(this->remainingFeedLength>=FEEDER_PITCH/2) {
+				if(this->remainingFeedLength>=FEEDER_MECHANICAL_ADVANCE_LENGTH/2) {
 					//goto full advance-pos
 					this->gotoFullAdvancedPosition();
 					this->feederState=sAT_FULL_ADVANCED_POSITION;
-					this->remainingFeedLength-=FEEDER_PITCH/2;
+					this->remainingFeedLength-=FEEDER_MECHANICAL_ADVANCE_LENGTH/2;
 				}
 			}
 			break;
