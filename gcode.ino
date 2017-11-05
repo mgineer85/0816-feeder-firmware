@@ -90,13 +90,14 @@ void processCommand() {
 		/*
 			FEEDER-CODES
 		*/
-		case GCODE_ADVANCE:
-		case GCODE_ADVANCE+2:
-		case GCODE_ADVANCE+4:
-		case GCODE_ADVANCE+6:
-		case GCODE_ADVANCE+8:
-		case GCODE_ADVANCE+10:
-		case GCODE_ADVANCE+12: {
+		case GCODE_ADVANCE: {
+			//1st to check: are feeder enabled?
+			if(feederEnabled!=1) {
+				sendAnswer(1,F("Enable feeder first!"));
+				break;
+			}
+			
+			
 			int8_t signedFeederNo = (int)parseParameter('N',-1);
 			
 			//check for presence of FeederNo
@@ -256,7 +257,25 @@ void processCommand() {
 			break;
 		}
 		
-		
+		case GCODE_SET_FEEDER_ENABLE: {
+			
+			int8_t _feederEnabled=parseParameter('S',-1);
+			if( (_feederEnabled==0 || _feederEnabled==1) ) {
+				digitalWrite(FEEDER_ENABLE_PIN, (uint8_t)_feederEnabled);
+				feederEnabled=(uint8_t)_feederEnabled;
+				if((uint8_t)_feederEnabled==1)
+					sendAnswer(0,F("Feeder powered up"));
+				else
+					sendAnswer(0,F("Feeder powered down"));
+			} else if(_feederEnabled==-1) {
+				sendAnswer(0,("current powerState: ") + String(feederEnabled));
+			} else {
+				sendAnswer(1,F("Invalid parameters"));
+			}
+			
+			
+			break;
+		}
 		case GCODE_SET_POWER_OUTPUT: {
 			//answer to host
 			int8_t powerPin=parseParameter('D',-1);
@@ -267,24 +286,27 @@ void processCommand() {
 			} else {
 				sendAnswer(1,F("Invalid Parameters"));
 			}
+			
+			
 			break;
 		}
 		
-			
-		
-		case 100:  help();  break;
-		default:
-			sendAnswer(0,F("unknown or empty command ignored"));
-			
-			break;
-			
-		case GCODE_FACTORY_RESET:
+		case GCODE_FACTORY_RESET: {
 			commonSettings.version[0]=commonSettings.version[0]+1;
 			
 			EEPROM.writeBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);
 			
 			sendAnswer(0,F("EEPROM invalidated, defaults will be loaded on next restart. Please restart now."));
-		break;
+			
+			
+			break;
+		}
+		
+		default:
+			sendAnswer(0,F("unknown or empty command ignored"));
+			
+			break;
+			
 	}
 	
 }

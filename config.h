@@ -64,12 +64,12 @@ const static uint8_t feederPinMap[NUMBER_OF_FEEDER] = {
 
 const static int8_t feederFeedbackPinMap[NUMBER_OF_FEEDER] = {
 	//use -1 to disable feedback pin for specific feeder. otherwise set input pin
-	-1,    // Feeder 1
+	 7,    // Feeder 1
 	-1,    // Feeder 2
 	-1,		//...
 	-1,
 	-1,
-	 7,
+	-1,
 	
 	-1,    // Feeder 7
 	-1,
@@ -129,12 +129,26 @@ const static int8_t feederFeedbackPinMap[NUMBER_OF_FEEDER] = {
 *  M-CODES
 *  ----------------------------------------------------------------- */
 
+/* ------------ M-CODE: ENABLE FEEDER -----------
+*
+* Command issued before any feeder shall be used. Turns a mosfet wired to FEEDER_ENABLE_PIN on/off
+*
+* Parameters:
+* S On: 1, Off: 0
+*
+* Examples:
+* > M701 S1 -> enable feeder, power on
+* > M701 S0 -> disable feeder, power off
+*/
+#define GCODE_SET_FEEDER_ENABLE 701
+#define FEEDER_ENABLE_PIN A15
+
 /* ------------ M-CODE: ADVANCE -----------
 *
 * Command issued to advance tape by one feeder
 *
 * Parameters:
-* N Number of Feeder: 0...11
+* N Number of Feeder: 0...NUMBER_OF_FEEDER
 * F Feedlength, optional: If given, has to be a multiple of 2 mm
 *
 * Example commands:

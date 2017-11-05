@@ -32,6 +32,7 @@
 
 // ------ Feeder
 FeederClass feeders[NUMBER_OF_FEEDER];
+uint8_t feederEnabled=0;
 
 // ------ Settings-Struct (saved in EEPROM)
 struct sCommonSettings {
@@ -160,9 +161,14 @@ void setup() {
 	updateADCvalues();
 	lastTimeADCread=millis();
 	
+	//feeder enable output
+	pinMode(FEEDER_ENABLE_PIN,OUTPUT);
+	digitalWrite(FEEDER_ENABLE_PIN,LOW);
+	
 	//power output init
 	for(uint8_t i=0;i<NUMBER_OF_POWER_OUTPUT;i++) {
 		pinMode(pwrOutputPinMap[i],OUTPUT);
+		digitalWrite(pwrOutputPinMap[i],LOW);
 	}
 	
 	Serial.println(F("Controller up and ready! Have fun."));

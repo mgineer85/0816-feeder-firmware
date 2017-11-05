@@ -45,8 +45,8 @@ void FeederClass::setup() {
 	this->gotoFullAdvancedPosition();
 	this->feederState=sAT_FULL_ADVANCED_POSITION;
 
-	//wait settle time to not having all servos run at the same time if power-supply is not dimensioned adequate
-	delay(this->feederSettings.time_to_settle);
+	//wait a little time not having all servos run at the same time if power-supply is not dimensioned adequate
+	delay(50);	//50ms
 }
 
 FeederClass::sFeederSettings FeederClass::getSettings() {
@@ -120,6 +120,15 @@ void FeederClass::advance(uint8_t feedLength) {
 		Serial.println(F("feeder not OK (not activated, no tape or tension of cover tape not OK)"));
 		return;
 	}
+	
+	
+	#ifdef DEBUG
+		if(this->feederIsOk()) {
+			Serial.println(F("feederIsOk = 1 (no error)"));
+		} else {
+			Serial.println(F("feederIsOk = 0 (error)"));
+		}
+	#endif
 	
 	
 	//check, what to do? if not, return quickly
