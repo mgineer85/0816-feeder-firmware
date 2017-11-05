@@ -180,8 +180,8 @@ const static int8_t feederFeedbackPinMap[NUMBER_OF_FEEDER] = {
 
 /* ------------ M-CODE: FACTORY RESET -----------
 *
-* Clear EEPROM and use DEFAULT values for feeder config
-* TODO
+* Invalidate EEPROM and restore default settings given from config.h
+*
 */
 #define GCODE_FACTORY_RESET 799
 

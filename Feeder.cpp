@@ -49,7 +49,7 @@ void FeederClass::setup() {
 	delay(this->feederSettings.time_to_settle);
 }
 
-sFeederSettings FeederClass::getSettings() {
+FeederClass::sFeederSettings FeederClass::getSettings() {
 	return this->feederSettings;
 }
 void FeederClass::setSettings(sFeederSettings UpdatedFeederSettings) {

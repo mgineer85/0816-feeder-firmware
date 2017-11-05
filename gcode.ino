@@ -178,8 +178,8 @@ void processCommand() {
 			}
 			
 			//merge given parameters to old settings
-			sFeederSettings oldFeederSettings=feeders[(uint8_t)signedFeederNo].getSettings();
-			sFeederSettings updatedFeederSettings;
+			FeederClass::sFeederSettings oldFeederSettings=feeders[(uint8_t)signedFeederNo].getSettings();
+			FeederClass::sFeederSettings updatedFeederSettings;
 			updatedFeederSettings.full_advanced_angle=parseParameter('A',oldFeederSettings.full_advanced_angle);
 			updatedFeederSettings.half_advanced_angle=parseParameter('B',oldFeederSettings.half_advanced_angle);
 			updatedFeederSettings.retract_angle=parseParameter('C',oldFeederSettings.retract_angle);
@@ -245,7 +245,9 @@ void processCommand() {
 				commonSettings.adc_scaling_values[(uint8_t)channel][0]=parseParameter('S',commonSettings.adc_scaling_values[(uint8_t)channel][0]);
 				commonSettings.adc_scaling_values[(uint8_t)channel][1]=parseParameter('O',commonSettings.adc_scaling_values[(uint8_t)channel][1]);
 				
-				sendAnswer(0,(F("scaling set")));
+				EEPROM.writeBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);
+				
+				sendAnswer(0,(F("scaling set and stored to eeprom")));
 			} else {
 				sendAnswer(1,F("invalid adc channel (0...7)"));
 			}
@@ -275,6 +277,14 @@ void processCommand() {
 			sendAnswer(0,F("unknown or empty command ignored"));
 			
 			break;
+			
+		case GCODE_FACTORY_RESET:
+			commonSettings.version[0]=commonSettings.version[0]+1;
+			
+			EEPROM.writeBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);
+			
+			sendAnswer(0,F("EEPROM invalidated, defaults will be loaded on next restart. Please restart now."));
+		break;
 	}
 	
 }

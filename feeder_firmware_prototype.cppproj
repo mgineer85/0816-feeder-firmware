@@ -1095,9 +1095,6 @@ build.arch=AVR
     <Compile Include="Feeder.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="globals.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="__vm\.feeder_firmware_prototype.vsarduino.h">
       <SubType>compile</SubType>
     </Compile>

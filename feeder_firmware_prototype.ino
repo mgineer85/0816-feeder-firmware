@@ -33,9 +33,6 @@
 // ------ Feeder
 FeederClass feeders[NUMBER_OF_FEEDER];
 
-// ------ DEBOUNCE test button
-//Bounce debouncedButton = Bounce();
-
 // ------ Settings-Struct (saved in EEPROM)
 struct sCommonSettings {
 
@@ -72,6 +69,13 @@ float adcScaledValues[8];
 // ------------------  U T I L I T I E S ---------------
 
 // ------ Operate command on all feeder
+enum eFeederCommands {
+	cmdSetup,
+	cmdUpdate,
+	cmdInitializeFeederWithId,
+	cmdFactoryReset,
+};
+void executeCommandOnAllFeeder(eFeederCommands command);
 void executeCommandOnAllFeeder(eFeederCommands command) {
 	for (uint8_t i=0;i<NUMBER_OF_FEEDER;i++) {
 		switch(command) {
@@ -81,7 +85,7 @@ void executeCommandOnAllFeeder(eFeederCommands command) {
 			case cmdUpdate:
 				feeders[i].update();
 			break;
-			case cmdActivateFeeder:
+			case cmdInitializeFeederWithId:
 				feeders[i].feederNo=i;
 			break;
 			case cmdFactoryReset:
@@ -130,7 +134,7 @@ void setup() {
 	
 	//initialize active feeders, this is giving them an valid ID
 	//needs to be done before factory reset to have a valid ID (eeprom-settings location is derived off the ID)
-	executeCommandOnAllFeeder(cmdActivateFeeder);
+	executeCommandOnAllFeeder(cmdInitializeFeederWithId);
 	
 	//load commonSettings from eeprom
 	EEPROM.readBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);
@@ -161,11 +165,6 @@ void setup() {
 		pinMode(pwrOutputPinMap[i],OUTPUT);
 	}
 	
-	// Setup the button for debugging purposes
-	/*pinMode(PIN_BUTTON,INPUT_PULLUP);
-	debouncedButton.attach(PIN_BUTTON);
-	debouncedButton.interval(5); // interval in ms*/
-	
 	Serial.println(F("Controller up and ready! Have fun."));
 }
 
@@ -190,11 +189,6 @@ void loop() {
 		updateADCvalues();
 	}
 	
-	
-	/*if ( debouncedButton.fell() ) {
-		feeders[0].advance(4);
-	}*/
-
 }
 
 
