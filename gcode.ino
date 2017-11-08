@@ -28,28 +28,6 @@ void setupGCodeProc() {
 	inputBuffer.reserve(MAX_BUFFFER_MCODE_LINE);
 }
 
-
-/**
-* write a string followed by a float to the serial line.  Convenient for debugging.
-* @input code the string.
-* @input val the float.
-*/
-/*
-void output(const char *code,float val) {
-	Serial.print(code);
-	Serial.println(val);
-}*/
-
-/**
-* display helpful information
-*/
-void help() {
-	Serial.print(F("Feeduino PnP "));
-	Serial.println(F("Commands:"));
-	Serial.println(F("none yet"));
-	Serial.println(F("All commands must end with a newline."));
-}
-
 void sendAnswer(uint8_t error, String message) {
 	if(error==0)
 		Serial.print(F("ok "));

@@ -94,8 +94,8 @@
 	
 */
 #define FEEDER_DEFAULT_FULL_ADVANCED_ANGLE  90				      // [°]  usually about 90.
-#define FEEDER_DEFAULT_HALF_ADVANCED_ANGLE  40              // [°]  usually about 40-60. only needed if advancing half pitch (for 0401 smds)
-#define FEEDER_DEFAULT_RETRACT_ANGLE  20				      // [°]  usually 20, might be adjusted to servo
+#define FEEDER_DEFAULT_HALF_ADVANCED_ANGLE  57              // [°]  usually about 55-65. only needed if advancing half pitch (for 0401 smds)
+#define FEEDER_DEFAULT_RETRACT_ANGLE  25				      // [°]  usually 20, might be adjusted to servo
 #define FEEDER_DEFAULT_FEED_LENGTH FEEDER_MECHANICAL_ADVANCE_LENGTH			// [mm] distance to be fed if no feedlength was given in a feed command
 #define FEEDER_DEFAULT_TIME_TO_SETTLE  240			  // [ms] time the servo needs to travel from FEEDER_DEFAULT_FULL_ADVANCED_ANGLE to FEEDER_DEFAULT_RETRACT_ANGLE
 /*
@@ -207,11 +207,11 @@ const static uint8_t feederPinMap[NUMBER_OF_FEEDER] = {
 */
 const static int8_t feederFeedbackPinMap[NUMBER_OF_FEEDER] = {
 	7,    // Feeder 0
-	-1,    // Feeder 1
-	-1,		//...
-	-1,
-	-1,
-	-1,
+	7,    // Feeder 1
+	7,		//...
+	7,
+	7,
+	7,
 	
 	-1,    // Feeder 6
 	-1,
