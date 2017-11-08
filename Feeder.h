@@ -73,7 +73,10 @@ class FeederClass {
 	void advance(uint8_t feedLength);
 	
 	uint8_t feederIsOk();
-	
+
+  void enable();
+  void disable();
+  
 	void update();
 };
 

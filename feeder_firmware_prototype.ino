@@ -31,7 +31,10 @@
 
 // ------ Feeder
 FeederClass feeders[NUMBER_OF_FEEDER];
-uint8_t feederEnabled=0;
+enum eFeederStates {
+  DISABLED,
+  ENABLED,
+} feederEnabled=DISABLED;
 
 // ------ Settings-Struct (saved in EEPROM)
 struct sCommonSettings {
@@ -72,8 +75,13 @@ float adcScaledValues[8];
 enum eFeederCommands {
 	cmdSetup,
 	cmdUpdate,
+
+  cmdEnable,
+  cmdDisable,
+  
 	cmdInitializeFeederWithId,
 	cmdFactoryReset,
+
 };
 void executeCommandOnAllFeeder(eFeederCommands command);
 void executeCommandOnAllFeeder(eFeederCommands command) {
@@ -85,7 +93,13 @@ void executeCommandOnAllFeeder(eFeederCommands command) {
 			case cmdUpdate:
 				feeders[i].update();
 			break;
-			case cmdInitializeFeederWithId:
+      case cmdEnable:
+        feeders[i].enable();
+      break;
+      case cmdDisable:
+        feeders[i].disable();
+      break;
+      case cmdInitializeFeederWithId:
 				feeders[i].feederNo=i;
 			break;
 			case cmdFactoryReset:

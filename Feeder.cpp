@@ -180,6 +180,21 @@ uint8_t FeederClass::feederIsOk() {
 	
 }
 
+//called when M-Code to enable feeder is issued
+void FeederClass::enable() {
+  //nothing to do here yet
+}
+
+//called when M-Code to disable feeder is issued
+void FeederClass::disable() {
+
+  //if stuck in half advanced pos, on disable go to full advanced.
+  //this way one component is thrown away but one can be sure there is a part if power was cut off from controller and on next start the feeder goes to retract position
+  if(this->feederState==sAT_HALF_ADVANCED_POSITION) {
+    this->gotoFullAdvancedPosition();
+  }
+}
+
 void FeederClass::update() {
 	
 	

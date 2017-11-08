@@ -88,9 +88,42 @@ void processCommand() {
 		/*
 			FEEDER-CODES
 		*/
+
+    
+    case MCODE_SET_FEEDER_ENABLE: {
+      
+      int8_t _feederEnabled=parseParameter('S',-1);
+      if( (_feederEnabled==0 || _feederEnabled==1) ) {
+        
+        if((uint8_t)_feederEnabled==1) {
+          digitalWrite(FEEDER_ENABLE_PIN, HIGH);
+          feederEnabled=ENABLED;
+          
+          executeCommandOnAllFeeder(cmdEnable);
+          
+          sendAnswer(0,F("Feeder set enabled and operational"));
+        } else {
+          digitalWrite(FEEDER_ENABLE_PIN, LOW);
+          feederEnabled=DISABLED;
+          
+          executeCommandOnAllFeeder(cmdDisable);
+          
+          sendAnswer(0,F("Feeder set disabled"));
+        }
+      } else if(_feederEnabled==-1) {
+        sendAnswer(0,("current powerState: ") + String(feederEnabled));
+      } else {
+        sendAnswer(1,F("Invalid parameters"));
+      }
+      
+      
+      break;
+    }
+
+    
 		case MCODE_ADVANCE: {
 			//1st to check: are feeder enabled?
-			if(feederEnabled!=1) {
+			if(feederEnabled!=ENABLED) {
 				sendAnswer(1,F("Enable feeder first!"));
 				break;
 			}
@@ -137,7 +170,7 @@ void processCommand() {
 
    case MCODE_RETRACT_POST_PICK: {
       //1st to check: are feeder enabled?
-      if(feederEnabled!=1) {
+      if(feederEnabled!=ENABLED) {
         sendAnswer(1,F("Enable feeder first!"));
         break;
       }
@@ -274,26 +307,6 @@ void processCommand() {
 			break;
 		}
 		
-		case MCODE_SET_FEEDER_ENABLE: {
-			
-			int8_t _feederEnabled=parseParameter('S',-1);
-			if( (_feederEnabled==0 || _feederEnabled==1) ) {
-				digitalWrite(FEEDER_ENABLE_PIN, (uint8_t)_feederEnabled);
-				feederEnabled=(uint8_t)_feederEnabled;
-				if((uint8_t)_feederEnabled==1) {
-					sendAnswer(0,F("Feeder powered up"));
-				} else {
-					sendAnswer(0,F("Feeder powered down"));
-				}
-			} else if(_feederEnabled==-1) {
-				sendAnswer(0,("current powerState: ") + String(feederEnabled));
-			} else {
-				sendAnswer(1,F("Invalid parameters"));
-			}
-			
-			
-			break;
-		}
 		case MCODE_SET_POWER_OUTPUT: {
 			//answer to host
 			int8_t powerPin=parseParameter('D',-1);
