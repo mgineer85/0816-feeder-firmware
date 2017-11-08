@@ -2,7 +2,6 @@
 #define _FEEDER_h
 
 #include "arduino.h"
-#include "globals.h"
 #include "config.h"
 #include <Servo.h>
 
@@ -36,12 +35,9 @@ class FeederClass {
 	
 	enum sFeederState {
 		sAT_UNKNOWN,
-		sAT_IDLE,
 		sAT_FULL_ADVANCED_POSITION,
 		sAT_HALF_ADVANCED_POSITION,
-		sGOTO_RETRACT_POSITION,
 		sAT_RETRACT_POSITION,
-		sAT_ADVANCING,
 		
 	} lastFeederState= sAT_UNKNOWN, feederState = sAT_UNKNOWN;
 	unsigned long lastTimePositionChange;
@@ -70,6 +66,7 @@ class FeederClass {
 	void saveFeederSettings();
 	void factoryReset();
 
+  void gotoPostPickPosition();
 	void gotoRetractPosition();
 	void gotoHalfAdvancedPosition();
 	void gotoFullAdvancedPosition();

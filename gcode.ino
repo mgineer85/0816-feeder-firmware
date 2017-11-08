@@ -1,11 +1,3 @@
-#include "globals.h"
-
-
-
-
-
-
-
 String inputBuffer = "";         // Buffer for incoming G-Code lines
 
 
@@ -119,19 +111,12 @@ void processCommand() {
 			
 			//determine feedLength
 			uint8_t feedLength;
-			if(cmd == MCODE_ADVANCE) {
-				//base-command. two options for feedLength here:
-				//F parameter omitted: use configured feed_length
-				//F parameter given: go for given feedlength F
-				//get feedLength if given, otherwise go for default configured feed_length in case of base-command MCODE_ADVANCE
-				feedLength = (uint8_t)parseParameter('F',feeders[(uint8_t)signedFeederNo].feederSettings.feed_length);
-			} else {
-				//do the mapping of several m-codes to feedLengths'
-				feedLength = cmd-MCODE_ADVANCE;
-			}
+			//get feedLength if given, otherwise go for default configured feed_length
+			feedLength = (uint8_t)parseParameter('F',feeders[(uint8_t)signedFeederNo].feederSettings.feed_length);
+
 			
-			if ( ((feedLength%2) != 0) || feedLength>12 ) {
-				//advancing is only possible for multiples of 2mm and 12mm max
+			if ( ((feedLength%2) != 0) || feedLength>24 ) {
+				//advancing is only possible for multiples of 2mm and 24mm max
 				sendAnswer(1,F("Invalid feedLength"));
 				break;
 			}
@@ -143,12 +128,38 @@ void processCommand() {
 			//start feeding
 			feeders[(uint8_t)signedFeederNo].advance(feedLength);
 
-			//answer OK to host
+			//answer OK to host -> NO
 			//no answer to host here: wait to send OK, until finished. otherwise the pickup is started to early.
 			//message is fired off in feeder.cpp
 			
 			break;
 		}
+
+   case MCODE_RETRACT_POST_PICK: {
+      //1st to check: are feeder enabled?
+      if(feederEnabled!=1) {
+        sendAnswer(1,F("Enable feeder first!"));
+        break;
+      }
+      
+      
+      int8_t signedFeederNo = (int)parseParameter('N',-1);
+      
+      //check for presence of FeederNo
+      if(signedFeederNo==-1) {
+        sendAnswer(1,F("feederNo missing for command"));
+        break;
+      } else if(!validFeederNo(signedFeederNo)) {
+        sendAnswer(1,F("invalid feeder selected"));
+        break;
+      }
+      
+      feeders[(uint8_t)signedFeederNo].gotoPostPickPosition();
+
+      sendAnswer(0,F("feeder postPickRetract done if needed"));
+  
+      break;
+   }
 		
 		case MCODE_FEEDER_IS_OK: {
 			int8_t signedFeederNo = (int)parseParameter('N',-1);
@@ -269,10 +280,11 @@ void processCommand() {
 			if( (_feederEnabled==0 || _feederEnabled==1) ) {
 				digitalWrite(FEEDER_ENABLE_PIN, (uint8_t)_feederEnabled);
 				feederEnabled=(uint8_t)_feederEnabled;
-				if((uint8_t)_feederEnabled==1)
+				if((uint8_t)_feederEnabled==1) {
 					sendAnswer(0,F("Feeder powered up"));
-				else
+				} else {
 					sendAnswer(0,F("Feeder powered down"));
+				}
 			} else if(_feederEnabled==-1) {
 				sendAnswer(0,("current powerState: ") + String(feederEnabled));
 			} else {

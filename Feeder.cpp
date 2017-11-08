@@ -42,8 +42,7 @@ void FeederClass::setup() {
 	this->servo.attach(feederPinMap[this->feederNo],this->feederSettings.motor_min_pulsewidth,this->feederSettings.motor_max_pulsewidth);
 
 	//put on defined position
-	this->gotoFullAdvancedPosition();
-	this->feederState=sAT_FULL_ADVANCED_POSITION;
+	this->gotoRetractPosition();
 
 	//wait a little time not having all servos run at the same time if power-supply is not dimensioned adequate
 	delay(50);	//50ms
@@ -91,8 +90,23 @@ void FeederClass::factoryReset() {
 }
 
 
+void FeederClass::gotoPostPickPosition() {
+  if(this->feederState==sAT_FULL_ADVANCED_POSITION) {
+    this->gotoRetractPosition();
+    #ifdef DEBUG
+      Serial.println("gotoPostPickPosition retracted feeder");
+    #endif
+  } else {
+    #ifdef DEBUG
+      Serial.println("gotoPostPickPosition didn't need to retract feeder");
+    #endif
+    
+  }
+}
+
 void FeederClass::gotoRetractPosition() {
 	this->servo.write(this->feederSettings.retract_angle);
+  this->feederState=sAT_RETRACT_POSITION;
 	#ifdef DEBUG
 		Serial.println("going to retract now");
 	#endif
@@ -100,6 +114,7 @@ void FeederClass::gotoRetractPosition() {
 
 void FeederClass::gotoHalfAdvancedPosition() {
 	this->servo.write(this->feederSettings.half_advanced_angle);
+  this->feederState=sAT_HALF_ADVANCED_POSITION;
 	#ifdef DEBUG
 		Serial.println("going to half adv now");
 	#endif
@@ -107,6 +122,7 @@ void FeederClass::gotoHalfAdvancedPosition() {
 
 void FeederClass::gotoFullAdvancedPosition() {
 	this->servo.write(this->feederSettings.full_advanced_angle);
+  this->feederState=sAT_FULL_ADVANCED_POSITION;
 	#ifdef DEBUG
 		Serial.println("going to full adv now");
 	#endif
@@ -177,13 +193,10 @@ void FeederClass::update() {
 	if (millis() - this->lastTimePositionChange >= (unsigned long)this->feederSettings.time_to_settle) {
 		//now servo is expected to have settled at its designated position, so do some stuff
 		
-		
 		if(this->flagAdvancingFinished==1) {
 			Serial.println("ok");
 			this->flagAdvancingFinished=0;
 		}
-		
-		
 		
 		//if no need for feeding exit fast.
 		if(this->remainingFeedLength==0)
@@ -197,16 +210,13 @@ void FeederClass::update() {
 		switch (this->feederState) {
 			/* ------------------------------------- RETRACT POS ---------------------- */
 			case sAT_RETRACT_POSITION: {
-
 				if(this->remainingFeedLength>=FEEDER_MECHANICAL_ADVANCE_LENGTH) {
 					//goto full advance-pos
 					this->gotoFullAdvancedPosition();
-					this->feederState=sAT_FULL_ADVANCED_POSITION;
 					this->remainingFeedLength-=FEEDER_MECHANICAL_ADVANCE_LENGTH;
 				} else if(this->remainingFeedLength>=FEEDER_MECHANICAL_ADVANCE_LENGTH/2) {
 					//goto half advance-pos
 					this->gotoHalfAdvancedPosition();
-					this->feederState=sAT_HALF_ADVANCED_POSITION;
 					this->remainingFeedLength-=FEEDER_MECHANICAL_ADVANCE_LENGTH/2;
 				}
 				
@@ -218,7 +228,6 @@ void FeederClass::update() {
 				if(this->remainingFeedLength>=FEEDER_MECHANICAL_ADVANCE_LENGTH/2) {
 					//goto full advance-pos
 					this->gotoFullAdvancedPosition();
-					this->feederState=sAT_FULL_ADVANCED_POSITION;
 					this->remainingFeedLength-=FEEDER_MECHANICAL_ADVANCE_LENGTH/2;
 				}
 			}
@@ -226,9 +235,9 @@ void FeederClass::update() {
 			
 			/* ------------------------------------- FULL-ADVANCED POS ---------------------- */
 			case sAT_FULL_ADVANCED_POSITION: {
-				//just retract after having settled in full-advanced-pos for next task or finishing the current one...
+        // if coming here and remainingFeedLength==0, then the function is aborted above already, thus no retract after pick
+        // if coming here and remainingFeedLength >0, then the feeder goes to retract for next advance move
 				this->gotoRetractPosition();
-				this->feederState=sAT_RETRACT_POSITION;
 			}
 			break;
 			
