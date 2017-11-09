@@ -11,17 +11,17 @@ float parseParameter(char code,float defaultVal) {
 	int codePosition = inputBuffer.indexOf(code);
 	if(codePosition!=-1) {
 		//code found in buffer
-		
+
 		//find end of number (separated by " " (space))
 		int delimiterPosition = inputBuffer.indexOf(" ",codePosition+1);
-		
+
 		float parsedNumber = inputBuffer.substring(codePosition+1,delimiterPosition).toFloat();
-		
+
 		return parsedNumber;
 	} else {
 		return defaultVal;
 	}
-	
+
 }
 
 void setupGCodeProc() {
@@ -33,17 +33,23 @@ void sendAnswer(uint8_t error, String message) {
 		Serial.print(F("ok "));
 	else
 		Serial.print(F("error "));
-	
+
 	Serial.println(message);
 }
 
-boolean validFeederNo(int8_t signedFeederNo) {
-	if(signedFeederNo<0 || signedFeederNo>(NUMBER_OF_FEEDER-1)) {
-		//error, not valid
+boolean validFeederNo(int8_t signedFeederNo, uint8_t feederNoMandatory = 0) {
+	if(signedFeederNo == -1 && feederNoMandatory >= 1) {
+		//no number given (-1) but it is mandatory.
 		return false;
 	} else {
-		//perfectly fine
-		return true;
+		//state now: number is given, check for valid range
+		if(signedFeederNo<0 || signedFeederNo>(NUMBER_OF_FEEDER-1)) {
+			//error, number not in a valid range
+			return false;
+		} else {
+			//perfectly fine number
+			return true;
+		}
 	}
 }
 
@@ -54,38 +60,38 @@ void processCommand() {
 
 	//get the command, default -1 if no command found
 	int cmd = parseParameter('M',-1);
-	
+
 	#ifdef DEBUG
 		Serial.print("command found: M");
 		Serial.println(cmd);
 	#endif
-	
+
 
 	switch(cmd) {
-		
+
 		/*
 			FEEDER-CODES
 		*/
 
-    
+
     case MCODE_SET_FEEDER_ENABLE: {
-      
+
       int8_t _feederEnabled=parseParameter('S',-1);
       if( (_feederEnabled==0 || _feederEnabled==1) ) {
-        
+
         if((uint8_t)_feederEnabled==1) {
           digitalWrite(FEEDER_ENABLE_PIN, HIGH);
           feederEnabled=ENABLED;
-          
+
           executeCommandOnAllFeeder(cmdEnable);
-          
+
           sendAnswer(0,F("Feeder set enabled and operational"));
         } else {
           digitalWrite(FEEDER_ENABLE_PIN, LOW);
           feederEnabled=DISABLED;
-          
+
           executeCommandOnAllFeeder(cmdDisable);
-          
+
           sendAnswer(0,F("Feeder set disabled"));
         }
       } else if(_feederEnabled==-1) {
@@ -93,39 +99,35 @@ void processCommand() {
       } else {
         sendAnswer(1,F("Invalid parameters"));
       }
-      
-      
+
+
       break;
     }
 
-    
+
 		case MCODE_ADVANCE: {
 			//1st to check: are feeder enabled?
 			if(feederEnabled!=ENABLED) {
 				sendAnswer(1,F("Enable feeder first!"));
 				break;
 			}
-			
-			
+
 			int8_t signedFeederNo = (int)parseParameter('N',-1);
-			
-			//check for presence of FeederNo
-			if(signedFeederNo==-1) {
-				sendAnswer(1,F("feederNo missing for command"));
-				break;
-			} else if(!validFeederNo(signedFeederNo)) {
-				sendAnswer(1,F("invalid feeder selected"));
+
+			//check for presence of a mandatory FeederNo
+			if(!validFeederNo(signedFeederNo,1)) {
+				sendAnswer(1,F("feederNo missing or invalid"));
 				break;
 			}
 
 			//can go on without further checks -> if number was given, it was checked for validity above already
-			
+
 			//determine feedLength
 			uint8_t feedLength;
 			//get feedLength if given, otherwise go for default configured feed_length
 			feedLength = (uint8_t)parseParameter('F',feeders[(uint8_t)signedFeederNo].feederSettings.feed_length);
 
-			
+
 			if ( ((feedLength%2) != 0) || feedLength>24 ) {
 				//advancing is only possible for multiples of 2mm and 24mm max
 				sendAnswer(1,F("Invalid feedLength"));
@@ -142,7 +144,7 @@ void processCommand() {
 			//answer OK to host -> NO
 			//no answer to host here: wait to send OK, until finished. otherwise the pickup is started to early.
 			//message is fired off in feeder.cpp
-			
+
 			break;
 		}
 
@@ -152,60 +154,46 @@ void processCommand() {
         sendAnswer(1,F("Enable feeder first!"));
         break;
       }
-      
-      
+
+
       int8_t signedFeederNo = (int)parseParameter('N',-1);
-      
+
       //check for presence of FeederNo
-      if(signedFeederNo==-1) {
-        sendAnswer(1,F("feederNo missing for command"));
-        break;
-      } else if(!validFeederNo(signedFeederNo)) {
-        sendAnswer(1,F("invalid feeder selected"));
-        break;
-      }
-      
+			if(!validFeederNo(signedFeederNo,1)) {
+				sendAnswer(1,F("feederNo missing or invalid"));
+				break;
+			}
+
       feeders[(uint8_t)signedFeederNo].gotoPostPickPosition();
 
       sendAnswer(0,F("feeder postPickRetract done if needed"));
-  
+
       break;
    }
-		
+
 		case MCODE_FEEDER_IS_OK: {
 			int8_t signedFeederNo = (int)parseParameter('N',-1);
-			
+
 			//check for presence of FeederNo
-			if(signedFeederNo==-1) {
-				sendAnswer(1,F("feederNo missing for command"));
-				break;
-			} else if(!validFeederNo(signedFeederNo)) {
-				sendAnswer(1,F("invalid feeder selected"));
+			if(!validFeederNo(signedFeederNo,1)) {
+				sendAnswer(1,F("feederNo missing or invalid"));
 				break;
 			}
-			
-			if(feeders[(uint8_t)signedFeederNo].feederIsOk()) {
-				sendAnswer(0,F("feeder OK"));
-			} else {
-				//return answer as ("OK"), cause it's a status request
-				sendAnswer(0,F("feeder is on ERROR state"));
-			}
-			
+
+			sendAnswer(0,feeders[(uint8_t)signedFeederNo].reportFeederErrorState());
+
 			break;
 		}
 
 		case MCODE_UPDATE_FEEDER_CONFIG: {
 			int8_t signedFeederNo = (int)parseParameter('N',-1);
-			
+
 			//check for presence of FeederNo
-			if(signedFeederNo==-1) {
-				sendAnswer(1,F("feederNo missing for command"));
-				break;
-			} else if(!validFeederNo(signedFeederNo)) {
-				sendAnswer(1,F("invalid feeder selected"));
+			if(!validFeederNo(signedFeederNo,1)) {
+				sendAnswer(1,F("feederNo missing or invalid"));
 				break;
 			}
-			
+
 			//merge given parameters to old settings
 			FeederClass::sFeederSettings oldFeederSettings=feeders[(uint8_t)signedFeederNo].getSettings();
 			FeederClass::sFeederSettings updatedFeederSettings;
@@ -217,19 +205,19 @@ void processCommand() {
 			updatedFeederSettings.motor_min_pulsewidth=parseParameter('V',oldFeederSettings.motor_min_pulsewidth);
 			updatedFeederSettings.motor_max_pulsewidth=parseParameter('W',oldFeederSettings.motor_max_pulsewidth);
 			updatedFeederSettings.ignore_feedback=parseParameter('X',oldFeederSettings.ignore_feedback);
-			
+
 			//set to feeder
 			feeders[(uint8_t)signedFeederNo].setSettings(updatedFeederSettings);
-			
+
 			//save to eeprom
 			feeders[(uint8_t)signedFeederNo].saveFeederSettings();
-			
+
 			//confirm
 			sendAnswer(0,F("Config of feeder updated."));
-			
+
 			break;
 		}
-		
+
 		/*
 		CODES to Control ADC
 		*/
@@ -237,54 +225,54 @@ void processCommand() {
 			//answer to host
 			int8_t channel=parseParameter('A',-1);
 			if( channel>=0 && channel<8 ) {
-				
+
 				//send value in first line of answer, so it can be parsed by OpenPnP correctly
 				Serial.println(String("value:")+String(adcRawValues[(uint8_t)channel]));
-				
+
 				//common answer
 				sendAnswer(0,"value sent");
 			} else {
 				sendAnswer(1,F("invalid adc channel (0...7)"));
 			}
-			
+
 			break;
 		}
 		case MCODE_GET_ADC_SCALED: {
 			//answer to host
 			int8_t channel=parseParameter('A',-1);
 			if( channel>=0 && channel<8 ) {
-				
+
 				//send value in first line of answer, so it can be parsed by OpenPnP correctly
 				Serial.println(String("value:")+String(adcScaledValues[(uint8_t)channel],4));
-				
+
 				//common answer
 				sendAnswer(0,"value sent");
 			} else {
 				sendAnswer(1,F("invalid adc channel (0...7)"));
 			}
-			
+
 			break;
 		}
 		case MCODE_SET_SCALING: {
-			
+
 			int8_t channel=parseParameter('A',-1);
-			
+
 			//check for valid parameters
 			if( channel>=0 && channel<8 ) {
 				commonSettings.adc_scaling_values[(uint8_t)channel][0]=parseParameter('S',commonSettings.adc_scaling_values[(uint8_t)channel][0]);
 				commonSettings.adc_scaling_values[(uint8_t)channel][1]=parseParameter('O',commonSettings.adc_scaling_values[(uint8_t)channel][1]);
-				
+
 				EEPROM.writeBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);
-				
+
 				sendAnswer(0,(F("scaling set and stored to eeprom")));
 			} else {
 				sendAnswer(1,F("invalid adc channel (0...7)"));
 			}
-			
-			
+
+
 			break;
 		}
-		
+
 		case MCODE_SET_POWER_OUTPUT: {
 			//answer to host
 			int8_t powerPin=parseParameter('D',-1);
@@ -295,29 +283,29 @@ void processCommand() {
 			} else {
 				sendAnswer(1,F("Invalid Parameters"));
 			}
-			
-			
+
+
 			break;
 		}
-		
+
 		case MCODE_FACTORY_RESET: {
 			commonSettings.version[0]=commonSettings.version[0]+1;
-			
+
 			EEPROM.writeBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings);
-			
+
 			sendAnswer(0,F("EEPROM invalidated, defaults will be loaded on next restart. Please restart now."));
-			
-			
+
+
 			break;
 		}
-		
+
 		default:
 			sendAnswer(0,F("unknown or empty command ignored"));
-			
+
 			break;
-			
+
 	}
-	
+
 }
 
 
@@ -330,36 +318,34 @@ void ready() {
 
 
 void listenToSerialStream() {
-	
+
 	while (Serial.available()) {
-	
+
 		// get the received byte, convert to char for adding to buffer
 		char receivedChar = (char)Serial.read();
-		
+
 		// print back for debugging
 		//#ifdef DEBUG
 			Serial.print(receivedChar);
 		//#endif
-		
+
 		// add to buffer
 		inputBuffer += receivedChar;
-		
+
 		// if the received character is a newline, processCommand
 		if (receivedChar == '\n') {
-			
+
 			//remove comments
 			inputBuffer.remove(inputBuffer.indexOf(";"));
 			inputBuffer.trim();
-			
-			
+
+
 			processCommand();
-			
+
 			//clear buffer
 			inputBuffer="";
-			
+
 			//ready();
 		}
 	}
 }
-
-

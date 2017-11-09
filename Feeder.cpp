@@ -1,7 +1,24 @@
 #include "Feeder.h"
 #include "config.h"
-#include <Servo.h>
-#include <EEPROMex.h>
+
+bool FeederClass::isInitialized() {
+	if(this->feederNo == -1)
+	  return false;
+	else
+		return true;
+}
+
+void FeederClass::initialize(uint8_t _feederNo) {
+	this->feederNo = _feederNo;
+}
+
+bool FeederClass::hasFeedbackLine() {
+	if(feederFeedbackPinMap[this->feederNo] != -1) {
+		return true;
+	} else {
+		return false;
+	}
+}
 
 void FeederClass::outputCurrentSettings() {
 	Serial.print("M");
@@ -28,16 +45,16 @@ void FeederClass::outputCurrentSettings() {
 }
 
 void FeederClass::setup() {
-	
+
 	//load settings from eeprom
 	this->loadFeederSettings();
-	
+
 	//feedback input
 	//microswitch is active low (NO connected to feedback-pin)
-	if(feederFeedbackPinMap[this->feederNo]!=-1) {
+	if(this->hasFeedbackLine()) {
 		pinMode((uint8_t)feederFeedbackPinMap[this->feederNo],INPUT_PULLUP);
 	}
-	
+
 	//attach servo to pin
 	this->servo.attach(feederPinMap[this->feederNo],this->feederSettings.motor_min_pulsewidth,this->feederSettings.motor_max_pulsewidth);
 
@@ -51,32 +68,32 @@ void FeederClass::setup() {
 FeederClass::sFeederSettings FeederClass::getSettings() {
 	return this->feederSettings;
 }
+
 void FeederClass::setSettings(sFeederSettings UpdatedFeederSettings) {
 	this->feederSettings=UpdatedFeederSettings;
-	
-	
+
+
 	#ifdef DEBUG
 		Serial.println(F("updated feeder settings"));
 		this->outputCurrentSettings();
 	#endif
 }
 
-
 void FeederClass::loadFeederSettings() {
 	uint16_t adressOfFeederSettingsInEEPROM = EEPROM_FEEDER_SETTINGS_ADDRESS_OFFSET + this->feederNo * sizeof(this->feederSettings);
 	EEPROM.readBlock(adressOfFeederSettingsInEEPROM, this->feederSettings);
-	
+
 	#ifdef DEBUG
 		Serial.println(F("loaded settings from eeprom:"));
 		this->outputCurrentSettings();
 	#endif
-	
 }
+
 void FeederClass::saveFeederSettings() {
 	uint16_t adressOfFeederSettingsInEEPROM = EEPROM_FEEDER_SETTINGS_ADDRESS_OFFSET + this->feederNo * sizeof(this->feederSettings);
 	EEPROM.writeBlock(adressOfFeederSettingsInEEPROM, this->feederSettings);
-	
-	
+
+
 	#ifdef DEBUG
 		Serial.println(F("stored settings to eeprom:"));
 		this->outputCurrentSettings();
@@ -85,13 +102,13 @@ void FeederClass::saveFeederSettings() {
 
 void FeederClass::factoryReset() {
 	//just save the defaults to eeprom...
-	
+
 	this->saveFeederSettings();
 }
 
 
 void FeederClass::gotoPostPickPosition() {
-  if(this->feederState==sAT_FULL_ADVANCED_POSITION) {
+  if(this->feederPosition==sAT_FULL_ADVANCED_POSITION) {
     this->gotoRetractPosition();
     #ifdef DEBUG
       Serial.println("gotoPostPickPosition retracted feeder");
@@ -100,13 +117,14 @@ void FeederClass::gotoPostPickPosition() {
     #ifdef DEBUG
       Serial.println("gotoPostPickPosition didn't need to retract feeder");
     #endif
-    
+
   }
 }
 
 void FeederClass::gotoRetractPosition() {
 	this->servo.write(this->feederSettings.retract_angle);
-  this->feederState=sAT_RETRACT_POSITION;
+  this->feederPosition=sAT_RETRACT_POSITION;
+	this->feederState=sMOVING;
 	#ifdef DEBUG
 		Serial.println("going to retract now");
 	#endif
@@ -114,7 +132,8 @@ void FeederClass::gotoRetractPosition() {
 
 void FeederClass::gotoHalfAdvancedPosition() {
 	this->servo.write(this->feederSettings.half_advanced_angle);
-  this->feederState=sAT_HALF_ADVANCED_POSITION;
+  this->feederPosition=sAT_HALF_ADVANCED_POSITION;
+	this->feederState=sMOVING;
 	#ifdef DEBUG
 		Serial.println("going to half adv now");
 	#endif
@@ -122,31 +141,32 @@ void FeederClass::gotoHalfAdvancedPosition() {
 
 void FeederClass::gotoFullAdvancedPosition() {
 	this->servo.write(this->feederSettings.full_advanced_angle);
-  this->feederState=sAT_FULL_ADVANCED_POSITION;
+  this->feederPosition=sAT_FULL_ADVANCED_POSITION;
+	this->feederState=sMOVING;
 	#ifdef DEBUG
 		Serial.println("going to full adv now");
 	#endif
 }
 
 void FeederClass::advance(uint8_t feedLength) {
-	
+
 	//check whether feeder is OK first
 	if(!this->feederIsOk()) {
 		Serial.print(F("error "));
 		Serial.println(F("feeder not OK (not activated, no tape or tension of cover tape not OK)"));
 		return;
 	}
-	
-	
+
+
 	#ifdef DEBUG
 		if(this->feederIsOk()) {
-			Serial.println(F("feederIsOk = 1 (no error)"));
+			Serial.println(F("feederIsOk = 1 (no error, error ignored or no feedback-line)"));
 		} else {
 			Serial.println(F("feederIsOk = 0 (error)"));
 		}
 	#endif
-	
-	
+
+
 	//check, what to do? if not, return quickly
 	if(feedLength==0 && this->remainingFeedLength==0) {
 		//nothing to do, just return
@@ -163,21 +183,56 @@ void FeederClass::advance(uint8_t feedLength) {
 
 }
 
-
-uint8_t FeederClass::feederIsOk() {
-	if(this->feederSettings.ignore_feedback==1 || feederFeedbackPinMap[this->feederNo]==-1) {
-		//no feedback pin defined or feedback shall be ignored
-		return 1;
+bool FeederClass::feederIsOk() {
+	if(this->getFeederErrorState() == sERROR) {
+		return false;
 	} else {
-		if( digitalRead((uint8_t)feederFeedbackPinMap[this->feederNo]) == LOW ) {
-			//the microswitch pulls feedback-pin LOW if tension of cover tape is OK. motor to pull tape is off then
-			return 1;
-		} else {
-			//microswitch is open, this is considered as an error
-			return 0;
-		}
+		return true;
 	}
-	
+}
+
+FeederClass::tFeederErrorState FeederClass::getFeederErrorState() {
+	if(!this->hasFeedbackLine()) {
+		//no feedback-line, return always OK
+		//no feedback pin defined or feedback shall be ignored
+		return sOK_NOFEEDBACKLINE;
+	}
+
+	if( digitalRead((uint8_t)feederFeedbackPinMap[this->feederNo]) == LOW ) {
+		//the microswitch pulls feedback-pin LOW if tension of cover tape is OK. motor to pull tape is off then
+		//no error
+			return sOK;
+	} else {
+		//microswitch is not pushed down, this is considered as an error
+
+		if(this->feederSettings.ignore_feedback==1) {
+			//error present, but ignore
+			return sERROR_IGNORED;
+		} else {
+			//error present, report fail
+			return sERROR;
+		}
+
+	}
+
+}
+
+String FeederClass::reportFeederErrorState() {
+	switch(this->getFeederErrorState()) {
+		case sOK_NOFEEDBACKLINE:
+			return "OK, no feedback line for feeder";
+		break;
+		case sOK:
+			return "OK, feedbackline checked";
+		break;
+		case sERROR_IGNORED:
+			return "error, but ignored";
+		break;
+		case sERROR:
+			return "error, feeder checked";
+		break;
+	}
+	return "report error";
 }
 
 //called when M-Code to enable feeder is issued
@@ -190,39 +245,39 @@ void FeederClass::disable() {
 
   //if stuck in half advanced pos, on disable go to full advanced.
   //this way one component is thrown away but one can be sure there is a part if power was cut off from controller and on next start the feeder goes to retract position
-  if(this->feederState==sAT_HALF_ADVANCED_POSITION) {
+  if(this->feederPosition==sAT_HALF_ADVANCED_POSITION) {
     this->gotoFullAdvancedPosition();
   }
 }
 
 void FeederClass::update() {
-	
-	
+
+
 	//state machine-update-stuff (for settle time)
-	if(this->lastFeederState!=this->feederState) {
+	if(this->lastFeederPosition!=this->feederPosition) {
 		this->lastTimePositionChange=millis();
-		this->lastFeederState=this->feederState;
+		this->lastFeederPosition=this->feederPosition;
 	}
 
 	//time to change the position?
 	if (millis() - this->lastTimePositionChange >= (unsigned long)this->feederSettings.time_to_settle) {
+
 		//now servo is expected to have settled at its designated position, so do some stuff
-		
-		if(this->flagAdvancingFinished==1) {
+		if(this->feederState==sADVANCING_CYCLE_COMPLETED) {
 			Serial.println("ok");
-			this->flagAdvancingFinished=0;
+			this->feederState=sIDLE;
 		}
-		
+
 		//if no need for feeding exit fast.
 		if(this->remainingFeedLength==0)
 			return;
-		
-		
+
+
 		#ifdef DEBUG
 			Serial.print("remainingFeedLength before working: ");
 			Serial.println(this->remainingFeedLength);
 		#endif
-		switch (this->feederState) {
+		switch (this->feederPosition) {
 			/* ------------------------------------- RETRACT POS ---------------------- */
 			case sAT_RETRACT_POSITION: {
 				if(this->remainingFeedLength>=FEEDER_MECHANICAL_ADVANCE_LENGTH) {
@@ -234,10 +289,10 @@ void FeederClass::update() {
 					this->gotoHalfAdvancedPosition();
 					this->remainingFeedLength-=FEEDER_MECHANICAL_ADVANCE_LENGTH/2;
 				}
-				
+
 			}
 			break;
-			
+
 			/* ------------------------------------- HALF-ADVANCED POS ---------------------- */
 			case sAT_HALF_ADVANCED_POSITION: {
 				if(this->remainingFeedLength>=FEEDER_MECHANICAL_ADVANCE_LENGTH/2) {
@@ -247,7 +302,7 @@ void FeederClass::update() {
 				}
 			}
 			break;
-			
+
 			/* ------------------------------------- FULL-ADVANCED POS ---------------------- */
 			case sAT_FULL_ADVANCED_POSITION: {
         // if coming here and remainingFeedLength==0, then the function is aborted above already, thus no retract after pick
@@ -255,28 +310,26 @@ void FeederClass::update() {
 				this->gotoRetractPosition();
 			}
 			break;
-			
+
 			default: {
 				//state not relevant for advancing...
 				//return error, should not occur?
 			}
 			break;
 		}
-		
+
 		#ifdef DEBUG
 			Serial.print("remainingFeedLength after working: ");
 			Serial.println(this->remainingFeedLength);
 		#endif
-		
+
 		//just finished advancing? set flag to send ok in next run after settle-time to let the pnp go on
 		if(this->remainingFeedLength==0) {
-			this->flagAdvancingFinished=1;
+			this->feederState=sADVANCING_CYCLE_COMPLETED;
 		}
 	}
-	
-	
-	
+
+
+
 	return;
 }
-
-

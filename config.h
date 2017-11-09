@@ -23,21 +23,21 @@
 
 /* -----------------------------------------------------------------
 *  FEEDER CONFIG
-*  ----------------------------------------------------------------- 
+*  -----------------------------------------------------------------
 * default settings per feeder
 
 // calculate angles: https://de.wikipedia.org/wiki/Schubkurbel, crankshift
 
 
-	when setting these values, make sure, the values for 
+	when setting these values, make sure, the values for
 	FEEDER_DEFAULT_MOTOR_MIN_PULSEWIDTH and
 	FEEDER_DEFAULT_MOTOR_MAX_PULSEWITH
 	reflect the according position for servo being used
-	
+
 	when everything is setup right, the lever is in advanced position at servo-angle ~90 degree
 	fully retracted is about ~20°
-	
-	
+
+
 	| STATE RETRACTED, looking from the top
 	|
 	|   .
@@ -62,7 +62,7 @@
 	|    O====o\\
 	|    ^   \\\\\
 	|    \_ servo-motor at FEEDER_DEFAULT_RETRACT_ANGLE (about 20°)
-	
+
 	| STATE FULL ADVANCED, looking from the top
 	|
 	|   .
@@ -91,7 +91,7 @@
 	|    :
 	|    :
 	|    0			<- servo-motor at FEEDER_DEFAULT_FULL_ADVANCED_ANGLE (about 90°)
-	
+
 */
 #define FEEDER_DEFAULT_FULL_ADVANCED_ANGLE  90				      // [°]  usually about 90.
 #define FEEDER_DEFAULT_HALF_ADVANCED_ANGLE  57              // [°]  usually about 55-65. only needed if advancing half pitch (for 0401 smds)
@@ -175,21 +175,21 @@ const static uint8_t feederPinMap[NUMBER_OF_FEEDER] = {
 	5,
 	6,
 	53,
-	
+
 	8,	// Feeder 6
 	9,
 	10,
 	11,
 	12,
 	13,
-	
+
 	22,	// Feeder 12
 	24,
 	26,
 	28,
 	30,
 	32,
-	
+
 	34,	//Feeder 18
 	36,
 	38,
@@ -212,28 +212,28 @@ const static int8_t feederFeedbackPinMap[NUMBER_OF_FEEDER] = {
 	7,
 	7,
 	7,
-	
+
 	-1,    // Feeder 6
 	-1,
 	-1,
 	-1,
 	-1,
 	-1,
-	
+
 	-1,    // Feeder 12
 	-1,
 	-1,
 	-1,
 	-1,
 	-1,
-	
+
 	-1,    // Feeder 18
 	-1,
 	-1,
 	-1,
 	-1,
 	-1,
-	
+
 };
 
 /*
@@ -248,7 +248,7 @@ const static int8_t feederFeedbackPinMap[NUMBER_OF_FEEDER] = {
 
 /* ----------------
   MOSFET power output pinmap
-  
+
   on pcb 4 output are prepared. output 1 is at index 0 in pwrOutputPinMap
 */
 
