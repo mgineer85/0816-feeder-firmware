@@ -113,6 +113,11 @@ void processCommand() {
 			}
 
 			int8_t signedFeederNo = (int)parseParameter('N',-1);
+			int8_t _overrideError = (int)parseParameter('X',-1);
+			boolean overrideError = false;
+			if(_overrideError >= 1) {
+				overrideError = true;
+			}
 
 			//check for presence of a mandatory FeederNo
 			if(!validFeederNo(signedFeederNo,1)) {
@@ -136,10 +141,13 @@ void processCommand() {
 			#ifdef DEBUG
 				Serial.print("Determined feedLength ");
 				Serial.print(feedLength);
-				Serial.println("");
+				Serial.println();
 			#endif
+
 			//start feeding
-			feeders[(uint8_t)signedFeederNo].advance(feedLength);
+			if(feeders[(uint8_t)signedFeederNo].advance(feedLength,overrideError)) {
+				sendAnswer(1,F("feeder not OK (not activated, no tape or tension of cover tape not OK)"));
+			}
 
 			//answer OK to host -> NO
 			//no answer to host here: wait to send OK, until finished. otherwise the pickup is started to early.

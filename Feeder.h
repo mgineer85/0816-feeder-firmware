@@ -90,7 +90,7 @@ class FeederClass {
 	void gotoRetractPosition();
 	void gotoHalfAdvancedPosition();
 	void gotoFullAdvancedPosition();
-	void advance(uint8_t feedLength);
+	boolean advance(uint8_t feedLength, boolean overrideError);
 
 	String reportFeederErrorState();
 	bool feederIsOk();

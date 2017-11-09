@@ -148,39 +148,34 @@ void FeederClass::gotoFullAdvancedPosition() {
 	#endif
 }
 
-void FeederClass::advance(uint8_t feedLength) {
-
-	//check whether feeder is OK first
-	if(!this->feederIsOk()) {
-		Serial.print(F("error "));
-		Serial.println(F("feeder not OK (not activated, no tape or tension of cover tape not OK)"));
-		return;
-	}
-
+boolean FeederClass::advance(uint8_t feedLength, boolean overrideError = false) {
 
 	#ifdef DEBUG
-		if(this->feederIsOk()) {
-			Serial.println(F("feederIsOk = 1 (no error, error ignored or no feedback-line)"));
-		} else {
-			Serial.println(F("feederIsOk = 0 (error)"));
-		}
+		Serial.println(this->reportFeederErrorState());
 	#endif
 
+	//check whether feeder is OK before every advance command
+	if(!this->feederIsOk() && overrideError) {
+		//return with false means an error, that is not ignored and not overridden
+		//error, return false
+		return false;
+	}
 
 	//check, what to do? if not, return quickly
 	if(feedLength==0 && this->remainingFeedLength==0) {
 		//nothing to do, just return
-		return;
+
 	} else if (feedLength>0 && this->remainingFeedLength>0) {
 		//last advancing not completed! ignore newly received command
 		//TODO: one could use a queue
-		return;
 	} else {
 		//OK, start new advance-proc
 		//feed multiples of 2 possible: 2/4/6/8/10/12,...
 		this->remainingFeedLength=feedLength;
 	}
 
+	//return true: advance started okay
+	return true;
 }
 
 bool FeederClass::feederIsOk() {
@@ -201,7 +196,7 @@ FeederClass::tFeederErrorState FeederClass::getFeederErrorState() {
 	if( digitalRead((uint8_t)feederFeedbackPinMap[this->feederNo]) == LOW ) {
 		//the microswitch pulls feedback-pin LOW if tension of cover tape is OK. motor to pull tape is off then
 		//no error
-			return sOK;
+		return sOK;
 	} else {
 		//microswitch is not pushed down, this is considered as an error
 
