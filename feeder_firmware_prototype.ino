@@ -14,8 +14,6 @@
 *
 *
 *
-* TODO:
-* - Command to save state of feeder (job finished)
 *
 */
 
@@ -31,7 +29,7 @@
 
 // ------ Feeder
 FeederClass feeders[NUMBER_OF_FEEDER];
-enum eFeederStates {
+enum eFeederEnabledState {
   DISABLED,
   ENABLED,
 } feederEnabled=DISABLED;
