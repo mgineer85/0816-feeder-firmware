@@ -18,7 +18,7 @@ float parseParameter(char code,float defaultVal) {
 		float parsedNumber = inputBuffer.substring(codePosition+1,delimiterPosition).toFloat();
 
 		return parsedNumber;
-	} else {
+		} else {
 		return defaultVal;
 	}
 
@@ -30,23 +30,23 @@ void setupGCodeProc() {
 
 void sendAnswer(uint8_t error, String message) {
 	if(error==0)
-		Serial.print(F("ok "));
+	Serial.print(F("ok "));
 	else
-		Serial.print(F("error "));
+	Serial.print(F("error "));
 
 	Serial.println(message);
 }
 
-boolean validFeederNo(int8_t signedFeederNo, uint8_t feederNoMandatory = 0) {
+bool validFeederNo(int8_t signedFeederNo, uint8_t feederNoMandatory = 0) {
 	if(signedFeederNo == -1 && feederNoMandatory >= 1) {
 		//no number given (-1) but it is mandatory.
 		return false;
-	} else {
+		} else {
 		//state now: number is given, check for valid range
 		if(signedFeederNo<0 || signedFeederNo>(NUMBER_OF_FEEDER-1)) {
 			//error, number not in a valid range
 			return false;
-		} else {
+			} else {
 			//perfectly fine number
 			return true;
 		}
@@ -62,59 +62,59 @@ void processCommand() {
 	int cmd = parseParameter('M',-1);
 
 	#ifdef DEBUG
-		Serial.print("command found: M");
-		Serial.println(cmd);
+	Serial.print("command found: M");
+	Serial.println(cmd);
 	#endif
 
 
 	switch(cmd) {
 
 		/*
-			FEEDER-CODES
+		FEEDER-CODES
 		*/
 
 
-    case MCODE_SET_FEEDER_ENABLE: {
+		case MCODE_SET_FEEDER_ENABLE: {
 
-      int8_t _feederEnabled=parseParameter('S',-1);
-      if( (_feederEnabled==0 || _feederEnabled==1) ) {
+			int8_t _feederEnabled=parseParameter('S',-1);
+			if( (_feederEnabled==0 || _feederEnabled==1) ) {
 
-        if((uint8_t)_feederEnabled==1) {
-          digitalWrite(FEEDER_ENABLE_PIN, HIGH);
-          feederEnabled=ENABLED;
+				if((uint8_t)_feederEnabled==1) {
+					digitalWrite(FEEDER_ENABLE_PIN, HIGH);
+					feederEnabled=ENABLED;
 
-          executeCommandOnAllFeeder(cmdEnable);
+					executeCommandOnAllFeeder(cmdEnable);
 
-          sendAnswer(0,F("Feeder set enabled and operational"));
-        } else {
-          digitalWrite(FEEDER_ENABLE_PIN, LOW);
-          feederEnabled=DISABLED;
+					sendAnswer(0,F("Feeder set enabled and operational"));
+				} else {
+					digitalWrite(FEEDER_ENABLE_PIN, LOW);
+					feederEnabled=DISABLED;
 
-          executeCommandOnAllFeeder(cmdDisable);
+					executeCommandOnAllFeeder(cmdDisable);
 
-          sendAnswer(0,F("Feeder set disabled"));
-        }
-      } else if(_feederEnabled==-1) {
-        sendAnswer(0,("current powerState: ") + String(feederEnabled));
-      } else {
-        sendAnswer(1,F("Invalid parameters"));
-      }
+					sendAnswer(0,F("Feeder set disabled"));
+				}
+			} else if(_feederEnabled==-1) {
+				sendAnswer(0,("current powerState: ") + String(feederEnabled));
+			} else {
+				sendAnswer(1,F("Invalid parameters"));
+			}
 
 
-      break;
-    }
+			break;
+		}
 
 
 		case MCODE_ADVANCE: {
 			//1st to check: are feeder enabled?
 			if(feederEnabled!=ENABLED) {
-				sendAnswer(1,F("Enable feeder first!"));
+				sendAnswer(1,String(String("Enable feeder first! M") + String(MCODE_SET_FEEDER_ENABLE) + String(" S1")));
 				break;
 			}
 
 			int8_t signedFeederNo = (int)parseParameter('N',-1);
 			int8_t _overrideError = (int)parseParameter('X',-1);
-			boolean overrideError = false;
+			bool overrideError = false;
 			if(_overrideError >= 1) {
 				overrideError = true;
 			}
@@ -139,45 +139,48 @@ void processCommand() {
 				break;
 			}
 			#ifdef DEBUG
-				Serial.print("Determined feedLength ");
-				Serial.print(feedLength);
-				Serial.println();
+			Serial.print("Determined feedLength ");
+			Serial.print(feedLength);
+			Serial.println();
 			#endif
 
 			//start feeding
-			if(feeders[(uint8_t)signedFeederNo].advance(feedLength,overrideError)) {
+			bool triggerFeedOK=feeders[(uint8_t)signedFeederNo].advance(feedLength,overrideError);
+			if(!triggerFeedOK) {
+				//report error to host at once, tape was not advanced...
 				sendAnswer(1,F("feeder not OK (not activated, no tape or tension of cover tape not OK)"));
+			} else {
+				//answer OK to host in case there was no error -> NO, no answer now:
+				//wait to send OK, until feed process finished. otherwise the pickup is started immediately, thus too early.
+				//message is fired off in feeder.cpp
 			}
 
-			//answer OK to host -> NO
-			//no answer to host here: wait to send OK, until finished. otherwise the pickup is started to early.
-			//message is fired off in feeder.cpp
-
+			
 			break;
 		}
 
-   case MCODE_RETRACT_POST_PICK: {
-      //1st to check: are feeder enabled?
-      if(feederEnabled!=ENABLED) {
-        sendAnswer(1,F("Enable feeder first!"));
-        break;
-      }
+		case MCODE_RETRACT_POST_PICK: {
+			//1st to check: are feeder enabled?
+			if(feederEnabled!=ENABLED) {
+				sendAnswer(1,String(String("Enable feeder first! M") + String(MCODE_SET_FEEDER_ENABLE) + String(" S1")));
+				break;
+			}
 
 
-      int8_t signedFeederNo = (int)parseParameter('N',-1);
+			int8_t signedFeederNo = (int)parseParameter('N',-1);
 
-      //check for presence of FeederNo
+			//check for presence of FeederNo
 			if(!validFeederNo(signedFeederNo,1)) {
 				sendAnswer(1,F("feederNo missing or invalid"));
 				break;
 			}
 
-      feeders[(uint8_t)signedFeederNo].gotoPostPickPosition();
+			feeders[(uint8_t)signedFeederNo].gotoPostPickPosition();
 
-      sendAnswer(0,F("feeder postPickRetract done if needed"));
+			sendAnswer(0,F("feeder postPickRetract done if needed"));
 
-      break;
-   }
+			break;
+		}
 
 		case MCODE_FEEDER_IS_OK: {
 			int8_t signedFeederNo = (int)parseParameter('N',-1);
@@ -189,6 +192,35 @@ void processCommand() {
 			}
 
 			sendAnswer(0,feeders[(uint8_t)signedFeederNo].reportFeederErrorState());
+
+			break;
+		}
+
+		case MCODE_SERVO_SET_ANGLE: {
+			//1st to check: are feeder enabled?
+			if(feederEnabled!=ENABLED) {
+				sendAnswer(1,String(String("Enable feeder first! M") + String(MCODE_SET_FEEDER_ENABLE) + String(" S1")));
+				break;
+			}
+
+
+			int8_t signedFeederNo = (int)parseParameter('N',-1);
+			uint8_t angle = (int)parseParameter('A',90);
+
+			//check for presence of FeederNo
+			if(!validFeederNo(signedFeederNo,1)) {
+				sendAnswer(1,F("feederNo missing or invalid"));
+				break;
+			}
+			//check for valid angle
+			if( angle>180 ) {
+				sendAnswer(1,F("illegal angle"));
+				break;
+			}
+
+			feeders[(uint8_t)signedFeederNo].gotoAngle(angle);
+
+			sendAnswer(0,F("angle set"));
 
 			break;
 		}
@@ -308,22 +340,13 @@ void processCommand() {
 		}
 
 		default:
-			sendAnswer(0,F("unknown or empty command ignored"));
+		sendAnswer(0,F("unknown or empty command ignored"));
 
-			break;
+		break;
 
 	}
 
 }
-
-
-/**
-* prepares the input buffer to receive a new message and tells the serial connected device it is ready for more.
-*/
-void ready() {
-	Serial.print(F(">"));  // signal ready to receive input
-}
-
 
 void listenToSerialStream() {
 
@@ -334,7 +357,7 @@ void listenToSerialStream() {
 
 		// print back for debugging
 		//#ifdef DEBUG
-			Serial.print(receivedChar);
+		Serial.print(receivedChar);
 		//#endif
 
 		// add to buffer
@@ -353,7 +376,6 @@ void listenToSerialStream() {
 			//clear buffer
 			inputBuffer="";
 
-			//ready();
 		}
 	}
 }

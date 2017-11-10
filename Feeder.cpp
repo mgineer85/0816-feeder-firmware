@@ -141,16 +141,29 @@ void FeederClass::gotoHalfAdvancedPosition() {
 
 void FeederClass::gotoFullAdvancedPosition() {
 	this->servo.write(this->feederSettings.full_advanced_angle);
-  this->feederPosition=sAT_FULL_ADVANCED_POSITION;
+	this->feederPosition=sAT_FULL_ADVANCED_POSITION;
 	this->feederState=sMOVING;
 	#ifdef DEBUG
 		Serial.println("going to full adv now");
 	#endif
 }
 
-boolean FeederClass::advance(uint8_t feedLength, boolean overrideError = false) {
+
+void FeederClass::gotoAngle(uint8_t angle) {
+	
+	this->servo.write(angle);
+	
+	#ifdef DEBUG
+		Serial.print("going to ");
+		Serial.print(angle);
+		Serial.println("deg");
+	#endif
+}
+
+bool FeederClass::advance(uint8_t feedLength, bool overrideError = false) {
 
 	#ifdef DEBUG
+		Serial.println(F("advance triggered"));
 		Serial.println(this->reportFeederErrorState());
 	#endif
 
@@ -190,21 +203,39 @@ FeederClass::tFeederErrorState FeederClass::getFeederErrorState() {
 	if(!this->hasFeedbackLine()) {
 		//no feedback-line, return always OK
 		//no feedback pin defined or feedback shall be ignored
+		#ifdef DEBUG
+			Serial.println(F("getFeederErrorState: sOK_NOFEEDBACKLINE"));
+		#endif
+		
 		return sOK_NOFEEDBACKLINE;
 	}
 
 	if( digitalRead((uint8_t)feederFeedbackPinMap[this->feederNo]) == LOW ) {
 		//the microswitch pulls feedback-pin LOW if tension of cover tape is OK. motor to pull tape is off then
 		//no error
+		#ifdef DEBUG
+			Serial.println(F("getFeederErrorState: sOK"));
+		#endif
+		
 		return sOK;
 	} else {
 		//microswitch is not pushed down, this is considered as an error
 
 		if(this->feederSettings.ignore_feedback==1) {
 			//error present, but ignore
+			
+			#ifdef DEBUG
+				Serial.println(F("getFeederErrorState: sERROR_IGNORED"));
+			#endif
+			
 			return sERROR_IGNORED;
 		} else {
 			//error present, report fail
+			
+			#ifdef DEBUG
+				Serial.println(F("getFeederErrorState: sERROR"));
+			#endif
+			
 			return sERROR;
 		}
 
@@ -215,10 +246,10 @@ FeederClass::tFeederErrorState FeederClass::getFeederErrorState() {
 String FeederClass::reportFeederErrorState() {
 	switch(this->getFeederErrorState()) {
 		case sOK_NOFEEDBACKLINE:
-			return "OK, no feedback line for feeder";
+			return "no feedback line for feeder, impliciting feeder OK";
 		break;
 		case sOK:
-			return "OK, feedbackline checked";
+			return "feedbackline checked, explicit feeder OK";
 		break;
 		case sERROR_IGNORED:
 			return "error, but ignored";
@@ -226,8 +257,10 @@ String FeederClass::reportFeederErrorState() {
 		case sERROR:
 			return "error, feeder checked";
 		break;
+		
+		default:
+			return "illegal state in reportFeederErrorState";
 	}
-	return "report error";
 }
 
 //called when M-Code to enable feeder is issued
@@ -259,7 +292,7 @@ void FeederClass::update() {
 
 		//now servo is expected to have settled at its designated position, so do some stuff
 		if(this->feederState==sADVANCING_CYCLE_COMPLETED) {
-			Serial.println("ok");
+			Serial.println("ok, advancing cycle completed");
 			this->feederState=sIDLE;
 		}
 

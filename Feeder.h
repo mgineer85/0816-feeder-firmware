@@ -86,11 +86,12 @@ class FeederClass {
 	void saveFeederSettings();
 	void factoryReset();
 
-  void gotoPostPickPosition();
+	void gotoPostPickPosition();
 	void gotoRetractPosition();
 	void gotoHalfAdvancedPosition();
 	void gotoFullAdvancedPosition();
-	boolean advance(uint8_t feedLength, boolean overrideError);
+	void gotoAngle(uint8_t angle);
+	bool advance(uint8_t feedLength, bool overrideError);
 
 	String reportFeederErrorState();
 	bool feederIsOk();

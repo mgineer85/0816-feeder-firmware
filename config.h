@@ -7,7 +7,8 @@
 *     DEBUG
 */
 // prints some extra information via serial
-#define DEBUG
+// uncomment to disable in production
+//#define DEBUG
 
 /*
 *  EEPROM-Settings
@@ -95,7 +96,7 @@
 */
 #define FEEDER_DEFAULT_FULL_ADVANCED_ANGLE  90				      // [°]  usually about 90.
 #define FEEDER_DEFAULT_HALF_ADVANCED_ANGLE  57              // [°]  usually about 55-65. only needed if advancing half pitch (for 0401 smds)
-#define FEEDER_DEFAULT_RETRACT_ANGLE  25				      // [°]  usually 20, might be adjusted to servo
+#define FEEDER_DEFAULT_RETRACT_ANGLE  15				      // [°]  usually 20, might be adjusted to servo
 #define FEEDER_DEFAULT_FEED_LENGTH FEEDER_MECHANICAL_ADVANCE_LENGTH			// [mm] distance to be fed if no feedlength was given in a feed command
 #define FEEDER_DEFAULT_TIME_TO_SETTLE  240			  // [ms] time the servo needs to travel from FEEDER_DEFAULT_FULL_ADVANCED_ANGLE to FEEDER_DEFAULT_RETRACT_ANGLE
 /*
@@ -283,6 +284,7 @@ const static uint8_t pwrOutputPinMap[NUMBER_OF_POWER_OUTPUT] = {
 #define MCODE_ADVANCE 600
 #define MCODE_RETRACT_POST_PICK 601
 #define MCODE_FEEDER_IS_OK 602
+#define MCODE_SERVO_SET_ANGLE 603
 #define MCODE_SET_FEEDER_ENABLE 610
 #define MCODE_UPDATE_FEEDER_CONFIG	620
 

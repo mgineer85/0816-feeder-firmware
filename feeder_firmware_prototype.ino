@@ -77,6 +77,7 @@ enum eFeederCommands {
   cmdEnable,
   cmdDisable,
 
+	cmdOutputCurrentSettings,
 	cmdInitializeFeederWithId,
 	cmdFactoryReset,
 
@@ -91,13 +92,16 @@ void executeCommandOnAllFeeder(eFeederCommands command) {
 			case cmdUpdate:
 				feeders[i].update();
 			break;
-      case cmdEnable:
-        feeders[i].enable();
-      break;
-      case cmdDisable:
-        feeders[i].disable();
-      break;
-      case cmdInitializeFeederWithId:
+			case cmdEnable:
+				feeders[i].enable();
+			break;
+			case cmdDisable:
+				feeders[i].disable();
+			break;
+			case cmdOutputCurrentSettings:
+				feeders[i].outputCurrentSettings();
+			break;
+			case cmdInitializeFeederWithId:
 				feeders[i].initialize(i);
 			break;
 			case cmdFactoryReset:
@@ -162,11 +166,14 @@ void setup() {
 		EEPROM.writeBlock(EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET, commonSettings_default);
 	}
 
-	//print all settings on UI
+	//print all settings to console
 	printCommonSettings();
 
 	//handles the servo controlling stuff
 	executeCommandOnAllFeeder(cmdSetup);
+	
+	//print all settings of every feeder to console
+	executeCommandOnAllFeeder(cmdOutputCurrentSettings);
 
 	//init adc-values
 	updateADCvalues();
