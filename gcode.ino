@@ -113,10 +113,13 @@ void processCommand() {
 			}
 
 			int8_t signedFeederNo = (int)parseParameter('N',-1);
-			int8_t _overrideError = (int)parseParameter('X',-1);
+			int8_t overrideErrorRaw = (int)parseParameter('X',-1);
 			bool overrideError = false;
-			if(_overrideError >= 1) {
+			if(overrideErrorRaw >= 1) {
 				overrideError = true;
+				#ifdef DEBUG
+				Serial.println("Argument X1 found, feedbackline/error will be ignored");
+				#endif
 			}
 
 			//check for presence of a mandatory FeederNo
@@ -124,8 +127,6 @@ void processCommand() {
 				sendAnswer(1,F("feederNo missing or invalid"));
 				break;
 			}
-
-			//can go on without further checks -> if number was given, it was checked for validity above already
 
 			//determine feedLength
 			uint8_t feedLength;

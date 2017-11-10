@@ -144,6 +144,7 @@ void setup() {
 	Serial.begin(SERIAL_BAUD);
 	while (!Serial);
 	Serial.println(F("Controller starting...")); Serial.flush();
+	Serial.println(F("Here is some stuff saved in EEPROM. Paste in a textfile to backup these settings...")); Serial.flush();
 
 	// setup listener to serial stream
 	setupGCodeProc();

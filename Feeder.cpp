@@ -166,12 +166,26 @@ bool FeederClass::advance(uint8_t feedLength, bool overrideError = false) {
 		Serial.println(F("advance triggered"));
 		Serial.println(this->reportFeederErrorState());
 	#endif
-
+	
+	
+	#ifdef DEBUG
+		Serial.print(F("feederIsOk: "));
+		Serial.println(this->feederIsOk());
+		Serial.print(F("overrideError: "));
+		Serial.println(overrideError);
+	#endif
+	
 	//check whether feeder is OK before every advance command
-	if(!this->feederIsOk() && overrideError) {
-		//return with false means an error, that is not ignored and not overridden
-		//error, return false
-		return false;
+	if( !this->feederIsOk() ) {
+		//feeder is in error state, usually this would lead to exit advance with false and no advancing cycle started
+		 
+		 if(!overrideError) {
+			//return with false means an error, that is not ignored/overridden
+			//error, and error was not overridden -> return false, advance not successful
+			return false;
+		 } else {
+			 Serial.println(F("error overridden temporarily"));
+		 }
 	}
 
 	//check, what to do? if not, return quickly
@@ -203,39 +217,21 @@ FeederClass::tFeederErrorState FeederClass::getFeederErrorState() {
 	if(!this->hasFeedbackLine()) {
 		//no feedback-line, return always OK
 		//no feedback pin defined or feedback shall be ignored
-		#ifdef DEBUG
-			Serial.println(F("getFeederErrorState: sOK_NOFEEDBACKLINE"));
-		#endif
-		
 		return sOK_NOFEEDBACKLINE;
 	}
 
 	if( digitalRead((uint8_t)feederFeedbackPinMap[this->feederNo]) == LOW ) {
 		//the microswitch pulls feedback-pin LOW if tension of cover tape is OK. motor to pull tape is off then
 		//no error
-		#ifdef DEBUG
-			Serial.println(F("getFeederErrorState: sOK"));
-		#endif
-		
 		return sOK;
 	} else {
 		//microswitch is not pushed down, this is considered as an error
 
 		if(this->feederSettings.ignore_feedback==1) {
 			//error present, but ignore
-			
-			#ifdef DEBUG
-				Serial.println(F("getFeederErrorState: sERROR_IGNORED"));
-			#endif
-			
 			return sERROR_IGNORED;
 		} else {
 			//error present, report fail
-			
-			#ifdef DEBUG
-				Serial.println(F("getFeederErrorState: sERROR"));
-			#endif
-			
 			return sERROR;
 		}
 
@@ -246,16 +242,16 @@ FeederClass::tFeederErrorState FeederClass::getFeederErrorState() {
 String FeederClass::reportFeederErrorState() {
 	switch(this->getFeederErrorState()) {
 		case sOK_NOFEEDBACKLINE:
-			return "no feedback line for feeder, impliciting feeder OK";
+			return "getFeederErrorState: sOK_NOFEEDBACKLINE (no feedback line for feeder, impliciting feeder OK)";
 		break;
 		case sOK:
-			return "feedbackline checked, explicit feeder OK";
+			return "getFeederErrorState: sOK (feedbackline checked, explicit feeder OK)";
 		break;
 		case sERROR_IGNORED:
-			return "error, but ignored";
+			return "getFeederErrorState: sERROR_IGNORED (error, but ignored per feeder setting X1)";
 		break;
 		case sERROR:
-			return "error, feeder checked";
+			return "getFeederErrorState: sERROR (error signaled on feedbackline)";
 		break;
 		
 		default:
