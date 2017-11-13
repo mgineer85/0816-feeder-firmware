@@ -167,73 +167,73 @@
 #define NUMBER_OF_FEEDER 24			//default 24
 
 /*
-* feederPinMap: Map IO-pins to specific feeder. First feeder is at index 0. Last feeder is NUMBER_OF_FEEDER-1
+* feederPinMap: Map IO-pins to specific feeder. First feeder is at index 0 (N0). Last feeder is NUMBER_OF_FEEDER-1
 */
 const static uint8_t feederPinMap[NUMBER_OF_FEEDER] = {
-	2,    // Feeder 0
-	3,    // Feeder 1
-	4,		//...
+	13,    // Feeder N0
+	11,    // Feeder N1
+	9,		//...
+	7,
 	5,
-	6,
-	53,
+	3,
 
-	8,	// Feeder 6
-	9,
-	10,
-	11,
-	12,
-	13,
-
-	22,	// Feeder 12
+	14,	// Feeder N6
+	16,
+	18,
+	22,
 	24,
 	26,
-	28,
-	30,
-	32,
 
-	34,	//Feeder 18
+	30,	// Feeder N12
+	32,
+	34,
 	36,
 	38,
 	40,
-	42,
+
+	42,	//Feeder N18
 	44,
+	46,
+	48,
+	50,
+	52,	// Feeder N23
 };
 
 
 /*
-* feederFeedbackPinMap: Map IO-pins to feedback-line to specific feeder. First feeder is at index 0. Last feeder is NUMBER_OF_FEEDER-1
+* feederFeedbackPinMap: Map IO-pins to feedback-line to specific feeder. First feeder is at index 0 (N0). Last feeder is NUMBER_OF_FEEDER-1
 * Feedback-line is usually connected to a microswitch to determine whether the feeder has a tape loaded and cover tape is tensioned
 *
 * to disable feedback-functionality completely at compile-time set pin to -1
 */
 const static int8_t feederFeedbackPinMap[NUMBER_OF_FEEDER] = {
-	7,    // Feeder 0
-	7,    // Feeder 1
-	7,		//...
-	7,
-	7,
-	7,
+	12,    // Feeder N0
+	10,    // Feeder N1
+	8,		//...
+	6,
+	4,
+	2,
 
-	-1,    // Feeder 6
-	-1,
-	-1,
-	-1,
-	-1,
-	-1,
+	15,    // Feeder N6
+	17,
+	19,
+	23,
+	25,
+	27,
 
-	-1,    // Feeder 12
-	-1,
-	-1,
-	-1,
-	-1,
-	-1,
+	31,    // Feeder N12
+	33,
+	35,
+	37,
+	39,
+	41,
 
-	-1,    // Feeder 18
-	-1,
-	-1,
-	-1,
-	-1,
-	-1,
+	43,    // Feeder N18
+	45,
+	47,
+	49,
+	51,
+	53,		// Feeder N23
 
 };
 
