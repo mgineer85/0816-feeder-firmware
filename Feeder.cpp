@@ -184,7 +184,7 @@ bool FeederClass::advance(uint8_t feedLength, bool overrideError = false) {
 			//error, and error was not overridden -> return false, advance not successful
 			return false;
 		 } else {
-			 Serial.println(F("error overridden temporarily"));
+			 Serial.println(F("overridden error temporarily"));
 		 }
 	}
 

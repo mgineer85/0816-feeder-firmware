@@ -146,6 +146,16 @@ void setup() {
 	Serial.println(F("Controller starting...")); Serial.flush();
 	Serial.println(F("Here is some stuff saved in EEPROM. Paste in a textfile to backup these settings...")); Serial.flush();
 
+	//feeder enable output
+	pinMode(FEEDER_ENABLE_PIN,OUTPUT);
+	digitalWrite(FEEDER_ENABLE_PIN,LOW);
+
+	//power output init
+	for(uint8_t i=0;i<NUMBER_OF_POWER_OUTPUT;i++) {
+		pinMode(pwrOutputPinMap[i],OUTPUT);
+		digitalWrite(pwrOutputPinMap[i],LOW);
+	}
+	
 	// setup listener to serial stream
 	setupGCodeProc();
 
@@ -170,8 +180,11 @@ void setup() {
 	//print all settings to console
 	printCommonSettings();
 
-	//handles the servo controlling stuff
+	//setup feeder objects
+	digitalWrite(FEEDER_ENABLE_PIN, HIGH);	//enable first, because while setup feeder might retract.
 	executeCommandOnAllFeeder(cmdSetup);
+	delay(200);		//have the last feeder settled before disabling
+	executeCommandOnAllFeeder(cmdDisable);
 	
 	//print all settings of every feeder to console
 	executeCommandOnAllFeeder(cmdOutputCurrentSettings);
@@ -180,15 +193,6 @@ void setup() {
 	updateADCvalues();
 	lastTimeADCread=millis();
 
-	//feeder enable output
-	pinMode(FEEDER_ENABLE_PIN,OUTPUT);
-	digitalWrite(FEEDER_ENABLE_PIN,LOW);
-
-	//power output init
-	for(uint8_t i=0;i<NUMBER_OF_POWER_OUTPUT;i++) {
-		pinMode(pwrOutputPinMap[i],OUTPUT);
-		digitalWrite(pwrOutputPinMap[i],LOW);
-	}
 
 	Serial.println(F("Controller up and ready! Have fun."));
 }
