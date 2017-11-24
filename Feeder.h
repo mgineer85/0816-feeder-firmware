@@ -60,6 +60,11 @@ class FeederClass {
 
 	//store last tinestamp position changed to respect a settle time
 	unsigned long lastTimePositionChange;
+	
+	//some variables for utilizing the feedbackline to feed for setup the feeder...
+	uint8_t feedbackLineTickCounter=0;
+	unsigned long lastTimeFeedbacklineCheck;
+	int lastButtonState;
 
 	//permanently in eeprom stored settings
 	sFeederSettings feederSettings = {

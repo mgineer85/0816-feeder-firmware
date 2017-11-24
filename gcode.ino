@@ -246,7 +246,7 @@ void processCommand() {
 			updatedFeederSettings.motor_min_pulsewidth=parseParameter('V',oldFeederSettings.motor_min_pulsewidth);
 			updatedFeederSettings.motor_max_pulsewidth=parseParameter('W',oldFeederSettings.motor_max_pulsewidth);
 			updatedFeederSettings.ignore_feedback=parseParameter('X',oldFeederSettings.ignore_feedback);
-
+			
 			//set to feeder
 			feeders[(uint8_t)signedFeederNo].setSettings(updatedFeederSettings);
 
@@ -254,7 +254,7 @@ void processCommand() {
 			feeders[(uint8_t)signedFeederNo].saveFeederSettings();
 
 			//confirm
-			sendAnswer(0,F("Config of feeder updated."));
+			sendAnswer(0,F("Feeders config updated."));
 
 			break;
 		}

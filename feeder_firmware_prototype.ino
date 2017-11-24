@@ -185,6 +185,7 @@ void setup() {
 	executeCommandOnAllFeeder(cmdSetup);
 	delay(200);		//have the last feeder settled before disabling
 	executeCommandOnAllFeeder(cmdDisable);
+	digitalWrite(FEEDER_ENABLE_PIN, LOW);	//disable afterwards
 	
 	//print all settings of every feeder to console
 	executeCommandOnAllFeeder(cmdOutputCurrentSettings);

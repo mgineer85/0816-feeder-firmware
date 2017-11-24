@@ -54,6 +54,8 @@ void FeederClass::setup() {
 	if(this->hasFeedbackLine()) {
 		pinMode((uint8_t)feederFeedbackPinMap[this->feederNo],INPUT_PULLUP);
 	}
+	
+	this->lastButtonState=digitalRead(feederFeedbackPinMap[this->feederNo]);
 
 	//attach servo to pin
 	this->servo.attach(feederPinMap[this->feederNo],this->feederSettings.motor_min_pulsewidth,this->feederSettings.motor_max_pulsewidth);
@@ -124,7 +126,7 @@ void FeederClass::gotoPostPickPosition() {
 void FeederClass::gotoRetractPosition() {
 	this->servo.write(this->feederSettings.retract_angle);
   this->feederPosition=sAT_RETRACT_POSITION;
-	this->feederState=sMOVING;
+	//this->feederState=sMOVING;		//moving-flag is not evaluated currently in the firmware... if setting this, it breaks manual feed via tensioner.
 	#ifdef DEBUG
 		Serial.println("going to retract now");
 	#endif
@@ -133,7 +135,7 @@ void FeederClass::gotoRetractPosition() {
 void FeederClass::gotoHalfAdvancedPosition() {
 	this->servo.write(this->feederSettings.half_advanced_angle);
   this->feederPosition=sAT_HALF_ADVANCED_POSITION;
-	this->feederState=sMOVING;
+	//this->feederState=sMOVING;
 	#ifdef DEBUG
 		Serial.println("going to half adv now");
 	#endif
@@ -142,7 +144,7 @@ void FeederClass::gotoHalfAdvancedPosition() {
 void FeederClass::gotoFullAdvancedPosition() {
 	this->servo.write(this->feederSettings.full_advanced_angle);
 	this->feederPosition=sAT_FULL_ADVANCED_POSITION;
-	this->feederState=sMOVING;
+	//this->feederState=sMOVING;
 	#ifdef DEBUG
 		Serial.println("going to full adv now");
 	#endif
@@ -189,10 +191,10 @@ bool FeederClass::advance(uint8_t feedLength, bool overrideError = false) {
 	}
 
 	//check, what to do? if not, return quickly
-	if(feedLength==0 && this->remainingFeedLength==0) {
+	if(feedLength==0) {
 		//nothing to do, just return
 
-	} else if (feedLength>0 && this->remainingFeedLength>0) {
+	} else if ( feedLength>0 && this->feederState!=sIDLE ) {
 		//last advancing not completed! ignore newly received command
 		//TODO: one could use a queue
 	} else {
@@ -275,8 +277,68 @@ void FeederClass::disable() {
 }
 
 void FeederClass::update() {
-
-
+	
+	//routine for detecting manual feed via tensioner microswitch.
+	//useful for setup a feeder. press tensioner short to advance by feeder's default feed length
+	if(this->feederState==sIDLE) {		//only check feedback line if feeder is idle. this shall not interfere with the feedbackline-checking to detect the error state of the feeder
+		
+		if (millis() - this->lastTimeFeedbacklineCheck >= 10UL) {	//to debounce, check every 10ms the feedbackline.
+			
+			this->lastTimeFeedbacklineCheck=millis();		//update last time checked
+		
+			int buttonState = digitalRead(feederFeedbackPinMap[this->feederNo]);	//read level of feedbackline (active low)
+		
+			if ( this->feedbackLineTickCounter > 0 ) {		//to debounce there is a timer
+				this->feedbackLineTickCounter++;
+			}
+		
+			
+			if ( (buttonState != this->lastButtonState) && (buttonState == LOW)) {		//event: button state changed to low (tensioner pressed)
+				this->lastButtonState=buttonState;		//update state
+				this->feedbackLineTickCounter=1;		//start counter
+				#ifdef DEBUG
+					Serial.print(F("buttonState changed to low"));
+				#endif
+			} else if (buttonState != this->lastButtonState) {
+				this->lastButtonState=buttonState;	//update in case button went high again
+			}
+			
+			if ( (this->feedbackLineTickCounter > 5) ) {
+				//after 50ms the microswitch is expected to be debounced, so a potential manual feed can be issued, when going to high level again.
+				if(buttonState==HIGH) {
+					//button released, we have a valid feed command now
+					#ifdef DEBUG
+						Serial.print(F("Manual feed triggered for feeder N"));
+						Serial.print(this->feederNo);
+						Serial.print(F("advancing feeders default length "));
+						Serial.print(this->feederSettings.feed_length);
+						Serial.print(F("mm."));
+					#endif
+					
+					//trigger feed with default feeder length, errors are overridden.
+					this->advance(this->feederSettings.feed_length,true);
+					
+					//reset
+					this->feedbackLineTickCounter=0;
+				}
+				
+				//check for invalidity
+				if (this->feedbackLineTickCounter > 50) {	//button pressed too long (this is the case, too, if the cover tape was inserted and properly tensioned)
+					
+					#ifdef DEBUG
+						Serial.print(F("Potential manual feed rejected (button pressed too long, probably cover tape was inserted properly)"));
+					#endif
+					
+					//reset counter to reject potential feed
+					this->feedbackLineTickCounter=0;
+				}
+			}
+		}
+	} else {
+		//don't do anything if not idle...
+		feedbackLineTickCounter=0;
+	}
+	
 	//state machine-update-stuff (for settle time)
 	if(this->lastFeederPosition!=this->feederPosition) {
 		this->lastTimePositionChange=millis();
@@ -295,7 +357,8 @@ void FeederClass::update() {
 		//if no need for feeding exit fast.
 		if(this->remainingFeedLength==0)
 			return;
-
+		else 
+			this->feederState=sMOVING;
 
 		#ifdef DEBUG
 			Serial.print("remainingFeedLength before working: ");
