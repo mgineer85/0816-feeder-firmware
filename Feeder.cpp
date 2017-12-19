@@ -280,6 +280,7 @@ void FeederClass::update() {
 	
 	//routine for detecting manual feed via tensioner microswitch.
 	//useful for setup a feeder. press tensioner short to advance by feeder's default feed length
+	//feeder have to be enabled for this, otherwise this feature doesn't work and pressing the tensioner can't be detected due to open mosfet on controller pcb.
 	if(this->feederState==sIDLE) {		//only check feedback line if feeder is idle. this shall not interfere with the feedbackline-checking to detect the error state of the feeder
 		
 		if (millis() - this->lastTimeFeedbacklineCheck >= 10UL) {	//to debounce, check every 10ms the feedbackline.

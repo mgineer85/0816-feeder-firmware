@@ -8,7 +8,7 @@
 */
 // prints some extra information via serial
 // uncomment to disable in production
-#define DEBUG
+//#define DEBUG
 
 /*
 *  Select controller shield
