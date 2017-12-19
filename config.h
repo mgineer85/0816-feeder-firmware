@@ -11,6 +11,15 @@
 #define DEBUG
 
 /*
+*  Select controller shield
+*/
+// defaults to the native shield, optional sensor shield can be selected
+#define NATIVE_SHIELD 1
+#define SENSOR_SHIELD 2
+#define CONTROLLER_SHIELD NATIVE_SHIELD
+
+
+/*
 *  EEPROM-Settings
 */
 //change to something other unique if structure of data to be saved in eeprom changed (max 3 chars)
@@ -161,9 +170,6 @@
 //
 // ------------------------------------------------------
 
-#define NATIVE_SHIELD 1
-#define SENSOR_SHIELD 2
-#define CONTROLLER_SHIELD SENSOR_SHIELD // SENSOR_SHIELD
 
 
 
