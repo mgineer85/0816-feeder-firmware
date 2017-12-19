@@ -3,6 +3,7 @@
 
 #include "arduino.h"
 #include "config.h"
+#include "boards.h"
 #include <Servo.h>
 #include <EEPROMex.h>
 

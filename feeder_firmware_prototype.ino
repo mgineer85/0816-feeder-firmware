@@ -1,14 +1,14 @@
 /*
-* Author: Michael Groene
-* (c)2017
+* Author: Michael G.
+* (c)2017-12-19
 *
 * This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
 * http://creativecommons.org/licenses/by-nc-sa/4.0/
 *
-* v0.1 - initial
+* v0.2
 *
 * CHANGELOG:
-*
+* v0.2 added support for sensor shield (experimental, no feedbackline supported)
 *
 *
 *
@@ -17,8 +17,8 @@
 *
 */
 
-
 #include "config.h"
+#include "boards.h"
 
 // ------------------  I N C  L I B R A R I E S ---------------
 #include <HardwareSerial.h>
