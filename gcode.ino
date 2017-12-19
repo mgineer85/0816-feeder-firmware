@@ -245,7 +245,9 @@ void processCommand() {
 			updatedFeederSettings.time_to_settle=parseParameter('U',oldFeederSettings.time_to_settle);
 			updatedFeederSettings.motor_min_pulsewidth=parseParameter('V',oldFeederSettings.motor_min_pulsewidth);
 			updatedFeederSettings.motor_max_pulsewidth=parseParameter('W',oldFeederSettings.motor_max_pulsewidth);
+#if CONTROLLER_SHIELD == NATIVE_SHIELD
 			updatedFeederSettings.ignore_feedback=parseParameter('X',oldFeederSettings.ignore_feedback);
+#endif
 			
 			//set to feeder
 			feeders[(uint8_t)signedFeederNo].setSettings(updatedFeederSettings);
@@ -262,6 +264,7 @@ void processCommand() {
 		/*
 		CODES to Control ADC
 		*/
+ #if CONTROLLER_SHIELD == NATIVE_SHIELD
 		case MCODE_GET_ADC_RAW: {
 			//answer to host
 			int8_t channel=parseParameter('A',-1);
@@ -328,6 +331,8 @@ void processCommand() {
 
 			break;
 		}
+   
+#endif
 
 		case MCODE_FACTORY_RESET: {
 			commonSettings.version[0]=commonSettings.version[0]+1;

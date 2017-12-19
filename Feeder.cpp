@@ -39,8 +39,10 @@ void FeederClass::outputCurrentSettings() {
 	Serial.print(this->feederSettings.motor_min_pulsewidth);
 	Serial.print(" W");
 	Serial.print(this->feederSettings.motor_max_pulsewidth);
+#if CONTROLLER_SHIELD == NATIVE_SHIELD   
 	Serial.print(" X");
 	Serial.print(this->feederSettings.ignore_feedback);
+#endif
 	Serial.println();
 }
 
@@ -216,6 +218,7 @@ bool FeederClass::feederIsOk() {
 }
 
 FeederClass::tFeederErrorState FeederClass::getFeederErrorState() {
+#if CONTROLLER_SHIELD == NATIVE_SHIELD
 	if(!this->hasFeedbackLine()) {
 		//no feedback-line, return always OK
 		//no feedback pin defined or feedback shall be ignored
@@ -238,7 +241,9 @@ FeederClass::tFeederErrorState FeederClass::getFeederErrorState() {
 		}
 
 	}
-
+#else
+  return sOK_NOFEEDBACKLINE;
+#endif
 }
 
 String FeederClass::reportFeederErrorState() {

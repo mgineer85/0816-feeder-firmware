@@ -29,14 +29,16 @@ class FeederClass {
 
 	//used to transfer settings between different objects
 	struct sFeederSettings {
-		int full_advanced_angle;
-		int half_advanced_angle;
-		int retract_angle;
+		uint8_t full_advanced_angle;
+		uint8_t half_advanced_angle;
+		uint8_t retract_angle;
 		uint8_t feed_length;
 		int time_to_settle;
 		int motor_min_pulsewidth;
 		int motor_max_pulsewidth;
+#if CONTROLLER_SHIELD == NATIVE_SHIELD      
 		uint8_t ignore_feedback;
+#endif
 		//sFeederState lastFeederState;       //save last position to stay there on poweron? needs something not to wear out the eeprom. until now just go to retract pos.
 	};
 
@@ -76,7 +78,9 @@ class FeederClass {
 		FEEDER_DEFAULT_TIME_TO_SETTLE,
 		FEEDER_DEFAULT_MOTOR_MIN_PULSEWIDTH,
 		FEEDER_DEFAULT_MOTOR_MAX_PULSEWITH,
+#if CONTROLLER_SHIELD == NATIVE_SHIELD
 		FEEDER_DEFAULT_IGNORE_FEEDBACK,
+#endif
 	};
 
 	Servo servo;

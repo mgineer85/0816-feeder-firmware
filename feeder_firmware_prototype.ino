@@ -40,15 +40,17 @@ struct sCommonSettings {
 	//add further settings here
 
 	char version[4];   // This is for detection if settings suit to struct, if not, eeprom is reset to defaults
-
+#if CONTROLLER_SHIELD == NATIVE_SHIELD
 	float adc_scaling_values[8][2];
+#endif
 };
 sCommonSettings commonSettings_default = {
 
 	//add further settings here
 
 	CONFIG_VERSION,
-
+ 
+#if CONTROLLER_SHIELD == NATIVE_SHIELD
 	{
 		{ANALOG_A0_SCALING_FACTOR,ANALOG_A0_OFFSET},
 		{ANALOG_A1_SCALING_FACTOR,ANALOG_A1_OFFSET},
@@ -59,6 +61,7 @@ sCommonSettings commonSettings_default = {
 		{ANALOG_A6_SCALING_FACTOR,ANALOG_A6_OFFSET},
 		{ANALOG_A7_SCALING_FACTOR,ANALOG_A7_OFFSET},
 	},
+#endif
 };
 sCommonSettings commonSettings;
 
@@ -114,6 +117,7 @@ void executeCommandOnAllFeeder(eFeederCommands command) {
 	}
 }
 
+#if CONTROLLER_SHIELD == NATIVE_SHIELD
 void updateADCvalues() {
 
 	for(uint8_t i=0; i<=7; i++) {
@@ -121,10 +125,12 @@ void updateADCvalues() {
 		adcScaledValues[i]=(adcRawValues[i]*commonSettings.adc_scaling_values[i][0])+commonSettings.adc_scaling_values[i][1];
 	}
 }
+#endif
 
 void printCommonSettings() {
 
 	//ADC-scaling values
+#if CONTROLLER_SHIELD == NATIVE_SHIELD   
 	Serial.println("Analog Scaling Settings:");
 	for(uint8_t i=0; i<=7; i++) {
 		Serial.print("M");
@@ -137,6 +143,7 @@ void printCommonSettings() {
 		Serial.print(commonSettings.adc_scaling_values[i][1]);
 		Serial.println();
 	}
+#endif
 }
 
 // ------------------  S E T U P -----------------------
@@ -191,9 +198,10 @@ void setup() {
 	executeCommandOnAllFeeder(cmdOutputCurrentSettings);
 
 	//init adc-values
+#if CONTROLLER_SHIELD == NATIVE_SHIELD
 	updateADCvalues();
 	lastTimeADCread=millis();
-
+#endif
 
 	Serial.println(F("Controller up and ready! Have fun."));
 }
@@ -213,10 +221,11 @@ void loop() {
 	executeCommandOnAllFeeder(cmdUpdate);
 
 	// Process ADC inputs
+#if CONTROLLER_SHIELD == NATIVE_SHIELD
 	if (millis() - lastTimeADCread >= ADC_READ_EVERY_MS) {
 		lastTimeADCread=millis();
 
 		updateADCvalues();
 	}
-
+#endif
 }

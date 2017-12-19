@@ -17,13 +17,14 @@
 #define NATIVE_SHIELD 1
 #define SENSOR_SHIELD 2
 #define CONTROLLER_SHIELD NATIVE_SHIELD
+//change config_version, if change board!
 
 
 /*
 *  EEPROM-Settings
 */
 //change to something other unique if structure of data to be saved in eeprom changed (max 3 chars)
-#define CONFIG_VERSION "aab"
+#define CONFIG_VERSION "aac"
 
 /*
 *  Serial
@@ -103,11 +104,11 @@
 	|    0			<- servo-motor at FEEDER_DEFAULT_FULL_ADVANCED_ANGLE (about 90°)
 
 */
-#define FEEDER_DEFAULT_FULL_ADVANCED_ANGLE  90				      // [°]  usually about 90.
-#define FEEDER_DEFAULT_HALF_ADVANCED_ANGLE  57              // [°]  usually about 55-65. only needed if advancing half pitch (for 0401 smds)
-#define FEEDER_DEFAULT_RETRACT_ANGLE  15				      // [°]  usually 20, might be adjusted to servo
+#define FEEDER_DEFAULT_FULL_ADVANCED_ANGLE  90				      // [°]  usually about 90 (type: uint8_t)
+#define FEEDER_DEFAULT_HALF_ADVANCED_ANGLE  57              // [°]  usually about 55-65. only needed if advancing half pitch (for 0401 smds) (type: uint8_t)
+#define FEEDER_DEFAULT_RETRACT_ANGLE  15				      // [°]  usually 20, might be adjusted to servo (type: uint8_t)
 #define FEEDER_DEFAULT_FEED_LENGTH FEEDER_MECHANICAL_ADVANCE_LENGTH			// [mm] distance to be fed if no feedlength was given in a feed command
-#define FEEDER_DEFAULT_TIME_TO_SETTLE  240			  // [ms] time the servo needs to travel from FEEDER_DEFAULT_FULL_ADVANCED_ANGLE to FEEDER_DEFAULT_RETRACT_ANGLE
+#define FEEDER_DEFAULT_TIME_TO_SETTLE  240			  // [ms] time the servo needs to travel from FEEDER_DEFAULT_FULL_ADVANCED_ANGLE to FEEDER_DEFAULT_RETRACT_ANGLE (type: uint8_t -> max 255ms)
 /*
 	 0° == ~ 544 µs	--> min, default 544 and seems it fits to the sg90 from tower pro
 	90° ==          --> "middle"
@@ -175,7 +176,11 @@
 
 //where in eeprom to store common settings and feeder specific data
 #define EEPROM_COMMON_SETTINGS_ADDRESS_OFFSET 4
-#define EEPROM_FEEDER_SETTINGS_ADDRESS_OFFSET 128
+#if CONTROLLER_SHIELD == NATIVE_SHIELD
+  #define EEPROM_FEEDER_SETTINGS_ADDRESS_OFFSET 128
+#else
+  #define EEPROM_FEEDER_SETTINGS_ADDRESS_OFFSET 8
+#endif
 
 //buffer size for serial commands received
 #define MAX_BUFFFER_MCODE_LINE 64	// no line can be longer than this
