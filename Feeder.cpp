@@ -12,6 +12,7 @@ void FeederClass::initialize(uint8_t _feederNo) {
 	this->feederNo = _feederNo;
 }
 
+#ifdef HAS_FEEDBACKLINES
 bool FeederClass::hasFeedbackLine() {
 	if(feederFeedbackPinMap[this->feederNo] != -1) {
 		return true;
@@ -19,6 +20,7 @@ bool FeederClass::hasFeedbackLine() {
 		return false;
 	}
 }
+#endif
 
 void FeederClass::outputCurrentSettings() {
 	Serial.print("M");
@@ -39,7 +41,7 @@ void FeederClass::outputCurrentSettings() {
 	Serial.print(this->feederSettings.motor_min_pulsewidth);
 	Serial.print(" W");
 	Serial.print(this->feederSettings.motor_max_pulsewidth);
-#if CONTROLLER_SHIELD == NATIVE_SHIELD   
+#ifdef HAS_FEEDBACKLINES
 	Serial.print(" X");
 	Serial.print(this->feederSettings.ignore_feedback);
 #endif
@@ -53,11 +55,12 @@ void FeederClass::setup() {
 
 	//feedback input
 	//microswitch is active low (NO connected to feedback-pin)
-	if(this->hasFeedbackLine()) {
+#ifdef HAS_FEEDBACKLINES
+	if(this->hasFeedbackLine())
 		pinMode((uint8_t)feederFeedbackPinMap[this->feederNo],INPUT_PULLUP);
-	}
-	
+
 	this->lastButtonState=digitalRead(feederFeedbackPinMap[this->feederNo]);
+#endif
 
 	//attach servo to pin
 	this->servo.attach(feederPinMap[this->feederNo],this->feederSettings.motor_min_pulsewidth,this->feederSettings.motor_max_pulsewidth);
@@ -218,7 +221,7 @@ bool FeederClass::feederIsOk() {
 }
 
 FeederClass::tFeederErrorState FeederClass::getFeederErrorState() {
-#if CONTROLLER_SHIELD == NATIVE_SHIELD
+#ifdef HAS_FEEDBACKLINES
 	if(!this->hasFeedbackLine()) {
 		//no feedback-line, return always OK
 		//no feedback pin defined or feedback shall be ignored
@@ -282,7 +285,8 @@ void FeederClass::disable() {
 }
 
 void FeederClass::update() {
-	
+
+#ifdef HAS_FEEDBACKLINE
 	//routine for detecting manual feed via tensioner microswitch.
 	//useful for setup a feeder. press tensioner short to advance by feeder's default feed length
 	//feeder have to be enabled for this, otherwise this feature doesn't work and pressing the tensioner can't be detected due to open mosfet on controller pcb.
@@ -344,7 +348,9 @@ void FeederClass::update() {
 		//don't do anything if not idle...
 		feedbackLineTickCounter=0;
 	}
-	
+
+#endif
+  
 	//state machine-update-stuff (for settle time)
 	if(this->lastFeederPosition!=this->feederPosition) {
 		this->lastTimePositionChange=millis();

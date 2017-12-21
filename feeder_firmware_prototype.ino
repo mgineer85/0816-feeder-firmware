@@ -18,7 +18,7 @@
 */
 
 #include "config.h"
-#include "boards.h"
+#include "shield.h"
 
 // ------------------  I N C  L I B R A R I E S ---------------
 #include <HardwareSerial.h>
@@ -40,7 +40,7 @@ struct sCommonSettings {
 	//add further settings here
 
 	char version[4];   // This is for detection if settings suit to struct, if not, eeprom is reset to defaults
-#if CONTROLLER_SHIELD == NATIVE_SHIELD
+#ifdef HAS_ANALOG_IN
 	float adc_scaling_values[8][2];
 #endif
 };
@@ -50,7 +50,7 @@ sCommonSettings commonSettings_default = {
 
 	CONFIG_VERSION,
  
-#if CONTROLLER_SHIELD == NATIVE_SHIELD
+#ifdef HAS_ANALOG_IN
 	{
 		{ANALOG_A0_SCALING_FACTOR,ANALOG_A0_OFFSET},
 		{ANALOG_A1_SCALING_FACTOR,ANALOG_A1_OFFSET},
@@ -117,7 +117,7 @@ void executeCommandOnAllFeeder(eFeederCommands command) {
 	}
 }
 
-#if CONTROLLER_SHIELD == NATIVE_SHIELD
+#ifdef HAS_ANALOG_IN
 void updateADCvalues() {
 
 	for(uint8_t i=0; i<=7; i++) {
@@ -130,7 +130,7 @@ void updateADCvalues() {
 void printCommonSettings() {
 
 	//ADC-scaling values
-#if CONTROLLER_SHIELD == NATIVE_SHIELD   
+#ifdef HAS_ANALOG_IN
 	Serial.println("Analog Scaling Settings:");
 	for(uint8_t i=0; i<=7; i++) {
 		Serial.print("M");
@@ -198,7 +198,7 @@ void setup() {
 	executeCommandOnAllFeeder(cmdOutputCurrentSettings);
 
 	//init adc-values
-#if CONTROLLER_SHIELD == NATIVE_SHIELD
+#ifdef HAS_ANALOG_IN
 	updateADCvalues();
 	lastTimeADCread=millis();
 #endif
@@ -221,7 +221,7 @@ void loop() {
 	executeCommandOnAllFeeder(cmdUpdate);
 
 	// Process ADC inputs
-#if CONTROLLER_SHIELD == NATIVE_SHIELD
+#ifdef HAS_ANALOG_IN
 	if (millis() - lastTimeADCread >= ADC_READ_EVERY_MS) {
 		lastTimeADCread=millis();
 

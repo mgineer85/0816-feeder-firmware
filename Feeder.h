@@ -3,7 +3,7 @@
 
 #include "arduino.h"
 #include "config.h"
-#include "boards.h"
+#include "shield.h"
 #include <Servo.h>
 #include <EEPROMex.h>
 
@@ -36,7 +36,7 @@ class FeederClass {
 		int time_to_settle;
 		int motor_min_pulsewidth;
 		int motor_max_pulsewidth;
-#if CONTROLLER_SHIELD == NATIVE_SHIELD      
+#ifdef HAS_FEEDBACKLINES  
 		uint8_t ignore_feedback;
 #endif
 		//sFeederState lastFeederState;       //save last position to stay there on poweron? needs something not to wear out the eeprom. until now just go to retract pos.
@@ -78,7 +78,7 @@ class FeederClass {
 		FEEDER_DEFAULT_TIME_TO_SETTLE,
 		FEEDER_DEFAULT_MOTOR_MIN_PULSEWIDTH,
 		FEEDER_DEFAULT_MOTOR_MAX_PULSEWITH,
-#if CONTROLLER_SHIELD == NATIVE_SHIELD
+#ifdef HAS_FEEDBACKLINES
 		FEEDER_DEFAULT_IGNORE_FEEDBACK,
 #endif
 	};
