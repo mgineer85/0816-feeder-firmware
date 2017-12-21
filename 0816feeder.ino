@@ -1,6 +1,6 @@
 /*
 * Author: Michael G.
-* (c)2017-12-19
+* (c)2017-12-21
 *
 * This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
 * http://creativecommons.org/licenses/by-nc-sa/4.0/

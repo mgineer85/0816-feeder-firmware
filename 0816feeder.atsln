@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Atmel Studio Solution File, Format Version 11.00
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "feeder_firmware_prototype", "feeder_firmware_prototype.cppproj", "{41D67B95-E04C-4F82-A6FA-5E5BD8099F3F}"
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "0816feeder", "0816feeder.cppproj", "{41D67B95-E04C-4F82-A6FA-5E5BD8099F3F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,6 +12,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{41D67B95-E04C-4F82-A6FA-5E5BD8099F3F}.Debug|AVR.ActiveCfg = Debug|AVR
+		{41D67B95-E04C-4F82-A6FA-5E5BD8099F3F}.Debug|AVR.Build.0 = Debug|AVR
 		{41D67B95-E04C-4F82-A6FA-5E5BD8099F3F}.Release|AVR.ActiveCfg = Release|AVR
 		{41D67B95-E04C-4F82-A6FA-5E5BD8099F3F}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
