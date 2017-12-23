@@ -130,7 +130,7 @@ void FeederClass::gotoPostPickPosition() {
 
 void FeederClass::gotoRetractPosition() {
 	this->servo.write(this->feederSettings.retract_angle);
-  this->feederPosition=sAT_RETRACT_POSITION;
+	this->feederPosition=sAT_RETRACT_POSITION;
 	//this->feederState=sMOVING;		//moving-flag is not evaluated currently in the firmware... if setting this, it breaks manual feed via tensioner.
 	#ifdef DEBUG
 		Serial.println("going to retract now");
@@ -139,7 +139,7 @@ void FeederClass::gotoRetractPosition() {
 
 void FeederClass::gotoHalfAdvancedPosition() {
 	this->servo.write(this->feederSettings.half_advanced_angle);
-  this->feederPosition=sAT_HALF_ADVANCED_POSITION;
+	this->feederPosition=sAT_HALF_ADVANCED_POSITION;
 	//this->feederState=sMOVING;
 	#ifdef DEBUG
 		Serial.println("going to half adv now");
@@ -198,7 +198,6 @@ bool FeederClass::advance(uint8_t feedLength, bool overrideError = false) {
 	//check, what to do? if not, return quickly
 	if(feedLength==0) {
 		//nothing to do, just return
-
 	} else if ( feedLength>0 && this->feederState!=sIDLE ) {
 		//last advancing not completed! ignore newly received command
 		//TODO: one could use a queue
@@ -307,7 +306,7 @@ void FeederClass::update() {
 				this->lastButtonState=buttonState;		//update state
 				this->feedbackLineTickCounter=1;		//start counter
 				#ifdef DEBUG
-					Serial.print(F("buttonState changed to low"));
+					Serial.println(F("buttonState changed to low"));
 				#endif
 			} else if (buttonState != this->lastButtonState) {
 				this->lastButtonState=buttonState;	//update in case button went high again
@@ -322,7 +321,7 @@ void FeederClass::update() {
 						Serial.print(this->feederNo);
 						Serial.print(F("advancing feeders default length "));
 						Serial.print(this->feederSettings.feed_length);
-						Serial.print(F("mm."));
+						Serial.println(F("mm."));
 					#endif
 					
 					//trigger feed with default feeder length, errors are overridden.
@@ -336,7 +335,7 @@ void FeederClass::update() {
 				if (this->feedbackLineTickCounter > 50) {	//button pressed too long (this is the case, too, if the cover tape was inserted and properly tensioned)
 					
 					#ifdef DEBUG
-						Serial.print(F("Potential manual feed rejected (button pressed too long, probably cover tape was inserted properly)"));
+						Serial.println(F("Potential manual feed rejected (button pressed too long, probably cover tape was inserted properly)"));
 					#endif
 					
 					//reset counter to reject potential feed
