@@ -1,19 +1,19 @@
 /*
-* Author: Michael G.
-* (c)2017-12-21
+* Author: mgrl
+* (c)2017-12-30
 *
 * This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
 * http://creativecommons.org/licenses/by-nc-sa/4.0/
 *
-* v0.2
+* current version: v0.3
 *
 * CHANGELOG:
-* v0.2 added support for sensor shield (experimental, no feedbackline supported)
-*
-*
-*
-*
-*
+* v0.2
+*   - added support for sensor shield (experimental, no feedbackline supported)
+* v0.3
+*   - better checking for manual feed (enhanced reliability not to conflict with g-code issued feeds)
+*   - improved setup sequence
+*   - default angle for 2mm feeds corrected according to math
 *
 */
 
@@ -77,8 +77,8 @@ enum eFeederCommands {
 	cmdSetup,
 	cmdUpdate,
 
-  cmdEnable,
-  cmdDisable,
+	cmdEnable,
+	cmdDisable,
 
 	cmdOutputCurrentSettings,
 	cmdInitializeFeederWithId,
@@ -188,11 +188,10 @@ void setup() {
 	printCommonSettings();
 
 	//setup feeder objects
-	digitalWrite(FEEDER_ENABLE_PIN, HIGH);	//enable first, because while setup feeder might retract.
-	executeCommandOnAllFeeder(cmdSetup);
-	delay(200);		//have the last feeder settled before disabling
-	executeCommandOnAllFeeder(cmdDisable);
-	digitalWrite(FEEDER_ENABLE_PIN, LOW);	//disable afterwards
+	executeCommandOnAllFeeder(cmdSetup);	//setup everything first, then power on short. made it this way to prevent servos from driving to an undefined angle while being initialized
+	digitalWrite(FEEDER_ENABLE_PIN, HIGH);	//power feeder first, because while setup feeder might retract.
+	delay(1000);		//have the last feeder's servo settled before disabling
+	digitalWrite(FEEDER_ENABLE_PIN, LOW);	//disable power afterwards
 	
 	//print all settings of every feeder to console
 	executeCommandOnAllFeeder(cmdOutputCurrentSettings);

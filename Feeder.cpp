@@ -49,6 +49,8 @@ void FeederClass::outputCurrentSettings() {
 }
 
 void FeederClass::setup() {
+	//attach servo to pin
+	this->servo.attach(feederPinMap[this->feederNo],this->feederSettings.motor_min_pulsewidth,this->feederSettings.motor_max_pulsewidth);
 
 	//load settings from eeprom
 	this->loadFeederSettings();
@@ -62,14 +64,8 @@ void FeederClass::setup() {
 	this->lastButtonState=digitalRead(feederFeedbackPinMap[this->feederNo]);
 #endif
 
-	//attach servo to pin
-	this->servo.attach(feederPinMap[this->feederNo],this->feederSettings.motor_min_pulsewidth,this->feederSettings.motor_max_pulsewidth);
-
 	//put on defined position
 	this->gotoRetractPosition();
-
-	//wait a little time not having all servos run at the same time if power-supply is not dimensioned adequate
-	delay(50);	//50ms
 }
 
 FeederClass::sFeederSettings FeederClass::getSettings() {
@@ -131,7 +127,7 @@ void FeederClass::gotoPostPickPosition() {
 void FeederClass::gotoRetractPosition() {
 	this->servo.write(this->feederSettings.retract_angle);
 	this->feederPosition=sAT_RETRACT_POSITION;
-	//this->feederState=sMOVING;		//moving-flag is not evaluated currently in the firmware... if setting this, it breaks manual feed via tensioner.
+	this->feederState=sMOVING;
 	#ifdef DEBUG
 		Serial.println("going to retract now");
 	#endif
@@ -140,7 +136,7 @@ void FeederClass::gotoRetractPosition() {
 void FeederClass::gotoHalfAdvancedPosition() {
 	this->servo.write(this->feederSettings.half_advanced_angle);
 	this->feederPosition=sAT_HALF_ADVANCED_POSITION;
-	//this->feederState=sMOVING;
+	this->feederState=sMOVING;
 	#ifdef DEBUG
 		Serial.println("going to half adv now");
 	#endif
@@ -149,7 +145,7 @@ void FeederClass::gotoHalfAdvancedPosition() {
 void FeederClass::gotoFullAdvancedPosition() {
 	this->servo.write(this->feederSettings.full_advanced_angle);
 	this->feederPosition=sAT_FULL_ADVANCED_POSITION;
-	//this->feederState=sMOVING;
+	this->feederState=sMOVING;
 	#ifdef DEBUG
 		Serial.println("going to full adv now");
 	#endif
@@ -198,12 +194,26 @@ bool FeederClass::advance(uint8_t feedLength, bool overrideError = false) {
 	//check, what to do? if not, return quickly
 	if(feedLength==0) {
 		//nothing to do, just return
+		#ifdef DEBUG
+			Serial.println(F("advance ignored, 0 feedlength was given"));
+		#endif
 	} else if ( feedLength>0 && this->feederState!=sIDLE ) {
 		//last advancing not completed! ignore newly received command
 		//TODO: one could use a queue
+		#ifdef DEBUG
+		
+			Serial.print(F("advance ignored, feedlength>0 given, but feederState!=sIDLE"));
+			Serial.print(F(" (feederState="));
+			Serial.print(this->feederState);
+			Serial.println(F(")"));
+		#endif
 	} else {
 		//OK, start new advance-proc
 		//feed multiples of 2 possible: 2/4/6/8/10/12,...
+		#ifdef DEBUG
+			Serial.print(F("advance initialized, remainingFeedLength="));
+			Serial.println(feedLength);
+		#endif
 		this->remainingFeedLength=feedLength;
 	}
 
@@ -285,7 +295,7 @@ void FeederClass::disable() {
 
 void FeederClass::update() {
 
-#ifdef HAS_FEEDBACKLINE
+#ifdef HAS_FEEDBACKLINES
 	//routine for detecting manual feed via tensioner microswitch.
 	//useful for setup a feeder. press tensioner short to advance by feeder's default feed length
 	//feeder have to be enabled for this, otherwise this feature doesn't work and pressing the tensioner can't be detected due to open mosfet on controller pcb.
@@ -319,7 +329,7 @@ void FeederClass::update() {
 					#ifdef DEBUG
 						Serial.print(F("Manual feed triggered for feeder N"));
 						Serial.print(this->feederNo);
-						Serial.print(F("advancing feeders default length "));
+						Serial.print(F(", advancing feeders default length "));
 						Serial.print(this->feederSettings.feed_length);
 						Serial.println(F("mm."));
 					#endif
@@ -344,7 +354,8 @@ void FeederClass::update() {
 			}
 		}
 	} else {
-		//don't do anything if not idle...
+		//permanently reset vars to don't do anything if not idle...
+		this->lastButtonState = digitalRead(feederFeedbackPinMap[this->feederNo]);	//read level of feedbackline (active low)
 		feedbackLineTickCounter=0;
 	}
 
@@ -366,11 +377,13 @@ void FeederClass::update() {
 		}
 
 		//if no need for feeding exit fast.
-		if(this->remainingFeedLength==0)
+		if(this->remainingFeedLength==0) {
+			this->feederState=sIDLE;	//make sure sIDLE is entered always again
 			return;
-		else 
+		} else {
 			this->feederState=sMOVING;
-
+		}
+		
 		#ifdef DEBUG
 			Serial.print("remainingFeedLength before working: ");
 			Serial.println(this->remainingFeedLength);

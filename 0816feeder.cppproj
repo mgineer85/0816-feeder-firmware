@@ -80,6 +80,7 @@
   <avrgcc.compiler.directories.IncludePaths>
     <ListValues>
       <Value>C:/Users/buero/Documents/Arduino/libraries/EEPROMEx</Value>
+      <Value>C:/Users/buero/Documents/Arduino/libraries/Servo/src</Value>
       <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/xmu4sem3.w5h/Micro Platforms/visualmicro/ide-atmel/libraries</Value>
       <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries</Value>
@@ -113,6 +114,7 @@
   <avrgcccpp.compiler.directories.IncludePaths>
     <ListValues>
       <Value>C:/Users/buero/Documents/Arduino/libraries/EEPROMEx</Value>
+      <Value>C:/Users/buero/Documents/Arduino/libraries/Servo/src</Value>
       <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/xmu4sem3.w5h/Micro Platforms/visualmicro/ide-atmel/libraries</Value>
       <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries</Value>
@@ -433,6 +435,7 @@ build.arch=AVR
   <avrgcc.compiler.directories.IncludePaths>
     <ListValues>
       <Value>C:/Users/buero/Documents/Arduino/libraries/EEPROMEx</Value>
+      <Value>C:/Users/buero/Documents/Arduino/libraries/Servo/src</Value>
       <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/xmu4sem3.w5h/Micro Platforms/visualmicro/ide-atmel/libraries</Value>
       <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries</Value>
@@ -466,6 +469,7 @@ build.arch=AVR
   <avrgcccpp.compiler.directories.IncludePaths>
     <ListValues>
       <Value>C:/Users/buero/Documents/Arduino/libraries/EEPROMEx</Value>
+      <Value>C:/Users/buero/Documents/Arduino/libraries/Servo/src</Value>
       <Value>C:/Program Files (x86)/Atmel/Studio/7.0/Extensions/xmu4sem3.w5h/Micro Platforms/visualmicro/ide-atmel/libraries</Value>
       <Value>C:/Users/buero/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.17/libraries</Value>
       <Value>C:/Users/buero/Documents/Arduino/libraries</Value>
