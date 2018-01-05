@@ -187,7 +187,10 @@ bool FeederClass::advance(uint8_t feedLength, bool overrideError = false) {
 			//error, and error was not overridden -> return false, advance not successful
 			return false;
 		 } else {
-			 Serial.println(F("overridden error temporarily"));
+			#ifdef DEBUG
+				Serial.println(F("overridden error temporarily"));
+			#endif
+			 
 		 }
 	}
 
@@ -280,17 +283,15 @@ String FeederClass::reportFeederErrorState() {
 
 //called when M-Code to enable feeder is issued
 void FeederClass::enable() {
-  //nothing to do here yet
+	
+	this->feederState=sIDLE;
+	
 }
 
 //called when M-Code to disable feeder is issued
 void FeederClass::disable() {
-
-  //if stuck in half advanced pos, on disable go to full advanced.
-  //this way one component is thrown away but one can be sure there is a part if power was cut off from controller and on next start the feeder goes to retract position
-  if(this->feederPosition==sAT_HALF_ADVANCED_POSITION) {
-    this->gotoFullAdvancedPosition();
-  }
+  
+  this->feederState=sDISABLED;
 }
 
 void FeederClass::update() {
@@ -378,7 +379,12 @@ void FeederClass::update() {
 
 		//if no need for feeding exit fast.
 		if(this->remainingFeedLength==0) {
-			this->feederState=sIDLE;	//make sure sIDLE is entered always again
+			
+			if(this->feederState!=sDISABLED)
+				//if feeder are not disabled:
+				//make sure sIDLE is entered always again (needed if gotoXXXPosition functions are called directly instead by advance() which would set a remainingFeedLength)
+				this->feederState=sIDLE;
+				
 			return;
 		} else {
 			this->feederState=sMOVING;

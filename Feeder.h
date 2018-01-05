@@ -46,10 +46,11 @@ class FeederClass {
 
 	//operational status of the feeder
 	enum sFeederState {
+		sDISABLED,
 		sIDLE,
 		sMOVING,
 		sADVANCING_CYCLE_COMPLETED,
-	} feederState = sIDLE;
+	} feederState = sDISABLED;
 
 	//store the position of the advancing lever
 	//last state is stored to enable half advance moves (2mm tapes)
@@ -106,8 +107,8 @@ class FeederClass {
 	String reportFeederErrorState();
 	bool feederIsOk();
 
-  void enable();
-  void disable();
+	void enable();
+	void disable();
 
 	void update();
 };
