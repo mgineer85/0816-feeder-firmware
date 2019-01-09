@@ -188,9 +188,10 @@ void setup() {
 	printCommonSettings();
 
 	//setup feeder objects
+  digitalWrite(FEEDER_ENABLE_PIN, HIGH);  //power feeder first, because while setup feeder might retract.
 	executeCommandOnAllFeeder(cmdSetup);	//setup everything first, then power on short. made it this way to prevent servos from driving to an undefined angle while being initialized
-	digitalWrite(FEEDER_ENABLE_PIN, HIGH);	//power feeder first, because while setup feeder might retract.
 	delay(1000);		//have the last feeder's servo settled before disabling
+  executeCommandOnAllFeeder(cmdDisable); //while setup ran, the feeder were moved and remain in sIDLE-state -> it shall be disabled
 	digitalWrite(FEEDER_ENABLE_PIN, LOW);	//disable power afterwards
 	
 	//print all settings of every feeder to console
