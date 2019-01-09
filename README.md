@@ -1,8 +1,8 @@
-# 0816 automatic feeder controller firmware
+# 0816 automatic smt feeder controller firmware
 
-Automatic feeder system to for OpenPnP.
-Details see https://docs.mgrl.de/maschine:pickandplace:feeder:0816feeder
+This is the firmware needed to use the 0816 smt feeder. Find details on the feeder design, setup and features in [the wiki documentation](https://docs.mgrl.de/maschine:pickandplace:feeder:0816feeder)
 
-![feeder in cad model](https://user-images.githubusercontent.com/3868450/34632854-34719c14-f278-11e7-8e8d-e245edc932fc.jpg)
+![render of the 3dprintable automatic 0816 smt feeder](https://user-images.githubusercontent.com/3868450/34632854-34719c14-f278-11e7-8e8d-e245edc932fc.jpg)
 
-https://www.youtube.com/watch?v=vJzb3llKgjA
+[Watch a video showing the smt feeder in action](https://www.youtube.com/watch?v=vJzb3llKgjA)
+
