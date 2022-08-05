@@ -96,11 +96,8 @@ const static int8_t feederFeedbackPinMap[NUMBER_OF_FEEDER] = {
 
 #define NUMBER_OF_POWER_OUTPUT 4
 const static uint8_t pwrOutputPinMap[NUMBER_OF_POWER_OUTPUT] = {
-  A11,    // Output 1 (D0)
-  A12,    // Output 2 (D1)
-  A13,     //...
-  A14,
+  65,    // Output 1 (D0)
+  66,    // Output 2 (D1)
+  67,     //...
+  68,
 };
-
-
-

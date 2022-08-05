@@ -45,6 +45,8 @@ void FeederClass::outputCurrentSettings() {
 	Serial.print(" X");
 	Serial.print(this->feederSettings.ignore_feedback);
 #endif
+  Serial.print(" S");
+  Serial.print(this->feederSettings.advance_speed);
 	Serial.println();
 }
 
@@ -143,7 +145,31 @@ void FeederClass::gotoHalfAdvancedPosition() {
 }
 
 void FeederClass::gotoFullAdvancedPosition() {
-	this->servo.write(this->feederSettings.full_advanced_angle);
+
+  uint8_t instant_angle;
+  // no Speed control needed (full speed)
+  if (feederSettings.advance_speed==0){
+	  this->servo.write(this->feederSettings.full_advanced_angle);
+  }
+  // Speed control required
+  else {
+    // First get the initial angle
+    if (this->feederPosition=sAT_HALF_ADVANCED_POSITION){
+      instant_angle = this->feederSettings.half_advanced_angle;
+    }
+    else{
+      instant_angle = this->feederSettings.retract_angle;
+    }
+    // Then action the servo step by step
+    // note: I am aware the use of delay here is certainly not optimal
+    // todo: a non-blocking solution should be used using (millis()-time > delay)
+    while(instant_angle<this->feederSettings.full_advanced_angle){
+      this->servo.write(instant_angle);
+      delay(feederSettings.advance_speed);
+      instant_angle++;
+    }
+    
+  }
 	this->feederPosition=sAT_FULL_ADVANCED_POSITION;
 	this->feederState=sMOVING;
 	#ifdef DEBUG

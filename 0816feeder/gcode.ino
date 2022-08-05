@@ -248,6 +248,7 @@ void processCommand() {
 #ifdef HAS_FEEDBACKLINES
 			updatedFeederSettings.ignore_feedback=parseParameter('X',oldFeederSettings.ignore_feedback);
 #endif
+      updatedFeederSettings.advance_speed=parseParameter('S',oldFeederSettings.advance_speed);
 			
 			//set to feeder
 			feeders[(uint8_t)signedFeederNo].setSettings(updatedFeederSettings);
@@ -263,6 +264,20 @@ void processCommand() {
 
 			break;
 		}
+
+    	case MCODE_PRINT_FEEDER_CONFIG: {
+        	int8_t signedFeederNo = (int)parseParameter('N', -1);
+
+       	 	//check for presence of FeederNo
+        	if (!validFeederNo(signedFeederNo, 1)) {
+          		sendAnswer(1, F("feederNo missing or invalid"));
+          		break;
+        	}
+
+        	feeders[(uint8_t)signedFeederNo].outputCurrentSettings();
+
+        	break;
+      	}
 
 		/*
 		CODES to Control ADC
