@@ -39,6 +39,7 @@ class FeederClass {
 #ifdef HAS_FEEDBACKLINES  
 		uint8_t ignore_feedback;
 #endif
+    uint8_t advance_speed;
 		//sFeederState lastFeederState;       //save last position to stay there on poweron? needs something not to wear out the eeprom. until now just go to retract pos.
 	};
 

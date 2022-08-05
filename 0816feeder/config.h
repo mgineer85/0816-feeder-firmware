@@ -118,7 +118,7 @@
 #define FEEDER_DEFAULT_MOTOR_MAX_PULSEWITH 2400		// [µs] see motor specs or experiment at bit. Value set here should bring the servo to 180°
 #define FEEDER_DEFAULT_IGNORE_FEEDBACK 0			// 0: before feeding the feedback-signal is checked. if signal is as expected, the feeder advances tape and returns OK to host. otherwise an error is thrown.
 													// 1: the feedback-signal is not checked, feeder advances tape and returns OK always
-
+#define FEEDER_DEFAULT_ADVANCE_SPEED 0 // 0 is max speed. 
 
 /* ----------------
   Analog Reading Config

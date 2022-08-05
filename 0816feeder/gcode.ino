@@ -248,6 +248,7 @@ void processCommand() {
 #ifdef HAS_FEEDBACKLINES
 			updatedFeederSettings.ignore_feedback=parseParameter('X',oldFeederSettings.ignore_feedback);
 #endif
+      updatedFeederSettings.advance_speed=parseParameter('S',oldFeederSettings.advance_speed);
 			
 			//set to feeder
 			feeders[(uint8_t)signedFeederNo].setSettings(updatedFeederSettings);
